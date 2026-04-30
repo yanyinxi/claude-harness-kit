@@ -1,5 +1,5 @@
 ---
-name: frontend-developer
+name: frontend-dev
 description: 通用前端开发专家，负责 UI 组件、状态管理、路由、用户体验。Use for frontend tasks, UI component creation, page implementation. 触发词：前端、UI、组件、页面、界面
 model: sonnet
 tools: Read, Write, Edit, Bash, Grep, Glob, TodoWrite
