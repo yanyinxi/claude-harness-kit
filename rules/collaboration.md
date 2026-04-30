@@ -1,76 +1,156 @@
-# Collaboration Strategy Rules（Java 项目）
+---
+scope: global
+---
 
-**更新时间**: 2026-04-23
-**适用范围**: 全局（所有文件）
+# Multi-Agent Collaboration Protocol — 多 Agent 协作契约
 
-## 多 Agent 协作规范
+## 1. 并行执行铁律
 
-### ✅ 正确的 Agent 调用方式（Claude Code）
+### 1.1 并行条件
 
-主 session 充当 Orchestrator，通过 `Agent` 工具调用子 agent：
+| 场景 | 可否并行 | 条件 |
+|------|:--:|------|
+| 探索/分析多个维度 | ✅ | 只看不写 |
+| 修改不同文件 | ✅ | 文件集不重叠 |
+| 不同审查维度 | ✅ | 独立审查 |
+| 修改同一文件 | ❌ | 合并为同一任务 |
+| 有依赖的任务 | ❌ | 先完成依赖方 |
+| 审查和修复 | ❌ | 先审查完再修复 |
+
+### 1.2 冲突检测（派发并行 Agent 前必须执行）
+
+派发前先列出每个 Agent 将修改的文件，检查重叠：
 
 ```
-# 并行调用（同一 response 中同时发出）
-Agent(subagent_type="frontend-developer", prompt="...", run_in_background=True)
-Agent(subagent_type="backend-developer", prompt="...", run_in_background=True)
-
-# 串行调用（需要等待结果）
-Agent(subagent_type="code-reviewer", prompt="审查以下代码...")
+任务 A: files=[a.java, b.java]
+任务 B: files=[c.vue, d.vue]
+→ A ∩ B = ∅ → 可并行
 ```
 
-**关键参数**：`subagent_type`（不是 `agent`），`prompt`，可选 `run_in_background=True`。
+如果文件重叠 → 合并任务或串行化。
 
-### ✅ 契约前置：前后端并行前必须定义数据契约
+### 1.3 并行分析 / 串行修复
 
-**这是前后端并行开发的前提条件，缺少它会导致两端的命名惯例冲突（如 camelCase vs snake_case），形成运行时补丁。**
+```
+✅ 正确: explore + codebase-analyzer + impact-analyzer 并行
+         → 汇总结果
+         → 按依赖顺序串行修复
 
-**适用场景**：任何涉及前端读取后端 API 响应数据的需求，无论是新功能还是修改现有接口。
+❌ 错误: 把所有 Agent 都并行，不考虑依赖
+```
 
-**执行步骤**：
+## 2. 信息同步协议
 
-1. **Step 1（串行，Orchestrator 自己做）**：在派发任何 agent 前，写出 API 数据契约：
-   - 每个接口的响应字段名（统一 camelCase）及类型
-   - 示例：
-     ```
-     GET /api/v1/assets 响应字段：
-       id: string, title: string, uploadedAt: string,
-       fileSizeBytes: number, sourceDataset: number, ...
-     GET /api/v1/stats/uploader-avg-size 响应字段：
-       uploader: string, avgSizeBytes: number, avgSizeHuman: string
-     ```
-   - 契约不需要 OpenAPI 格式，Markdown 表格即可，重要的是**字段名拼写和 case 必须精确**
+### 2.1 文件交接制 — 不依赖上下文传递状态
 
-2. **Step 2（并行）**：把契约原文粘贴进 backend-developer 和 frontend-developer 的 prompt 里，两端都以契约为准实现
+每个阶段的产出写入文件，下一阶段读取文件：
 
-3. **Step 3（验证）**：code-reviewer 检查时，确认后端 SQL alias 或 DTO 字段名与契约一致，确认前端没有 `?? row.snake_case` 形式的 fallback（这类 fallback 是契约缺失的症状，不是防御性编程）
+```
+[分析阶段] → research/summary.md
+[设计阶段] → plan/architecture.md
+[实现阶段] → output/task_*.md
+[审查阶段] → review/report.md
+```
 
-**技术规范（与框架无关，适用所有项目）**：
-- 响应字段命名：统一 camelCase（前端 JS/TS 惯例优先，因为字段名最终在 TS interface 中声明）
-- 后端 Map 返回时：SQL 列必须通过 `AS "camelCaseName"` 别名匹配（PostgreSQL 须加双引号保留大写）
-- 后端 DTO 返回时：Java 字段名使用 camelCase，Jackson 默认序列化即匹配
-- 禁止的补丁写法：`row.fieldName ?? row.field_name`、`d.someVal ?? d['some_val']` — 出现即表示契约断裂，应修后端，不改前端
+**规则**: 跨阶段状态**必须**写入文件。上下文可能被压缩，文件不会丢失。
 
-### ✅ 并行任务分配原则
+### 2.2 Mailbox — Agent 间通信
 
-- **前后端并行**：frontend-developer 和 backend-developer 互不依赖，同时启动（但须先完成契约定义）
-- **审查串行**：code-reviewer 必须在代码完成后启动
-- **进化串行**：evolver 在 code-reviewer 给出报告、主 session 完成修复后启动
+并行 Agent 之间发现需要协同的信息，写入 mailbox/ 目录：
 
-### ✅ Evolver 使用规范
+```
+mailbox/to_frontend.md  ← backend-dev 通知 API 字段变更
+mailbox/to_backend.md   ← frontend-dev 通知需要新接口
+```
 
-- `permissionMode: acceptEdits` — 否则后台运行时无法自动编辑文件
-- 项目必须 `git init` — 否则 session_evolver.py 的 files_changed 永远为 0
+**协议**:
+- Agent 启动时先读 mailbox/ 检查是否有给自己的消息
+- Agent 发现需要通知其他 Agent 时写 mailbox/
+- 消息格式: 时间 + 来源 + 内容 + 影响范围
+- 消息状态: unread → read → resolved
 
-## 反模式
+### 2.3 Checkpoint — 压缩安全
 
-### ⚠️ `Task(agent="...", prompt="...")` 语法错误
+每完成一个阶段，写入 checkpoint:
 
-正确参数名是 `subagent_type`，工具名是 `Agent`，不存在 `Task` 工具和 `agent=` 参数。
+```
+.compact/
+├── current_phase.md     # "Phase 3: Implement, Task 2/4"
+├── completed.md         # - [x] Task 1: xxx
+├── pending.md           # - [ ] Task 3: xxx
+└── recovery.md          # 如何从当前状态恢复
+```
 
-### ⚠️ `background_task(...)` 不存在
+`/compact` 后，从 checkpoint 文件恢复进度。
 
-这是旧框架的伪代码。并行是通过在同一 response 里同时发出多个 `Agent` 调用实现的。
+## 3. 并行模式库
 
-### ⚠️ 主 session 手写所有代码
+### 模式 1: 三路并行分析（研究文档 92% 缓存最优）
 
-浪费多 Agent 并行能力。应将后端/前端/测试任务分别委托给对应专业 Agent。
+```
+同一 response 同时发出:
+  Agent(explore, "搜索相关代码和调用链", background)
+  Agent(codebase-analyzer, "分析模块结构", background)
+  Agent(impact-analyzer, "评估影响范围", background)
+→ 所有 Agent 继承相同缓存前缀 → 92% 复用率
+```
+
+### 模式 2: 前后端并行开发（需契约前置）
+
+```
+Step 1 (串行): architect 定义 API 契约 → api-contract.md
+Step 2 (并行): backend-dev + frontend-dev 同时实现
+  两端都以 api-contract.md 为准
+  后端: 返回字段 = contract 定义的字段名 + camelCase
+  前端: 不使用 ?? fallback 写法（那说明契约断了）
+```
+
+### 模式 3: 多角度并行审查
+
+```
+同一 response 同时发出:
+  Agent(code-reviewer, "5 维度审查", background)
+  Agent(qa-tester, "测试覆盖审查", background)
+  Agent(security-auditor, "安全审查", background)  ← 仅安全相关
+→ 汇总 3 份报告 → 差异项人工判断
+```
+
+### 模式 4: Ralph 自修复循环
+
+```
+Agent(ralph, "实现 + 测试 → 失败 → 修复 → 重测", background=false)
+最多 5 轮自动修复
+```
+
+## 4. 错误处理
+
+### 4.1 Agent 失败
+
+```
+Agent 返回 error → 
+  工具失败 → 重试 1 次（换参数）
+  超时 → 拆分任务
+  逻辑错误 → 根因分析 → 修复 → 重新派发
+  连续 3 次失败 → 人工介入
+```
+
+### 4.2 并行 Agent 部分失败
+
+```
+Task A ✅, Task B ❌, Task C ✅
+  → 保留 A、C 的产出
+  → 修复 B 的根因
+  → 仅重派 B
+  → 全部通过 → 继续
+```
+
+## 5. Anti-Patterns（禁止）
+
+| 禁止 | 原因 | 正确做法 |
+|------|------|---------|
+| 有依赖的任务并行 | 重复工作 | 串行化依赖 |
+| 改同一文件的 Agent 并行 | 冲突 | 合并或串行 |
+| 上下文依赖记忆传递状态 | 压缩丢失 | 状态写入文件 |
+| 无契约前后端并行 | 字段不一致 | 先定契约再并行 |
+| 审查和修复同时进行 | 修复基础不稳 | 先审查完再修复 |
+| 不设超时等待 | 无限等待 | 每个 Agent 给预估时间 |
