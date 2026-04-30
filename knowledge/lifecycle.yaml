@@ -1,0 +1,114 @@
+# Knowledge Lifecycle Configuration
+# 借鉴 OpenAI Harness Engineering: 知识生命周期管理
+
+# ── Maturity levels ──────────────────────────────────────
+maturity:
+  levels:
+    - draft       # 新创建，未经验证
+    - verified    # ≥1 工作流使用
+    - proven      # ≥2 不同项目验证
+
+  promotion:
+    draft_to_verified:
+      condition: "usage_count >= 1"
+    verified_to_proven:
+      condition: "project_count >= 2"
+
+# ── Auto-decay (自动衰减) ─────────────────────────────────
+decay:
+  rules:
+    - from: proven
+      to: verified
+      after: "12 months unused"
+      check_field: "last_referenced_at"
+
+    - from: verified
+      to: draft
+      after: "6 months unused"
+      check_field: "last_referenced_at"
+
+    - from: draft
+      to: archived
+      after: "3 months unused AND lint flag count >= 3"
+      requires_approval: true  # 归档需要人工确认
+
+# ── Cross-project promotion (跨项目提升) ───────────────────
+cross_project_promotion:
+  # Layer 3 (项目特定) → Layer 1/2 (跨项目)
+  layer3_to_layer1_2:
+    condition: "referenced_by >= 2 different projects AND verified_by >= 1 maintainer"
+    action: "move to team-knowledge.git/{tech-wiki or biz-wiki}"
+
+# ── Knowledge types (MECE) ────────────────────────────────
+knowledge_types:
+  - name: model
+    description: 实体定义、数据结构、关系
+    example: "User entity: id, name, email, role, created_at"
+
+  - name: decision
+    description: 架构决策 + 理由
+    example: "选用 Redis 而非 Memcached: 需要持久化和 Pub/Sub"
+
+  - name: guideline
+    description: 推荐/禁止的实践
+    example: "recommend: 使用连接池; avoid: 裸 SQL 拼接"
+
+  - name: pitfall
+    description: 已知风险、失败模式
+    example: "N+1 查询: 使用 eager loading 或 batch fetch"
+
+  - name: process
+    description: 业务流程、操作步骤
+    example: "发布流程: 构建 → 测试 → 灰度 → 全量"
+
+# ── Storage layers ────────────────────────────────────────
+storage_layers:
+  - layer: L0-P
+    scope: personal
+    path: "~/.claude/"
+    shared: false
+    description: 个人偏好、本地设置
+
+  - layer: L0-T
+    scope: team
+    path: "team-knowledge.git/team/"
+    shared: true
+    description: 团队约定、编码规范
+
+  - layer: L1
+    scope: technical
+    path: "team-knowledge.git/tech-wiki/"
+    shared: true
+    description: 跨项目技术知识
+
+  - layer: L2
+    scope: business
+    path: "team-knowledge.git/biz-wiki/{domain}/"
+    shared: true
+    description: 业务领域知识
+
+  - layer: L3
+    scope: project
+    path: ".claude/knowledge/"
+    shared: false
+    description: 项目特定知识
+
+# ── Progressive disclosure index ──────────────────────────
+index:
+  description: "3-tier knowledge loading to minimize context usage"
+  tiers:
+    - level: 1
+      name: "always_loaded"
+      content: "title + one-line description"
+      budget: "~50 tokens per entry"
+      max_total: "~1150 tokens for 23 skills"
+
+    - level: 2
+      name: "on_demand"
+      content: "full INDEX.md (~300 tokens)"
+      trigger: "Agent matches relevant skill"
+
+    - level: 3
+      name: "deep_load"
+      content: "full SKILL.md body"
+      trigger: "Agent executes specific task"
