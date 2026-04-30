@@ -1,103 +1,72 @@
-# Claude Team Kit
+# Claude Harness Kit
 
-Claude Code 多 Agent 工作流编排 + 四维度自进化插件
+Claude Code 团队级 AI 驾驭工具包 — Human steers, Agents execute.
 
-## 功能特性
-
-### 1. 自进化系统
-
-- **四维度进化**: Agent / Skill / Rule / Memory
-- **评分体系**: A/B/C/D/F 五级评分
-- **熔断机制**: 连续退化自动阻止
-- **数据轮转**: 7天保留/30天压缩/90天删除
-
-### 2. 工作流编排
-
-- `/evolve` - 进化系统操控台
-- `/workflow` - 完整开发周期管理
-- `/knowledge-graph` - 知识图谱查询
-
-### 3. Hook 系统
-
-- SessionStart: 状态注入
-- PreToolUse: 安全检查
-- PostToolUse: 数据采集
-- Stop: 进化编排
+借鉴 OpenAI Harness Engineering 方法论，提供多 Agent 协作、通用 Skills/Rules、知识生命周期管理、持续进化能力。
 
 ## 快速开始
 
 ```bash
-# 加载插件
-claude --plugin-dir /path/to/claude-team-kit
+# 克隆插件
+git clone https://github.com/yanyinxi/claude-harness-kit.git
 
-# 使用进化系统
-/evolve status
-/evolve dashboard
+# 注册为 Claude Code 插件
+claude plugins install /path/to/claude-harness-kit
 
-# 使用工作流
-/workflow run "实现用户登录功能"
-/workflow pause
-/workflow resume
+# 初始化新项目
+./cli/kit.sh init
 
-# 查询知识图谱
-/knowledge-graph search "认证"
+# 扫描存量项目
+./cli/kit.sh scan --repo /path/to/project
 ```
 
 ## 目录结构
 
 ```
-claude-team-kit/
-├── .claude-plugin/       # 插件元数据
-├── agents/               # Agent 定义 (18个)
-├── skills/               # Skill 定义 (23个)
-├── hooks/
-│   ├── hooks.json        # Hook 配置
-│   └── bin/              # Hook 脚本 (11个)
-├── rules/                # 规则文件 (8个)
-├── lib/                  # Python 引擎 (14个模块)
-├── evolution/            # 备用进化引擎
-├── config/               # 配置文件
-├── memory/               # 记忆文件
-└── evolution-cli.py       # 统一 CLI
+claude-harness-kit/
+├── agents/                  # 22 个通用 Agent
+├── skills/                  # 19 个通用 Skill
+├── rules/                   # 6 条通用规则
+├── hooks/                   # 7 个 Hook 事件 + 8 脚本
+├── knowledge/               # 知识生命周期系统
+├── evolve-daemon/           # 进化守护进程
+├── cli/                     # 命令行工具
+├── docs/                    # 设计文档
+└── .claude-plugin/          # 插件元数据
 ```
 
-## 进化命令
+## 核心能力
 
-| 命令 | 功能 |
-|------|------|
-| `/evolve analyze` | 运行进化编排器 |
-| `/evolve status` | 进化安全状态 |
-| `/evolve dashboard` | 仪表盘 |
-| `/evolve approve <id>` | 批准进化 |
-| `/evolve rollback <ver>` | 回滚版本 |
-| `/evolve history` | 进化历史 |
+### 多 Agent 并行编排
+- 冲突检测矩阵 (A ∩ B = ∅ → 可并行)
+- TaskFile 协议 (阶段间文件交接)
+- Mailbox 机制 (Agent 间通信)
+- Checkpoint 系统 (上下文压缩恢复)
 
-## 工作流命令
+### 5 阶段执行流
+Research(并行分析) → Plan(串行设计) → Implement(并行编码) → Verify(并行审查+串行修复) → Ship(交付)
 
-| 命令 | 功能 |
-|------|------|
-| `/workflow run <task>` | 开始工作流 |
-| `/workflow pause` | 保存书签 |
-| `/workflow resume` | 恢复书签 |
-| `/workflow status` | 查看状态 |
+### 持续进化
+- Instinct System: 用户纠正 → 置信度累积 (0.3→0.5→0.7→0.9)
+- evolve-daemon: 数据采集 → 语义提取 → 分析 → 提案 → 应用
+- 进化回滚: 7 天观察期 + 自动熔断
+- 知识生命周期: draft → verified → proven，自动衰减
 
-## 评分等级
+### 安全保障
+- Deny-First: 安全拦截优先于功能放行
+- 审查 Agent 只读: code-reviewer / security-auditor / oracle
+- PreToolUse 危险命令拦截
 
-总分 = 基础分(40) + 活跃度(20) + 效果分(25) + 质量分(15)
+## 测试
 
-| 等级 | 分数 |
-|------|------|
-| A | ≥80 |
-| B | ≥65 |
-| C | ≥50 |
-| D | ≥35 |
-| F | <35 |
+```bash
+# 并行协议验证 (7 套件)
+python3 .claude/tests/test_parallelism_protocol.py
 
-## 风险分级
+# 全链路进化测试 (18 套件)
+python3 .claude/tests/test_full_link_evolution.py
+```
 
-| 等级 | 操作 | 处理 |
-|------|------|------|
-| Low | 追加内容 | 自动执行 |
-| Medium | 修改现有内容 | 自动执行 + 通知 |
-| High | 删除/重构 | 人工确认 |
-| Critical | 安全相关 | 禁止自动 |
+## License
+
+MIT

@@ -2,10 +2,10 @@
 
 ## 0. 插件定位
 
-本方案是 **claude-team-kit 插件的可选模块**。核心价值分层：
+本方案是 **claude-harness-kit 插件的可选模块**。核心价值分层：
 
 ```
-claude-team-kit 插件
+claude-harness-kit 插件
 │
 ├─ 必装层（团队通用）
 │   ├── 8 个 Agent 定义（技术栈无关）
@@ -891,17 +891,17 @@ def generate_proposal(analysis, config, root):
 ### 5.1 macOS LaunchAgent
 
 ```xml
-<!-- ~/Library/LaunchAgents/com.claude-team-kit.evolve.plist -->
+<!-- ~/Library/LaunchAgents/com.claude-harness-kit.evolve.plist -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "...">
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.claude-team-kit.evolve</string>
+    <string>com.claude-harness-kit.evolve</string>
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/python3</string>
-        <string>/Users/yyx/code/github/claude-team-kit/.claude/evolve-daemon/daemon.py</string>
+        <string>/Users/yyx/code/github/claude-harness-kit/.claude/evolve-daemon/daemon.py</string>
         <string>run</string>
     </array>
     <key>StartInterval</key>
@@ -911,7 +911,7 @@ def generate_proposal(analysis, config, root):
     <key>EnvironmentVariables</key>
     <dict>
         <key>CLAUDE_PROJECT_DIR</key>
-        <string>/Users/yyx/code/github/claude-team-kit</string>
+        <string>/Users/yyx/code/github/claude-harness-kit</string>
         <key>ANTHROPIC_API_KEY</key>
         <string><!-- 从 Keychain 或 .env 读取 --></string>
     </dict>
@@ -919,7 +919,7 @@ def generate_proposal(analysis, config, root):
 </plist>
 ```
 
-加载: `launchctl load ~/Library/LaunchAgents/com.claude-team-kit.evolve.plist`
+加载: `launchctl load ~/Library/LaunchAgents/com.claude-harness-kit.evolve.plist`
 
 ### 5.2 Linux systemd timer + cron 双保险
 
@@ -930,8 +930,8 @@ Description=Claude Team Kit Evolution Daemon
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/python3 %h/code/github/claude-team-kit/.claude/evolve-daemon/daemon.py run
-Environment=CLAUDE_PROJECT_DIR=%h/code/github/claude-team-kit
+ExecStart=/usr/bin/python3 %h/code/github/claude-harness-kit/.claude/evolve-daemon/daemon.py run
+Environment=CLAUDE_PROJECT_DIR=%h/code/github/claude-harness-kit
 
 # ~/.config/systemd/user/claude-evolve.timer
 [Unit]

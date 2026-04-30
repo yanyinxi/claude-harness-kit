@@ -124,7 +124,7 @@ def install_launchd(root: Path):
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.claude-team-kit.evolve</string>
+    <string>com.claude-harness-kit.evolve</string>
     <key>ProgramArguments</key>
     <array>
         <string>{sys.executable}</string>
@@ -143,7 +143,7 @@ def install_launchd(root: Path):
 </dict>
 </plist>"""
 
-    plist_path = Path.home() / "Library" / "LaunchAgents" / "com.claude-team-kit.evolve.plist"
+    plist_path = Path.home() / "Library" / "LaunchAgents" / "com.claude-harness-kit.evolve.plist"
     plist_path.parent.mkdir(parents=True, exist_ok=True)
     plist_path.write_text(plist)
     print(f"✅ LaunchAgent 已安装: {plist_path}")

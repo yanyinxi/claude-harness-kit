@@ -89,7 +89,7 @@
 
 ```bash
 # 团队安装（一次性）
-claude plugins install claude-team-kit
+claude plugins install claude-harness-kit
 
 # 存量项目适配（每个项目执行一次）
 cd legacy-project
@@ -695,7 +695,7 @@ cron 每 4 小时 / 累积 5+ 会话触发
 ## 8. 项目目录结构（最终版）
 
 ```
-claude-team-kit/                         # 插件根目录
+claude-harness-kit/                         # 插件根目录
 │
 ├── .claude-plugin/
 │   └── plugin.json                      # 插件元数据

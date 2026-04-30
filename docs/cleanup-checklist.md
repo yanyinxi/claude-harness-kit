@@ -10,7 +10,7 @@
 清理必须遵循以下原则：
 
 - **技术栈无关**：Agent/Rule 不能绑定 Java/Vue 等特定技术栈，通用模式放插件，技术细节放项目 CLAUDE.md
-- **开箱即用**：`claude plugins install claude-team-kit` 即可获得全部能力
+- **开箱即用**：`claude plugins install claude-harness-kit` 即可获得全部能力
 - **模块可选**：evolve-daemon 作为可选模块，不启用则零开销
 - **团队适配**：每个项目可通过自己的 CLAUDE.md 覆盖/扩展插件行为
 - **最小依赖**：只依赖 Python 3 标准库 + anthropic SDK（仅在启用 evolve-daemon 时需要）
@@ -250,7 +250,7 @@
 ## 清理后目录结构
 
 ```
-claude-team-kit/                       # 插件根目录
+claude-harness-kit/                       # 插件根目录
 ├── .claude-plugin/
 │   └── plugin.json                   # 插件元数据
 ├── package.json                      # npm 包配置
@@ -315,7 +315,7 @@ claude-team-kit/                       # 插件根目录
 └── src/...
 
 插件安装方式:
-  claude plugins install claude-team-kit
+  claude plugins install claude-harness-kit
   # 或在 package.json 中声明依赖后 npm install
 
 evolve-daemon 启用方式（可选）:

@@ -218,15 +218,15 @@ evolution/
 #### 1. 创建 GitHub 仓库
 
 ```bash
-# 1. GitHub 创建 claude-team-kit 仓库
+# 1. GitHub 创建 claude-harness-kit 仓库
 # 2. 本地初始化
-mkdir claude-team-kit && cd claude-team-kit && git init
+mkdir claude-harness-kit && cd claude-harness-kit && git init
 ```
 
 #### 2. 创建插件目录结构
 
 ```
-claude-team-kit/
+claude-harness-kit/
 ├── .claude-plugin/
 │   └── plugin.json              ← 新建
 ├── agents/                       ← 从 .claude/agents/ 平移（18个）
@@ -251,40 +251,40 @@ claude-team-kit/
 
 ```bash
 # agents（18个）
-cp -r .claude/agents/ claude-team-kit/agents/
+cp -r .claude/agents/ claude-harness-kit/agents/
 
 # skills（14个）
-cp -r .claude/skills/ claude-team-kit/skills/
+cp -r .claude/skills/ claude-harness-kit/skills/
 
 # rules（8个）
-cp -r .claude/rules/ claude-team-kit/rules/
+cp -r .claude/rules/ claude-harness-kit/rules/
 
 # hook 脚本（11个）
-mkdir -p claude-team-kit/hooks/bin/
-cp .claude/hooks/scripts/*.py claude-team-kit/hooks/bin/
-cp .claude/hooks/scripts/*.sh claude-team-kit/hooks/bin/
+mkdir -p claude-harness-kit/hooks/bin/
+cp .claude/hooks/scripts/*.py claude-harness-kit/hooks/bin/
+cp .claude/hooks/scripts/*.sh claude-harness-kit/hooks/bin/
 
 # Python 引擎（lib/，14个模块）
-cp -r .claude/lib/ claude-team-kit/lib/
+cp -r .claude/lib/ claude-harness-kit/lib/
 
 # 备用进化引擎（evolution/）
-cp -r .claude/evolution/ claude-team-kit/evolution/
+cp -r .claude/evolution/ claude-harness-kit/evolution/
 
 # 进化数据
-cp .claude/data/*.json claude-team-kit/config/ 2>/dev/null || true
-cp .claude/data/*.jsonl claude-team-kit/config/ 2>/dev/null || true
+cp .claude/data/*.json claude-harness-kit/config/ 2>/dev/null || true
+cp .claude/data/*.jsonl claude-harness-kit/config/ 2>/dev/null || true
 
 # 文档
-cp -r .claude/docs/ claude-team-kit/docs/
+cp -r .claude/docs/ claude-harness-kit/docs/
 
 # 记忆
-cp -r .claude/memory/ claude-team-kit/memory/
+cp -r .claude/memory/ claude-harness-kit/memory/
 
 # CLAUDE.md
-cp .claude/CLAUDE.md claude-team-kit/CLAUDE.md
+cp .claude/CLAUDE.md claude-harness-kit/CLAUDE.md
 
 # 测试
-cp -r .claude/tests/ claude-team-kit/tests/
+cp -r .claude/tests/ claude-harness-kit/tests/
 ```
 
 #### 4. 创建插件必需文件
@@ -292,14 +292,14 @@ cp -r .claude/tests/ claude-team-kit/tests/
 **plugin.json**：
 ```json
 {
-  "name": "claude-team-kit",
+  "name": "claude-harness-kit",
   "version": "0.1.0",
   "description": "Claude Code 多 Agent 工作流编排 + 四维度自进化插件",
   "author": {
     "name": "Your Name",
     "email": "you@example.com"
   },
-  "repository": "https://github.com/you/claude-team-kit",
+  "repository": "https://github.com/you/claude-harness-kit",
   "license": "MIT"
 }
 ```
@@ -307,7 +307,7 @@ cp -r .claude/tests/ claude-team-kit/tests/
 **package.json**：
 ```json
 {
-  "name": "claude-team-kit",
+  "name": "claude-harness-kit",
   "version": "0.1.0",
   "description": "Claude Code 多 Agent 工作流编排 + 四维度自进化插件",
   "main": "index.js",
@@ -323,7 +323,7 @@ cp -r .claude/tests/ claude-team-kit/tests/
 #### 验证项 1：插件基本加载
 
 ```bash
-claude --plugin-dir /path/to/claude-team-kit --help
+claude --plugin-dir /path/to/claude-harness-kit --help
 # 预期：能看到 agent 列表、skill 列表
 ```
 
@@ -388,7 +388,7 @@ claude --plugin-dir /tmp/test-hook-plugin -p "test"
 #### 验证项 4：Python 引擎可运行
 
 ```bash
-cd claude-team-kit
+cd claude-harness-kit
 
 # 验证 lib/ 引擎可 import
 python3 -c "import lib.evolution_orchestrator; print('OK')" 2>&1
@@ -1175,7 +1175,7 @@ if __name__ == "__main__":
 - 分享给 2-3 人试用
 
 **Phase 5 验收标准**：
-1. ✅ `npm install claude-team-kit` 可用
+1. ✅ `npm install claude-harness-kit` 可用
 2. ✅ 3 种项目 `/evolve` + `/workflow` 可用
 3. ✅ 进化闭环完整可用
 4. ✅ 安全审查无高危
