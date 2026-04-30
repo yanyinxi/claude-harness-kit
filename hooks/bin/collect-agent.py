@@ -15,8 +15,9 @@ def main():
     data_dir = root / ".claude" / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
 
+    raw = sys.stdin.read().strip()
     try:
-        hook_data = json.loads(sys.stdin.read().strip()) if sys.stdin.read().strip() else {}
+        hook_data = json.loads(raw) if raw else {}
     except (json.JSONDecodeError, OSError):
         hook_data = {}
 
@@ -35,4 +36,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        import sys, json
+        print(json.dumps({"collected": False, "warning": str(e)[:100]}), file=sys.stderr)
+        sys.exit(0)

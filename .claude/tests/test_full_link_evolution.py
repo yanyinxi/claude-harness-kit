@@ -321,8 +321,8 @@ def test_dimension_garbage_collection():
     ok("3 级风险评估 (Low→自动, Medium→Issue, High→仅报告)")
 
     # Verify gc is read-only for code
-    assert "disallowedTools" in gc_content and "Write" in gc_content
-    ok("GC Agent 不可直接修改代码 (disallowedTools: Write, Edit)")
+    assert "disallowed-tools" in gc_content and "Write" in gc_content
+    ok("GC Agent 不可直接修改代码 (disallowed-tools: Write, Edit)")
 
 
 # ═══════════════════════════════════════════════════════════════════════

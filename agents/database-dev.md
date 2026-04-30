@@ -2,6 +2,8 @@
 name: database-dev
 description: 数据库开发专家，负责表结构设计、迁移脚本、索引优化、查询性能调优。Use for database schema changes, migrations, query optimization.
 model: sonnet
+permissionMode: acceptEdits
+isolation: worktree
 tools: Read, Write, Edit, Bash, Grep, Glob
 skills: database-designer
 ---

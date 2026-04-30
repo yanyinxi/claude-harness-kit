@@ -12,8 +12,9 @@ description: |
   
 tools: Read, Grep, Glob
 model: opus
+permissionMode: default
 skills: karpathy-guidelines, architecture-design
-disallowedTools: Write, Edit, Bash
+disallowed-tools: Write, Edit, Bash
 context: global
 ---
 

@@ -55,7 +55,7 @@ print(json.dumps({
 [[ "$COMMAND_INPUT" =~ wget.*-O.*\|.*sh ]]                     && block "wget -O | sh (远程代码执行)"
 
 # ── 权限提升类 ──
-[[ "$COMMAND_INPUT" =~ \bsudo\b ]]                             && block "sudo 权限提升"
+[[ "$COMMAND_INPUT" =~ sudo[[:space:]] ]]                    && block "sudo 权限提升"
 [[ "$COMMAND_INPUT" =~ chmod[[:space:]]+(777|a\+rwx) ]]        && block "chmod 777/a+rwx (危险权限)"
 [[ "$COMMAND_INPUT" =~ chown.*root ]]                          && block "chown root (权限变更)"
 

@@ -55,4 +55,30 @@ if [[ "$FILE_PATH" =~ \.py$ ]] && [[ -f "$FILE_PATH" ]]; then
     fi
 fi
 
+# ── 测试先行检测（建议，不阻断）──
+_is_impl_file() {
+    local f="$1"
+    # 判断是否为实现代码文件（非测试、非配置、非文档）
+    [[ "$f" =~ /test/ ]] || [[ "$f" =~ /__tests__/ ]] || [[ "$f" =~ /spec/ ]] || \
+    [[ "$f" =~ \.test\. ]] || [[ "$f" =~ \.spec\. ]] || [[ "$f" =~ \.config\. ]] || \
+    [[ "$f" =~ \.json$ ]] || [[ "$f" =~ \.ya?ml$ ]] || [[ "$f" =~ \.md$ ]] || \
+    [[ "$f" =~ \.txt$ ]] || [[ "$f" =~ \.csv$ ]] || [[ "$f" =~ /docs/ ]] || \
+    [[ "$f" =~ /\. ]] && return 1
+    return 0
+}
+
+if _is_impl_file "$FILE_PATH" && git -C "$PROJECT_DIR" rev-parse --git-dir >/dev/null 2>&1; then
+    STAGED_FILES=$(git -C "$PROJECT_DIR" diff --cached --name-only 2>/dev/null || echo "")
+    TEST_IN_STAGED=0
+    for f in $STAGED_FILES; do
+        if [[ "$f" =~ \.test\. ]] || [[ "$f" =~ \.spec\. ]] || [[ "$f" =~ /test/ ]] || [[ "$f" =~ /__tests__/ ]]; then
+            TEST_IN_STAGED=1
+            break
+        fi
+    done
+    if [[ "$TEST_IN_STAGED" -eq 0 ]]; then
+        echo "💡 建议: 实现文件 $FILE_PATH 已变更，但未检测到对应测试文件变更。请确认是否需要添加测试。"
+    fi
+fi
+
 exit 0

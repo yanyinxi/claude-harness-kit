@@ -1,4 +1,4 @@
-# Claude Team Kit v2 — 团队级智能研发插件架构设计
+# Claude Harness Kit v2 — 团队级智能研发插件架构设计
 
 > **目标**: 20+ 人研发团队，100+ 存量代码库，AI 覆盖需求→开发→测试→上线全流程，自动化持续进化
 
@@ -703,7 +703,7 @@ claude-harness-kit/                         # 插件根目录
 ├── package.json                         # npm 包
 ├── README.md                            # 安装 + 使用 + Agent/Skill 目录
 │
-├── agents/                              # 20 个 Agent
+├── agents/                              # 22 个 Agent
 │   ├── architect.md                     # 架构设计 (Opus)
 │   ├── tech-lead.md                     # 技术评审 (Opus)
 │   ├── product-manager.md               # 需求分析 (Sonnet)
@@ -716,12 +716,14 @@ claude-harness-kit/                         # 插件根目录
 │   ├── code-reviewer.md                 # 代码审查 (Sonnet)
 │   ├── security-auditor.md              # 安全审计 (Opus)
 │   ├── qa-tester.md                     # QA 测试 (Sonnet)
+│   ├── test.md                          # 测试工程 (Sonnet)
 │   ├── explore.md                       # 代码探索 (Haiku)
 │   ├── codebase-analyzer.md             # 项目分析 (Haiku)
 │   ├── impact-analyzer.md               # 影响评估 (Haiku)
 │   ├── orchestrator.md                  # 多 Agent 编排 (Sonnet)
 │   ├── ralph.md                         # 持久执行 (Sonnet)
 │   ├── learner.md                       # 知识提取 (Sonnet)
+│   ├── gc.md                            # 知识垃圾回收 (Sonnet)
 │   ├── verifier.md                      # 专项验证 (Sonnet)
 │   └── oracle.md                        # 疑难咨询 (Opus)
 │

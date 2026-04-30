@@ -1,4 +1,4 @@
-# Claude Team Kit — 完整落地执行计划 v4.0
+# Claude Harness Kit — 完整落地执行计划 v4.0
 
 > **版本**: v4.0 — 基于 Claude Code 官方能力 + 项目 README.md 深度分析
 > **核心策略**: 完整平移 + 精确解耦 + 保留所有设计细节
@@ -739,7 +739,7 @@ tools: [Read, Bash, Grep, Glob]
 permissionMode: acceptEdits
 ---
 
-You are the workflow orchestrator for Claude Team Kit.
+You are the workflow orchestrator for Claude Harness Kit.
 
 **Your Responsibilities:**
 1. Understand the user's task and break it down
@@ -821,7 +821,7 @@ python3 ${CLAUDE_PLUGIN_ROOT}/evolution-cli.py kg relations <node-id>
 ```python
 #!/usr/bin/env python3
 """
-Claude Team Kit - Evolution CLI
+Claude Harness Kit - Evolution CLI
 统一命令行接口。
 
 用法:
@@ -996,7 +996,7 @@ if __name__ == "__main__":
 
 ```json
 {
-  "description": "Claude Team Kit Hooks",
+  "description": "Claude Harness Kit Hooks",
   "hooks": {
     "SessionStart": [{
       "matcher": "*",

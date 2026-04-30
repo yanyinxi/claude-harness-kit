@@ -17,15 +17,26 @@
 import json
 import os
 import sys
-import yaml
+try:
+    import yaml
+except ImportError:
+    yaml = None
 from pathlib import Path
 from datetime import datetime, timedelta
 
 
 def load_config():
     config_path = Path(__file__).parent / "config.yaml"
-    with open(config_path) as f:
-        return yaml.safe_load(f)
+    if yaml is not None:
+        with open(config_path) as f:
+            return yaml.safe_load(f)
+    # Fallback: inline default config when PyYAML is not installed
+    return {
+        "daemon": {"schedule": "*/30 * * * *", "idle_trigger_minutes": 120, "extract_timeout_seconds": 5},
+        "thresholds": {"min_new_sessions": 5, "min_same_pattern_corrections": 3, "max_hours_since_last_analyze": 6},
+        "safety": {"max_proposals_per_day": 3, "auto_close_days": 7, "breaker": {"max_consecutive_rejects": 3, "pause_days": 30}},
+        "paths": {"data_dir": ".claude/data", "proposals_dir": ".claude/proposals", "skills_dir": "skills", "agents_dir": "agents", "rules_dir": "rules", "instinct_dir": "instinct"},
+    }
 
 
 def find_root():
@@ -93,7 +104,6 @@ def check_thresholds(sessions: list[dict], config: dict, last_analyze_time: date
 
 def run_analysis(config: dict, root: Path, sessions: list[dict]):
     """执行分析并生成提案"""
-    sys.path.insert(0, str(Path(__file__).parent))
     from analyzer import aggregate_and_analyze
     from proposer import generate_proposal
 

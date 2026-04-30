@@ -12,6 +12,8 @@ description: |
   
 tools: Grep, Glob, Read, Bash
 model: haiku
+permissionMode: default
+maxTurns: 30
 skills: karpathy-guidelines
 context: global
 ---

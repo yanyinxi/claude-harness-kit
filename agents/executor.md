@@ -2,6 +2,8 @@
 name: executor
 description: 通用代码执行器，负责日常编码任务的实现。Use for general-purpose coding tasks, bug fixes, feature implementation. 触发词：实现、写代码、修复、实现功能
 model: sonnet
+permissionMode: acceptEdits
+isolation: worktree
 tools: Read, Write, Edit, Bash, Grep, Glob, TodoWrite
 skills: karpathy-guidelines, tdd
 ---

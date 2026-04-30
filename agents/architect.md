@@ -2,6 +2,7 @@
 name: architect
 description: 系统架构设计专家，负责技术选型、架构评审、跨模块影响评估。Use proactively when designing new systems, evaluating architecture tradeoffs, or making technology decisions that affect multiple modules.
 model: opus
+permissionMode: default
 tools: Read, Grep, Glob, TodoWrite
 skills: architecture-design
 ---

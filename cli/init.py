@@ -1,170 +1,379 @@
 #!/usr/bin/env python3
 """
-kit init — 自动分析项目，生成 CLAUDE.md 和 .claude/ 配置。
+kit init — 自动分析项目，生成高质量 CLAUDE.md 和 .claude/ 配置。
 
 流程:
-  1. 扫描项目结构，识别技术栈
-  2. 生成 CLAUDE.md（项目上下文）
-  3. 创建 .claude/ 目录骨架
-  4. 输出 next steps
+  1. 扫描项目结构，识别技术栈 + 版本号
+  2. 发现关键目录和入口文件
+  3. 从 git log 提取常见模式和陷阱
+  4. 生成 Map Not Manual 风格 CLAUDE.md（<100 行）
+  5. 创建 .claude/ 目录骨架（rules/, knowledge/, settings.local.json, .claudeignore）
 """
-import os
-import sys
+import os, re, sys, json, subprocess
 from pathlib import Path
 from datetime import datetime
 
+# ── 技术栈检测 ────────────────────────────────────────────
 
 LANG_DETECT = {
-    "pom.xml": ("Java", "Maven", "mvn"),
-    "build.gradle": ("Java/Kotlin", "Gradle", "gradle"),
-    "package.json": ("Node.js", "npm/yarn/pnpm", "npm"),
-    "go.mod": ("Go", "Go Modules", "go"),
-    "Cargo.toml": ("Rust", "Cargo", "cargo"),
-    "requirements.txt": ("Python", "pip", "python"),
-    "pyproject.toml": ("Python", "pip/poetry", "python"),
-    "Gemfile": ("Ruby", "Bundler", "bundle"),
-    "composer.json": ("PHP", "Composer", "composer"),
-    "CMakeLists.txt": ("C/C++", "CMake", "cmake"),
+    "pom.xml":        ("Java", "Maven", "mvn", "xml"),
+    "build.gradle":   ("Java/Kotlin", "Gradle", "gradle", "groovy"),
+    "build.gradle.kts": ("Java/Kotlin", "Gradle", "gradle", "kotlin-dsl"),
+    "package.json":   ("Node.js", "npm/yarn/pnpm", "npm", "json"),
+    "go.mod":         ("Go", "Go Modules", "go", "gomod"),
+    "Cargo.toml":     ("Rust", "Cargo", "cargo", "toml"),
+    "requirements.txt":("Python", "pip", "python", "txt"),
+    "pyproject.toml": ("Python", "pip/poetry", "python", "toml"),
+    "Gemfile":        ("Ruby", "Bundler", "bundle", "ruby"),
+    "composer.json":  ("PHP", "Composer", "composer", "json"),
+    "CMakeLists.txt": ("C/C++", "CMake", "cmake", "cmake"),
+    "Makefile":       ("C/C++", "Make", "make", "make"),
 }
 
 FRAMEWORK_HINTS = {
-    "spring": "Spring Boot",
-    "django": "Django",
-    "flask": "Flask",
-    "fastapi": "FastAPI",
-    "react": "React",
-    "vue": "Vue.js",
-    "angular": "Angular",
-    "express": "Express",
-    "next": "Next.js",
-    "gin": "Gin",
-    "echo": "Echo",
-    "laravel": "Laravel",
-    "rails": "Ruby on Rails",
+    "spring": "Spring Boot", "django": "Django", "flask": "Flask",
+    "fastapi": "FastAPI", "react": "React", "vue": "Vue.js",
+    "angular": "Angular", "express": "Express", "next": "Next.js",
+    "nuxt": "Nuxt.js", "gin": "Gin", "echo": "Echo", "fiber": "Fiber",
+    "laravel": "Laravel", "rails": "Ruby on Rails", "svelte": "Svelte",
+    "nestjs": "NestJS", "fastify": "Fastify",
 }
 
-IGNORE_DIRS = {".git", "node_modules", "__pycache__", ".idea", "dist", "build", "target", "vendor", ".venv"}
+KEY_DIR_PATTERNS = [
+    ("src/main/java", "Java 主源码"),
+    ("src/main/resources", "Java 资源文件"),
+    ("src/test/java", "Java 测试"),
+    ("src/components", "前端组件"),
+    ("src/pages", "前端页面"),
+    ("src/api", "API 路由"),
+    ("src/services", "服务层"),
+    ("src/utils", "工具函数"),
+    ("pkg/", "Go 包"),
+    ("cmd/", "Go 入口"),
+    ("internal/", "内部包"),
+    ("migrations/", "数据库迁移"),
+    ("db/migrate", "数据库迁移(Rails)"),
+    ("tests/", "测试目录"),
+    ("__tests__/", "测试目录(JS)"),
+    ("spec/", "测试目录(Ruby)"),
+    ("docker/", "Docker 配置"),
+    ("k8s/", "K8s 配置"),
+    (".github/workflows", "GitHub Actions"),
+]
 
+IGNORE_DIRS = {".git", "node_modules", "__pycache__", ".idea", "dist", "build",
+               "target", "vendor", ".venv", "venv", ".next", ".cache", "coverage"}
 
-def find_root() -> Path:
-    target = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
-    return Path(target).resolve()
+# ── 依赖解析 ──────────────────────────────────────────────
 
-
-def detect_tech_stack(root: Path) -> dict:
-    """扫描项目根目录，自动识别技术栈"""
-    detected = {"language": "unknown", "build_tool": "unknown", "build_cmd": "", "frameworks": [], "dirs": []}
-
-    for filename, (lang, build, cmd) in LANG_DETECT.items():
-        if (root / filename).exists():
-            detected["language"] = lang
-            detected["build_tool"] = build
-            detected["build_cmd"] = cmd
-            break
-
-    # 扫描框架线索
-    for candidate in [root / "pom.xml", root / "build.gradle", root / "package.json", root / "go.mod"]:
-        if candidate.exists():
-            content = candidate.read_text(encoding="utf-8").lower()
-            for hint, framework in FRAMEWORK_HINTS.items():
-                if hint in content and framework not in detected["frameworks"]:
-                    detected["frameworks"].append(framework)
-
-    # 扫描关键目录
-    dirs_output = []
+def parse_package_json(path: Path) -> dict:
+    """从 package.json 提取依赖和版本"""
     try:
-        items = sorted(root.iterdir())
-        for item in items:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        deps = {}
+        for field in ("dependencies", "devDependencies"):
+            for name, ver in data.get(field, {}).items():
+                deps[name] = str(ver).lstrip("^~>= ")
+        return deps
+    except Exception:
+        return {}
+
+def parse_pom_xml(path: Path) -> dict:
+    """从 pom.xml 提取关键依赖"""
+    deps = {}
+    try:
+        text = path.read_text(encoding="utf-8")
+        for m in re.finditer(r'<groupId>([^<]+)</groupId>\s*<artifactId>([^<]+)</artifactId>\s*(?:<version>([^<]+)</version>)?', text):
+            gid, aid, ver = m.group(1), m.group(2), m.group(3) or "?"
+            if gid.startswith("org.springframework") or gid.startswith("com."):
+                deps[f"{gid}:{aid}"] = ver
+    except Exception:
+        pass
+    return deps
+
+def parse_go_mod(path: Path) -> dict:
+    """从 go.mod 提取依赖"""
+    deps = {}
+    try:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("//") and not line.startswith("module "):
+                parts = line.split()
+                if len(parts) >= 2 and not parts[0] in ("go", "require", "replace", "exclude", "retract", "require", "toolchain"):
+                    deps[parts[0]] = parts[1] if len(parts) > 1 else "?"
+    except Exception:
+        pass
+    return deps
+
+# ── 目录发现 ──────────────────────────────────────────────
+
+def discover_structure(root: Path) -> dict:
+    """发现关键目录、入口文件、模块边界"""
+    key_dirs = []
+    entry_files = []
+    modules = []
+
+    seen = set()
+    # 深度 2 遍历
+    for depth in (1, 2):
+        for item in sorted(root.iterdir()):
             if item.name in IGNORE_DIRS or item.name.startswith("."):
                 continue
             if item.is_dir():
-                dirs_output.append(item.name)
-    except PermissionError:
+                rel = str(item.relative_to(root))
+                # 匹配关键目录模式
+                for pattern, label in KEY_DIR_PATTERNS:
+                    clean = pattern.rstrip("/")
+                    if (rel == clean or item.name == clean.split("/")[-1]) and rel not in seen:
+                        key_dirs.append((rel, label))
+                        seen.add(rel)
+                        break
+                if depth == 1:
+                    modules.append(item.name)
+
+    # 识别入口文件
+    entry_patterns = [
+        "main.go", "main.py", "app.py", "index.ts", "index.tsx", "index.js",
+        "App.tsx", "App.vue", "server.js", "server.ts", "Application.java",
+        "manage.py", "wsgi.py", "asgi.py",
+    ]
+    for pattern in entry_patterns:
+        candidates = list(root.glob(f"**/{pattern}"))
+        for c in candidates[:3]:  # 最多取 3 个
+            rel = str(c.relative_to(root))
+            if not any(d in rel for d in IGNORE_DIRS) and not "/." in rel:
+                entry_files.append(rel)
+
+    return {
+        "key_dirs": key_dirs[:15],
+        "entry_files": entry_files[:5],
+        "modules": modules[:10],
+    }
+
+# ── Git 历史提取 ──────────────────────────────────────────
+
+def extract_git_insights(root: Path) -> list[str]:
+    """从 git log 提取最近的 fix/refactor 关键词热点"""
+    insights = []
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(root), "log", "--oneline", "-50", "--no-merges"],
+            capture_output=True, text=True, timeout=5
+        )
+        fix_count = 0
+        refactor_count = 0
+        for line in result.stdout.splitlines():
+            if re.search(r'\bfix(ed)?\b', line, re.IGNORECASE):
+                fix_count += 1
+            if re.search(r'\brefactor\b', line, re.IGNORECASE):
+                refactor_count += 1
+
+        if fix_count > 5:
+            insights.append(f"近期 {fix_count}/50 个提交为 bug 修复")
+        if refactor_count > 3:
+            insights.append(f"近期 {refactor_count}/50 个提交为重构")
+    except Exception:
         pass
-    detected["dirs"] = dirs_output[:20]
+    return insights
 
-    return detected
+# ── CLAUDE.md 生成 ────────────────────────────────────────
+
+def generate_claude_md(root: Path, tech: dict, structure: dict) -> str:
+    """Map Not Manual 风格 — <100 行，含关键信息 + 指针"""
+    name = root.name
+    now = datetime.now().strftime("%Y-%m-%d")
+
+    lines = [
+        f"# {name}",
+        "",
+        f"<!-- Generated by kit init {now} — 人工补充 TODO 项 -->",
+        "",
+        "## 技术栈",
+        f"- {tech['language']} / {tech['build_tool']}",
+    ]
+    if tech.get("frameworks"):
+        lines.append(f"- 框架: {', '.join(tech['frameworks'])}")
+    if tech.get("version"):
+        lines.append(f"- 版本: {tech['version']}")
+    if tech.get("key_deps") and len(tech["key_deps"]) <= 10:
+        deps_str = ", ".join(f"{k}@{v}" for k, v in list(tech["key_deps"].items())[:8])
+        lines.append(f"- 关键依赖: {deps_str}")
+
+    lines += [
+        "",
+        "## 构建",
+        f"```bash",
+        f"{tech['build_cmd']} install   # 安装依赖",
+        f"{tech['build_cmd']} test      # 运行测试",
+        f"{tech['build_cmd']} build     # 构建",
+        f"```",
+        "",
+        "## 关键路径",
+    ]
+    for rel, label in structure.get("key_dirs", [])[:8]:
+        lines.append(f"- `{rel}/` — {label}")
+
+    if structure.get("entry_files"):
+        lines.append("")
+        lines.append("### 入口文件")
+        for f in structure["entry_files"][:5]:
+            lines.append(f"- `{f}`")
+
+    if structure.get("modules") and len(structure["modules"]) > 3:
+        lines.append("")
+        lines.append("### 模块")
+        for m in structure["modules"]:
+            lines.append(f"- `{m}/`")
+
+    lines += [
+        "",
+        "## 架构约定",
+        "<!-- TODO: 补充项目架构模式、分层约定、命名规范 -->",
+        "",
+        "## 已知陷阱",
+        "<!-- TODO: 补充已知的坑、历史遗留问题、易错点 -->",
+    ]
+    for insight in tech.get("git_insights", []):
+        lines.append(f"- ⚠ {insight}")
+
+    lines += [
+        "",
+        "## 相关知识",
+        "<!-- 指向详细知识库 -->",
+        "- 项目知识: `.claude/knowledge/INDEX.md`",
+        "- 团队规范: `.claude/rules/`",
+        "- 设计文档: `docs/`",
+    ]
+
+    return "\n".join(lines)
 
 
-def generate_claude_md(root: Path, tech: dict) -> str:
-    project_name = root.name
+# ── 骨架生成 ──────────────────────────────────────────────
 
-    return f"""# {project_name}
+def create_skeleton(root: Path):
+    """创建 .claude/ 完整骨架"""
+    claude_dir = root / ".claude"
+    dirs = [
+        claude_dir,
+        claude_dir / "rules",
+        claude_dir / "knowledge",
+        claude_dir / "data",
+    ]
+    for d in dirs:
+        d.mkdir(parents=True, exist_ok=True)
 
-<!-- Generated by kit init on {datetime.now().strftime("%Y-%m-%d %H:%M")} -->
+    # .claudeignore
+    ignore_path = root / ".claudeignore"
+    if not ignore_path.exists():
+        ignore_path.write_text("""# Claude Code — 排除扫描
+node_modules/
+dist/
+build/
+target/
+__pycache__/
+*.pyc
+.venv/
+vendor/
+.git/
+*.lock
+*.log
+coverage/
+.next/
+.cache/
+*.min.js
+""")
 
-## 技术栈
+    # knowledge INDEX
+    idx = claude_dir / "knowledge" / "INDEX.md"
+    if not idx.exists():
+        idx.write_text(f"# {root.name} — 知识库\n\n"
+                        "## 架构决策\n\n<!-- 技术选型理由、架构权衡 -->\n\n"
+                        "## 已知陷阱\n\n<!-- bug 模式、反模式、历史教训 -->\n\n"
+                        "## 操作流程\n\n<!-- 发布流程、回滚步骤、常见操作 -->\n",
+                        encoding="utf-8")
 
-- 语言: {tech["language"]}
-- 构建: {tech["build_tool"]}
-{f"- 框架: {', '.join(tech['frameworks'])}" if tech["frameworks"] else ""}
+    # settings.local.json
+    local = claude_dir / "settings.local.json"
+    if not local.exists():
+        local.write_text("{}\n")
 
-## 构建命令
 
-```bash
-# 构建
-{tech["build_cmd"]} build
-
-# 测试
-{tech["build_cmd"]} test
-```
-
-## 目录结构
-
-```
-{project_name}/
-"""
-    for d in tech["dirs"][:10]:
-        generated_claude_md += f"├── {d}/\n"
-    generated_claude_md += "└── ...\n"
-    generated_claude_md += "```\n\n"
-
-    generated_claude_md += """## 代码约定
-
-<!-- TODO: 补充项目特有的代码规范、命名约定、架构决策 -->
-
-## 注意事项
-
-<!-- TODO: 补充已知陷阱、历史遗留问题 -->
-
-## 相关文档
-
-<!-- TODO: 补充项目设计文档、wiki 链接 -->
-"""
-    return generated_claude_md
-
+# ── 主入口 ────────────────────────────────────────────────
 
 def main():
-    root = find_root()
-    print(f"kit init: 分析项目 {root.name}...")
+    target = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
+    root = Path(target).resolve()
+    print(f"kit init: {root.name}")
 
-    tech = detect_tech_stack(root)
+    # 1. 技术栈
+    tech = {"language": "unknown", "build_tool": "unknown", "build_cmd": "",
+            "frameworks": [], "version": "", "key_deps": {}}
+
+    for filename, (lang, build, cmd, fmt) in LANG_DETECT.items():
+        if (root / filename).exists():
+            tech["language"] = lang
+            tech["build_tool"] = build
+            tech["build_cmd"] = cmd
+
+            # 解析版本号
+            if fmt == "json":
+                deps = parse_package_json(root / filename)
+                tech["key_deps"] = deps
+            elif fmt == "xml":
+                deps = parse_pom_xml(root / filename)
+                tech["key_deps"] = deps
+            elif fmt == "gomod":
+                deps = parse_go_mod(root / filename)
+                tech["key_deps"] = deps
+            break
+
+    # 框架检测
+    for candidate in [root / "go.mod", root / "pom.xml", root / "build.gradle", root / "package.json"]:
+        if candidate.exists():
+            try:
+                content = candidate.read_text(encoding="utf-8").lower()
+                for hint, framework in FRAMEWORK_HINTS.items():
+                    if re.search(r'\b' + hint + r'\b', content) and framework not in tech["frameworks"]:
+                        tech["frameworks"].append(framework)
+            except Exception:
+                pass
+
     print(f"  检测到: {tech['language']} / {tech['build_tool']}")
     if tech["frameworks"]:
         print(f"  框架: {', '.join(tech['frameworks'])}")
+    if tech["key_deps"]:
+        print(f"  依赖: {len(tech['key_deps'])} 个")
 
-    # 生成 CLAUDE.md
-    claude_md = generate_claude_md(root, tech)
+    # 2. 目录结构
+    structure = discover_structure(root)
+    print(f"  关键目录: {len(structure['key_dirs'])} 个")
+    print(f"  入口文件: {len(structure['entry_files'])} 个")
+
+    # 3. Git 洞察
+    tech["git_insights"] = extract_git_insights(root)
+
+    # 4. 生成 CLAUDE.md
     claude_path = root / "CLAUDE.md"
     if claude_path.exists():
         print(f"  ⚠ CLAUDE.md 已存在，跳过生成")
     else:
-        claude_path.write_text(claude_md, encoding="utf-8")
-        print(f"  ✅ CLAUDE.md 已生成")
+        content = generate_claude_md(root, tech, structure)
+        claude_path.write_text(content, encoding="utf-8")
+        line_count = content.count("\n")
+        print(f"  ✅ CLAUDE.md 已生成 ({line_count} 行)")
 
-    # 创建 .claude/ 目录
-    claude_dir = root / ".claude"
-    claude_dir.mkdir(exist_ok=True)
-    (claude_dir / "settings.local.json").touch()
-    print(f"  ✅ .claude/ 目录已创建")
+    # 5. 骨架
+    create_skeleton(root)
+    print(f"  ✅ .claude/ 骨架已生成")
 
     # Next steps
-    print()
-    print("下一步:")
-    print(f"  1. 编辑 {claude_path} 补充项目特有信息")
-    print(f"  2. 补充项目 CLAUDE.md 中的 TODO 项")
-    print(f"  3. 运行 kit sync --from=xxx 同步团队共享配置")
-    print(f"  4. 提交 CLAUDE.md 到仓库")
+    print(f"""
+下一步:
+  1. 编辑 {claude_path} 补充 TODO 项（架构约定、已知陷阱）
+  2. 运行 kit mode default 确认执行模式
+  3. 运行 kit sync --from=<central-repo> 同步团队共享配置（如有）
+  4. git add CLAUDE.md .claude/ .claudeignore && git commit -m "chore: kit init"
+""")
 
 
 if __name__ == "__main__":

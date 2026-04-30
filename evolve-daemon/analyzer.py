@@ -26,6 +26,8 @@ def aggregate_and_analyze(sessions: list[dict], config: dict, root: Path) -> dic
 
     for s in sessions:
         for c in s.get("corrections", []):
+            if c is None:
+                continue
             target = c.get("target", "unknown")
             correction_targets[target] += 1
             hint = c.get("root_cause_hint", "unknown")

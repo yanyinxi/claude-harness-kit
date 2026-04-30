@@ -2,6 +2,8 @@
 name: codebase-analyzer
 description: 快速分析项目结构，自动识别技术栈、目录结构、关键配置，生成 CLAUDE.md。Use for kit init or when switching to a new project.
 model: haiku
+permissionMode: default
+maxTurns: 30
 tools: Read, Grep, Glob
 ---
 

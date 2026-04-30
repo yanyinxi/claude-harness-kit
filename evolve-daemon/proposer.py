@@ -33,11 +33,54 @@ def generate_proposal(analysis: dict, config: dict, root: Path) -> Path:
     return _generate_from_template(analysis, config, root)
 
 
+def _call_claude_api(api_key: str, model: str, system_prompt: str, user_message: str, max_tokens: int, temperature: float) -> str | None:
+    """调用 Claude API — 优先使用 SDK，降级为 REST API"""
+    # 方案 1: 使用 anthropic SDK（如果已安装）
+    try:
+        from anthropic import Anthropic
+        client = Anthropic(api_key=api_key)
+        response = client.messages.create(
+            model=model,
+            max_tokens=max_tokens,
+            temperature=temperature,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_message}],
+        )
+        return response.content[0].text
+    except ImportError:
+        pass
+
+    # 方案 2: 使用标准库 urllib 直接调 REST API（零外部依赖）
+    try:
+        import urllib.request
+        import urllib.error
+
+        body = json.dumps({
+            "model": model,
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+            "system": system_prompt,
+            "messages": [{"role": "user", "content": user_message}],
+        }).encode("utf-8")
+
+        req = urllib.request.Request(
+            "https://api.anthropic.com/v1/messages",
+            data=body,
+            headers={
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            result = json.loads(resp.read())
+            return result["content"][0]["text"]
+    except Exception:
+        return None
+
+
 def _generate_with_claude(analysis: dict, config: dict, root: Path, api_key: str) -> Path:
     """使用 Claude API 生成高质量提案"""
-    from anthropic import Anthropic
-
-    client = Anthropic(api_key=api_key)
     api_config = config["claude_api"]
 
     system_prompt = """你是 AI 工程规范优化器。分析 Claude Code 使用数据，找出 Agent/Skill/Rule 中的可改进点。
@@ -73,15 +116,18 @@ def _generate_with_claude(analysis: dict, config: dict, root: Path, api_key: str
 
     user_message = json.dumps(analysis, ensure_ascii=False, indent=2)
 
-    response = client.messages.create(
+    content = _call_claude_api(
+        api_key=api_key,
         model=api_config["analyze_model"],
+        system_prompt=system_prompt,
+        user_message=user_message,
         max_tokens=api_config["analyze_max_tokens"],
         temperature=api_config["analyze_temperature"],
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_message}],
     )
 
-    content = response.content[0].text
+    if content is None:
+        raise RuntimeError("Claude API 调用失败")
+
     return _save_proposal(content, analysis, config, root)
 
 
@@ -135,4 +181,50 @@ def _save_proposal(content: str, analysis: dict, config: dict, root: Path) -> Pa
     proposal_path = proposals_dir / f"{date_str}_{target}_optimize.md"
     proposal_path.write_text(content, encoding="utf-8")
 
+    # 记录到 instinct（待观察状态）
+    _record_to_instinct(analysis, proposal_path, confidence=0.5, source="proposal-generated")
+
     return proposal_path
+
+
+def _record_to_instinct(analysis: dict, proposal_path: Path, confidence: float, source: str):
+    """将提案内容记录到 instinct-record.json"""
+    try:
+        from instinct_updater import add_pattern
+        hotspots = analysis.get("correction_hotspots", {})
+        if hotspots:
+            top_target = sorted(hotspots.items(), key=lambda x: -x[1])[0][0]
+            record_id = add_pattern(
+                pattern=f"检测到多纠正热点: {top_target}",
+                correction="见提案文件",
+                root_cause=analysis.get("primary_cause", ""),
+                confidence=confidence,
+                source=source,
+            )
+            print(f"  🧠 instinct 已记录: {record_id}")
+    except Exception:
+        pass  # instinct 失败不影响提案生成
+
+
+def mark_proposal_accepted(proposal_path: Path, root: Path):
+    """
+    人工 accept 提案后调用 — 升级 instinct confidence 至 0.9。
+    用法: python3 -c "from evolve_daemon.proposer import mark_proposal_accepted; mark_proposal_accepted(Path('proposals/xxx.md'), Path('.'))"
+    """
+    try:
+        from instinct_updater import add_pattern
+        content = proposal_path.read_text(encoding="utf-8")
+        # 提取建议中的核心内容
+        import re
+        matches = re.findall(r"文件:\s*(\S+)", content)
+        target = matches[0] if matches else str(proposal_path.name)
+        record_id = add_pattern(
+            pattern=f"提案已采纳: {target}",
+            correction="提案已应用，待后续验证",
+            root_cause="经人工确认需要改进",
+            confidence=0.9,
+            source="proposal-accepted",
+        )
+        print(f"✅ instinct 已升级 confidence=0.9: {record_id}")
+    except Exception as e:
+        print(f"⚠️ instinct 更新失败: {e}")

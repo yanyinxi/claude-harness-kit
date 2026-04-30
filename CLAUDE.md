@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Claude Harness Kit — Claude Code 团队级 AI 驾驭工具包。借鉴 OpenAI Harness Engineering 方法论 (Human steers, Agents execute)，提供多 Agent 协作、通用化 Skills/Rules、知识生命周期管理、持续进化能力，支持 20+ 人团队和 100+ 存量代码库的全流程 AI 化。
 
-## 当前状态（v0.3）
+## 当前状态（v0.4）
 
 ```
 claude-harness-kit/

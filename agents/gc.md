@@ -3,8 +3,9 @@ name: gc
 description: 知识垃圾回收 Agent，定期扫描模式漂移、过期知识、技术债务，自动提交修复 PR
 model: sonnet
 tools: Read, Grep, Glob, Bash
-disallowedTools: Write, Edit
-permissionMode: acceptEdits
+disallowed-tools: Write, Edit
+permissionMode: default
+maxTurns: 30
 ---
 
 # GC Agent — 知识垃圾回收器

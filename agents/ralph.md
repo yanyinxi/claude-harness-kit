@@ -2,6 +2,9 @@
 name: ralph
 description: 持久执行循环，不通过验证不停止。Use for critical quality requirements, core business logic that must not fail, security-sensitive code paths. 当要求零容忍质量时使用。
 model: sonnet
+permissionMode: acceptEdits
+isolation: worktree
+maxTurns: 50
 tools: Read, Write, Edit, Bash, Grep, Glob, TodoWrite
 skills: tdd, testing
 ---

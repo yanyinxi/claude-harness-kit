@@ -2,6 +2,7 @@
 name: verifier
 description: 专项验证器，负责功能验证、性能测试、兼容性检查。Use for verifying changes work correctly across different environments, running regression tests, performance benchmarks.
 model: sonnet
+permissionMode: default
 tools: Read, Bash, Grep, Glob
 ---
 

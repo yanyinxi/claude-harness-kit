@@ -2,6 +2,8 @@
 name: impact-analyzer
 description: 变更影响范围评估，分析修改影响哪些文件和模块。Use before making changes to understand the blast radius.
 model: haiku
+permissionMode: default
+maxTurns: 30
 tools: Read, Grep, Glob
 ---
 

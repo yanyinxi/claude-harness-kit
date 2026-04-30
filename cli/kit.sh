@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# kit — Claude Team Kit CLI 工具入口
+# kit — Claude Harness Kit CLI 工具入口
 # 用法: kit <command> [args...]
 
 set -euo pipefail
@@ -7,7 +7,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 show_help() {
-    echo "kit — Claude Team Kit CLI"
+    echo "kit — Claude Harness Kit CLI"
     echo ""
     echo "用法: kit <command> [args...]"
     echo ""
@@ -16,13 +16,17 @@ show_help() {
     echo "  sync       从中央配置仓库同步团队共享规则"
     echo "  scan       扫描代码库目录，评估改造量"
     echo "  migrate    执行项目迁移（框架升级等）"
-    echo "  status     查看团队插件状态"
+    echo "  gc         知识垃圾回收 — 扫描 .claude/knowledge/ 生成漂移报告"
+    echo "  mode       切换执行模式（default|ralph|pipeline）"
+    echo "  status     查看 Harness Kit 当前状态（模式/Hooks/Sessions/Instinct）"
     echo "  help       显示此帮助"
     echo ""
     echo "示例:"
     echo "  kit init"
     echo "  kit sync --from=https://github.com/team/claude-standards"
     echo "  kit scan --group=backend-services"
+    echo "  kit gc"
+    echo "  kit mode ralph"
 }
 
 case "${1:-help}" in
@@ -38,13 +42,14 @@ case "${1:-help}" in
     migrate)
         python3 "$SCRIPT_DIR/migrate.py" "${@:2}"
         ;;
+    gc)
+        python3 "$SCRIPT_DIR/gc.py" "${@:2}"
+        ;;
+    mode)
+        python3 "$SCRIPT_DIR/mode.py" "${@:2}"
+        ;;
     status)
-        echo "Claude Team Kit v0.2"
-        echo ""
-        echo "Agents: $(ls "$SCRIPT_DIR/../agents/" | wc -l | tr -d ' ')"
-        echo "Skills: $(ls -d "$SCRIPT_DIR/../skills/"*/ | wc -l | tr -d ' ')"
-        echo "Rules:  $(ls "$SCRIPT_DIR/../rules/" | wc -l | tr -d ' ')"
-        echo "Hooks:  $(ls "$SCRIPT_DIR/../hooks/bin/" | wc -l | tr -d ' ')"
+        python3 "$SCRIPT_DIR/status.py"
         ;;
     help|--help|-h)
         show_help

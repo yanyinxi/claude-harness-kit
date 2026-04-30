@@ -2,6 +2,7 @@
 name: security-auditor
 description: 安全审计专家，负责代码安全审查、漏洞检测、OWASP 合规检查。Use proactively for security-sensitive code changes, auth logic, data handling.
 model: opus
+permissionMode: default
 tools: Read, Grep, Glob
 skills: security-audit
 ---

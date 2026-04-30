@@ -95,7 +95,7 @@ def evaluate_proposal(proposal: dict, metrics: dict, baseline: dict) -> str:
 
     # Task success rate degradation
     if baseline.get("task_success_rate", 1.0) > 0:
-        delta = (metrics["task_success_rate"] - baseline["task_success_rate"]) / baseline["task_success_rate"]
+        delta = (metrics["task_success_rate"] - baseline.get("task_success_rate", 1.0)) / baseline.get("task_success_rate", 1.0)
         if delta < -0.10:
             triggers.append(f"任务成功率下降 {abs(delta):.0%}")
 

@@ -926,7 +926,7 @@ def generate_proposal(analysis, config, root):
 ```ini
 # ~/.config/systemd/user/claude-evolve.service
 [Unit]
-Description=Claude Team Kit Evolution Daemon
+Description=Claude Harness Kit Evolution Daemon
 
 [Service]
 Type=oneshot
@@ -935,7 +935,7 @@ Environment=CLAUDE_PROJECT_DIR=%h/code/github/claude-harness-kit
 
 # ~/.config/systemd/user/claude-evolve.timer
 [Unit]
-Description=Claude Team Kit Evolution Timer
+Description=Claude Harness Kit Evolution Timer
 
 [Timer]
 OnCalendar=*:0/30

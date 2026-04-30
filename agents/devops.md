@@ -2,6 +2,8 @@
 name: devops
 description: DevOps 工程师，负责 CI/CD 配置、Docker 容器化、K8s 部署、环境管理。Use for CI/CD pipeline changes, Dockerfile creation, deployment configuration.
 model: sonnet
+permissionMode: acceptEdits
+isolation: worktree
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 

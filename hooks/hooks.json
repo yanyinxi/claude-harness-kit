@@ -1,9 +1,8 @@
 {
-  "description": "Claude Team Kit v2 — Hook 配置",
+  "description": "Claude Harness Kit v2 — Hook 配置",
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup",
         "hooks": [{
           "type": "command",
           "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/context-injector.py",
@@ -37,14 +36,6 @@
           "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect-agent.py",
           "timeout": 5
         }]
-      },
-      {
-        "matcher": "Skill",
-        "hooks": [{
-          "type": "command",
-          "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect-skill.py",
-          "timeout": 5
-        }]
       }
     ],
     "PostToolUseFailure": [
@@ -59,7 +50,6 @@
     ],
     "Stop": [
       {
-        "matcher": "*",
         "hooks": [{
           "type": "command",
           "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect-session.py",

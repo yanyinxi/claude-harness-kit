@@ -1,4 +1,4 @@
-# Harness Engineering 借鉴方案：Claude Team Kit 自进化能力升级
+# Harness Engineering 借鉴方案：Claude Harness Kit 自进化能力升级
 
 ## 一、调研概要
 
@@ -43,7 +43,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                   Claude Team Kit v2.1                   │
+│                   Claude Harness Kit v2.1                   │
 ├─────────────────────────────────────────────────────────┤
 │  Layer 4: 持续治理 (Continuous Governance)               │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────────┐ │

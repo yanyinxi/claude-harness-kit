@@ -87,7 +87,22 @@ def main():
     session = build_session_summary()
     append_session(root, session)
 
-    has_corrections = bool(os.environ.get("CLAUDE_HAS_CORRECTIONS"))
+    # 检测 corrections: 优先从 hook_data，其次从 agent_calls/failures 数据
+    corrections = session.get("corrections", [])
+    has_corrections = bool(corrections) or bool(os.environ.get("CLAUDE_HAS_CORRECTIONS"))
+
+    # 也检查 agent_calls.jsonl 和 failures.jsonl 中的异常模式
+    if not has_corrections:
+        data_dir = root / ".claude" / "data"
+        failures_file = data_dir / "failures.jsonl"
+        if failures_file.exists():
+            try:
+                failures = failures_file.read_text().strip()
+                if failures and len(failures.splitlines()) > 0:
+                    has_corrections = True
+            except OSError:
+                pass
+
     extraction_triggered = False
     if has_corrections:
         extraction_triggered = trigger_semantic_extraction(root)
@@ -101,4 +116,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        import sys, json
+        print(json.dumps({"collected": False, "warning": str(e)[:100]}), file=sys.stderr)
+        sys.exit(0)
