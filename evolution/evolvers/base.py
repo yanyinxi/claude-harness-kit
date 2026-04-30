@@ -131,7 +131,7 @@ class BaseEvolver(ABC):
                         1 for item in data
                         if item.get("confirmation_result") is not None
                     )
-            except:
+            except (json.JSONDecodeError, OSError):
                 pass
         
         # 根据配置判断
@@ -147,7 +147,7 @@ class BaseEvolver(ABC):
         records = []
         if not file_path.exists():
             return records
-        
+
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 for line in f:
@@ -159,5 +159,36 @@ class BaseEvolver(ABC):
                             continue
         except Exception as e:
             print(f"读取文件失败 {file_path}: {e}")
-        
+
         return records
+
+    def _safe_atomic_write(self, target_file: Path, content: str) -> bool:
+        """
+        安全的原子性文件写入。
+
+        使用临时文件 + os.replace() 确保：
+        1. 写入过程崩溃不会损坏原文件
+        2. 写入是原子的，不会出现部分内容
+
+        Args:
+            target_file: 目标文件路径
+            content: 要写入的内容
+
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            import os
+            tmp = target_file.with_suffix(target_file.suffix + '.tmp')
+            with open(tmp, 'w', encoding='utf-8') as f:
+                f.write(content)
+            os.replace(str(tmp), str(target_file))
+            return True
+        except Exception as e:
+            print(f"原子写入失败 {target_file}: {e}")
+            if tmp.exists():
+                try:
+                    tmp.unlink()
+                except OSError:
+                    pass
+            return False

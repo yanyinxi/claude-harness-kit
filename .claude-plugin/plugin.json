@@ -1,6 +1,8 @@
 {
+  "$schema": "https://claude.com/docs/claude-code/hooks",
   "name": "claude-team-kit",
   "version": "0.1.0",
+  "schemaVersion": "1.0.0",
   "description": "Claude Code 多 Agent 工作流编排 + 四维度自进化插件",
   "author": {
     "name": "Your Name",

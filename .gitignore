@@ -1,2 +1,75 @@
+# Python
 __pycache__/
+*.py[cod]
 *.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+*.whl
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+*.crt
+*.csr
+
+# Logs and data
+logs/
+*.log
+.claude/logs/
+.claude/data/backups/
+*.bak
+*.backup
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Claude plugin runtime data (keep structure, ignore content)
+.claude/data/*.jsonl
+.claude/data/*.json
+!.claude/data/pending_evolution.json.example
+!.claude/data/evolution_metrics.json.example
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp

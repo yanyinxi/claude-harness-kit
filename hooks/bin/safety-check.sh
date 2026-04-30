@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # 安全检查：阻止危险的 Bash 命令
 # Claude Code PreToolUse Hook - 从 stdin 读取 JSON 输入
 

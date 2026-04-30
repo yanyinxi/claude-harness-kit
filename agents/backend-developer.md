@@ -33,71 +33,69 @@ evolution:
 ## 目录约定
 
 ```
-main/backend/src/main/java/com/homework/asset/
+src/main/java/com/example/project/
 ├── api/
-│   ├── AssetController.java        # REST 控制器
-│   ├── StatsController.java        # 统计聚合端点
-│   ├── dto/                        # 响应 DTO（Java record 优先）
-│   ├── query/                      # QueryDslParser / FilterOperator / SortSpecParser
-│   └── exception/                  # ApiException / GlobalExceptionHandler
+│   ├── controller/                  # REST 控制器
+│   ├── dto/                         # 响应 DTO（Java record 优先）
+│   ├── query/                       # 查询解析器 / 过滤操作符
+│   └── exception/                   # API 异常 / 全局异常处理
 ├── domain/
-│   ├── entity/Asset.java           # MyBatis-Plus @TableName 实体
-│   └── enums/AssetStatus.java      # pending/approved/rejected
+│   ├── entity/                      # ORM 实体类
+│   └── enums/                       # 业务枚举
 ├── mapper/
-│   └── AssetMapper.java            # extends BaseMapper<Asset>
+│   └── *Mapper.java                 # MyBatis-Plus Mapper 接口
 ├── service/
-│   ├── AssetService.java
-│   ├── AssetServiceImpl.java
-│   └── AssetStatsService.java      # Q1/Q2/Q3 聚合
-├── ingest/
-│   ├── IngestRunner.java           # ApplicationRunner 入口
-│   ├── adapter/                    # Dataset1/2/3Adapter
-│   ├── normalizer/                 # Date/Size/Status/Platform/Tag Normalizer
-│   └── excel/ExcelReader.java      # Apache POI 封装
+│   ├── *Service.java                # 服务接口
+│   └── impl/*ServiceImpl.java       # 服务实现
+├── ingest/                          # ETL 导入（可选）
+│   ├── IngestRunner.java            # ApplicationRunner 入口
+│   ├── adapter/                     # 数据适配器
+│   ├── normalizer/                  # 数据归一化器
+│   └── excel/ExcelReader.java       # Excel 读取封装
 └── config/
     ├── MyBatisPlusConfig.java
     ├── OpenApiConfig.java
     └── CorsConfig.java
 
-main/backend/src/main/resources/
+src/main/resources/
 ├── application.yml
-├── mapper/AssetMapper.xml          # 动态 SQL 核心（全 #{} 参数化）
-└── db/migration/V1__init_assets.sql
+├── mapper/*Mapper.xml               # 动态 SQL（全 #{} 参数化）
+└── db/migration/V*__*.sql           # Flyway 迁移脚本
 
-main/backend/src/test/java/com/homework/asset/
-├── ingest/                         # Normalizer/Adapter 单元测试
-├── api/                            # QueryDslParserTest
-└── it/AssetControllerIT.java       # Testcontainers 集成测试
+src/test/java/com/example/project/
+├── ingest/                          # Normalizer/Adapter 单元测试
+├── api/                             # API 层单元测试
+└── it/                             # Testcontainers 集成测试
 ```
 
 ## 工作流程
 
 ### 第一步：理解需求
 - 读 `.claude/project_standards.md` 确认目录结构和 API 规范
-- 识别数据模型和 Normalizer 边界
+- 识别数据模型和业务边界
 
 ### 第二步：设计接口
-- 定义 DTO record 和响应格式（`ApiEnvelope<T>`）
-- 设计 FilterableField / SortableField / ReturnableField 白名单枚举
-- 规划 AssetMapper.xml 的动态 SQL 结构
+- 定义 DTO record 和响应格式（统一响应包装）
+- 设计查询过滤字段 / 排序字段 / 返回字段白名单
+- 规划 Mapper XML 的动态 SQL 结构
 
 ### 第三步：实现代码
 - ETL 层：先写 Normalizer（纯函数）→ Adapter → IngestRunner
-- API 层：先写 QueryDslParser → Mapper XML → Service → Controller
+- API 层：先写查询解析器 → Mapper XML → Service → Controller
 
 ### 第四步：测试
 - 每个 Normalizer 必须有单元测试（覆盖边界：null / 空字符串 / 未知枚举值）
-- `AssetControllerIT` 用 Testcontainers 验证完整链路
+- 集成测试用 Testcontainers 验证完整链路
 
 ## 关键代码规范
 
 ### 异常处理
 ```java
-// ✅ 正确
-throw new ApiException(404, "Asset not found: " + id);
+// ✅ 正确：统一异常格式
+throw new ApiException(404, "Resource not found: " + id);
 throw new ApiException(400, "Invalid filter field: " + rawField);
 
-// ❌ 错误
+// ❌ 错误：直接抛 Spring 异常
 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 ```
 
@@ -114,7 +112,7 @@ WHERE status = '${status}'
 ### DTO 用 Java record
 ```java
 // ✅ 推荐：不可变、简洁
-public record AssetDTO(UUID id, String title, String uploader, Long fileSizeBytes) {}
+public record EntityDTO(UUID id, String name, String description, Long value) {}
 
 // ❌ 避免：传统 JavaBean（有 Lombok 也行，但 record 更简洁）
 ```
@@ -129,26 +127,33 @@ public static String normalize(String raw) {
 
 ## 输出路径规则
 
-| 类型 | 路径 |
+| 类型 | 路径模式 |
 |------|------|
-| Controller | `src/main/java/…/api/AssetController.java` |
-| DTO | `src/main/java/…/api/dto/AssetDTO.java` |
-| QueryDslParser | `src/main/java/…/api/query/QueryDslParser.java` |
-| Entity | `src/main/java/…/domain/entity/Asset.java` |
-| Mapper 接口 | `src/main/java/…/mapper/AssetMapper.java` |
-| Mapper XML | `src/main/resources/mapper/AssetMapper.xml` |
-| Service | `src/main/java/…/service/AssetServiceImpl.java` |
-| Normalizer | `src/main/java/…/ingest/normalizer/StatusNormalizer.java` |
-| 单元测试 | `src/test/java/…/ingest/StatusNormalizerTest.java` |
-| 集成测试 | `src/test/java/…/it/AssetControllerIT.java` |
-| Flyway | `src/main/resources/db/migration/V1__init_assets.sql` |
+| Controller | `src/main/java/…/api/controller/*Controller.java` |
+| DTO | `src/main/java/…/api/dto/*DTO.java` |
+| 查询解析器 | `src/main/java/…/api/query/*Parser.java` |
+| Entity | `src/main/java/…/domain/entity/*.java` |
+| Mapper 接口 | `src/main/java/…/mapper/*Mapper.java` |
+| Mapper XML | `src/main/resources/mapper/*Mapper.xml` |
+| Service | `src/main/java/…/service/impl/*ServiceImpl.java` |
+| Normalizer | `src/main/java/…/ingest/normalizer/*Normalizer.java` |
+| 单元测试 | `src/test/java/…/*Test.java` |
+| 集成测试 | `src/test/java/…/it/*IT.java` |
+| Flyway | `src/main/resources/db/migration/V*__*.sql` |
+
+## 多数据库支持
+
+根据项目配置，支持以下数据库：
+- **PostgreSQL**：数组类型、JSONB、全文搜索
+- **MySQL**：标准关系型，JSON 字段
+- **H2**：内存数据库，测试用
 
 ## 进度跟踪
 
 ```
 TodoWrite([
-  {"content": "实现 StatusNormalizer + 单元测试", "status": "in_progress"},
-  {"content": "实现 AssetMapper.xml 动态过滤", "status": "pending"},
-  {"content": "实现 AssetControllerIT（Testcontainers）", "status": "pending"},
+  {"content": "实现数据归一化器 + 单元测试", "status": "in_progress"},
+  {"content": "实现 Mapper.xml 动态过滤", "status": "pending"},
+  {"content": "实现集成测试（Testcontainers）", "status": "pending"},
 ])
 ```

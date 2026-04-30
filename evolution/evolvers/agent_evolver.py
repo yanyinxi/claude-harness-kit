@@ -93,21 +93,17 @@ class AgentEvolver(BaseEvolver):
     def apply_evolution(self, agent_name: str, improvements: List[str]) -> bool:
         """应用 Agent 进化"""
         agent_file = self.config.agents_dir / f"{agent_name}.md"
-        
+
         if not agent_file.exists():
             return False
-        
+
         try:
             with open(agent_file, 'r', encoding='utf-8') as f:
                 content = f.read()
-            
-            # 添加进化元数据
+
             content = self._update_evolution_metadata(content, agent_name, improvements)
-            
-            with open(agent_file, 'w', encoding='utf-8') as f:
-                f.write(content)
-            
-            return True
+
+            return self._safe_atomic_write(agent_file, content)
         except Exception as e:
             print(f"更新 Agent 失败 {agent_name}: {e}")
             return False

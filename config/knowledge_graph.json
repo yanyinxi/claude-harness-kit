@@ -60,6 +60,21 @@
       "id": "best_practice_004",
       "created_at": "2026-04-29T23:41:38.013773",
       "updated_at": "2026-04-29T23:41:38.013818"
+    },
+    {
+      "type": "pattern",
+      "title": "Test Pattern",
+      "description": "Testing add-node",
+      "tags": [
+        "test",
+        "debug"
+      ],
+      "success_rate": 0.5,
+      "avg_reward": 5.0,
+      "evidence": [],
+      "id": "pattern_005",
+      "created_at": "2026-04-30T07:29:19.588869",
+      "updated_at": "2026-04-30T07:29:19.588883"
     }
   ],
   "edges": [

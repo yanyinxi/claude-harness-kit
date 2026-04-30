@@ -122,7 +122,7 @@ def update_weights(
             json.dump(weights, f, indent=2, ensure_ascii=False)
             fcntl.flock(f.fileno(), fcntl.LOCK_UN)
         os.replace(tmp_path, weights_file)
-    except Exception:
+    except OSError:
         if os.path.exists(tmp_path):
             os.unlink(tmp_path)
         raise

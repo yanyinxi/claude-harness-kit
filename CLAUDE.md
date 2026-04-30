@@ -11,83 +11,123 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-视频素材查询服务 — 一个前后端分离的 Java + Vue 3 全栈项目，提供视频素材的数据存储、查询统计和 Excel 导入功能。
+Claude Team Kit — 一个 Claude Code 插件，提供多 Agent 工作流编排和四维度自进化能力。通过智能化的 Agent 协作、动态 Skill 加载、规则驱动的行为优化，以及持久化的记忆系统，实现 AI 辅助开发的持续进化。
+
+## 核心功能
+
+### 1. 多 Agent 协作
+- 18 个专业 Agent（build, oracle, librarian, explore, etc.）
+- 并行任务执行与结果聚合
+- Agent 间通信与状态共享
+
+### 2. Skill 系统
+- 23 个预定义 Skill
+- 动态加载与卸载
+- 自定义 Skill 创建支持
+
+### 3. Hook 系统
+- SessionStart: 状态注入与环境初始化
+- PreToolUse: 安全检查与权限验证
+- PostToolUse: 数据采集与效果评估
+- Stop: 进化编排与策略更新
+
+### 4. 四维度自进化
+- Agent 进化：能力提升、行为优化
+- Skill 进化：效果改进、参数调优
+- Rule 进化：策略更新、权重调整
+- Memory 进化：知识沉淀、反馈学习
 
 ## 开发命令
 
-### 一键启动
+### 进化系统
 ```bash
-./start-local.sh    # 自动检测并安装依赖，启动 PostgreSQL + 后端 + 前端
+/evolve status              # 查看进化状态
+/evolve analyze             # 运行进化分析
+/evolve dashboard           # 打开仪表盘
+/evolve approve <id>        # 批准进化提案
+/evolve rollback <version>  # 回滚到指定版本
+/evolve history             # 查看进化历史
 ```
 
-### 后端 (Spring Boot)
+### 工作流编排
 ```bash
-cd main/backend
-mvn spring-boot:run              # 启动后端服务
-mvn test                         # 运行单元测试
-mvn test -Dtest=AssetServiceTest # 运行单个测试类
-mvn package                      # 构建 jar 包
+/workflow run "<task>"      # 启动工作流
+/workflow pause             # 暂停并保存书签
+/workflow resume            # 恢复工作流
+/workflow status            # 查看当前状态
 ```
 
-### 前端 (Vue 3)
+### 知识图谱
 ```bash
-cd main/frontend
-npm install                      # 安装依赖
-npm run dev                      # 启动开发服务器
-npm run build                    # 构建生产版本
-npm run lint                     # ESLint 检查并修复
-npm run test:e2e                 # 运行 E2E 测试
+/knowledge-graph search "<query>"  # 搜索知识
+/knowledge-graph show              # 显示图谱
 ```
 
 ## 技术架构
 
-### 后端技术栈
-- Spring Boot 3.3.4 + Java 17
-- MyBatis-Plus 3.5.7（数据访问）
-- PostgreSQL 15（数据库）
-- Spring Security + Bucket4j（安全 + 限流）
-- SpringDoc OpenAPI（API 文档）
-
-### 前端技术栈
-- Vue 3 + TypeScript
-- Vite 5（构建工具）
-- Pinia（状态管理）
-- Element Plus（UI 组件库）
-- ECharts（数据可视化）
-- Vue Router 4（路由）
-
-### 分层架构（后端）
-
+### 插件结构
 ```
-api/         → Controller 层，接收 HTTP 请求
-service/     → 业务逻辑层
-mapper/      → 数据访问层，MyBatis-Plus
-domain/      → 实体类
-config/      → Spring 配置类
-ingest/      → ETL 导入服务（Excel 解析、数据归一化）
+claude-team-kit/
+├── .claude-plugin/         # 插件元数据
+├── agents/                 # Agent 定义（18个）
+├── skills/                 # Skill 定义（23个）
+├── hooks/                  # Hook 系统
+│   ├── hooks.json          # Hook 配置
+│   └── bin/                # Hook 脚本（11个）
+├── rules/                  # 规则文件（8个）
+├── lib/                    # Python 引擎（14个模块）
+├── evolution/              # 进化引擎
+├── config/                 # 配置文件
+├── memory/                 # 记忆系统
+└── evolution-cli.py        # 统一 CLI
 ```
 
-### 安全防护
+### 核心组件
 
-请求处理链：`RateLimitFilter → ApiKeyAuthFilter → Controller → Prometheus 指标`
+#### 1. 进化引擎
+- 评分体系：A/B/C/D/F 五级评分
+- 熔断机制：连续退化自动阻止
+- 数据轮转：7天保留 / 30天压缩 / 90天删除
+- 风险分级：Low / Medium / High / Critical
 
-- 限流：Bucket4j，10 请求/秒
-- 认证：X-API-Key 请求头，白名单匹配
-- 权限：RBAC（USER/ADMIN 角色）
-- SQL 注入：字段名/操作符/返回值三重白名单
+#### 2. 工作流引擎
+- 任务分解与分配
+- 并行执行管理
+- 断点续跑支持
+- 状态持久化
 
-### 可观测性
+#### 3. 知识图谱
+- 跨会话知识存储
+- 语义搜索
+- 关系推理
+- 自动更新
 
-- Actuator：`/actuator/health`, `/actuator/info`
-- Prometheus：`/actuator/prometheus`
-- Swagger UI：`/swagger-ui.html`
+#### 4. 记忆系统
+- 短期记忆：当前会话
+- 中期记忆：项目级别
+- 长期记忆：全局知识
+- 反馈循环：效果评估驱动更新
 
-## 数据库设计要点
+### 评分体系
 
-- PostgreSQL text[] 数组存储标签/分类
-- JSONB 存储稀疏字段（extra）
-- 8 个业务索引支持高效查询
-- 归一化处理在 ETL 阶段完成，应用层无数据转换负担
+总分 = 基础分(40) + 活跃度(20) + 效果分(25) + 质量分(15)
+
+| 等级 | 分数范围 | 说明 |
+|------|---------|------|
+| A    | ≥80     | 优秀，持续进化 |
+| B    | ≥65     | 良好，稳定运行 |
+| C    | ≥50     | 合格，需关注 |
+| D    | ≥35     | 较差，需改进 |
+| F    | <35     | 失败，触发熔断 |
+
+### 风险分级与处理
+
+| 风险等级 | 操作类型 | 处理策略 |
+|---------|---------|---------|
+| Low     | 追加内容 | 自动执行 |
+| Medium  | 修改现有内容 | 自动执行 + 通知 |
+| High    | 删除/重构 | 人工确认 |
+| Critical| 安全相关 | 禁止自动执行 |
 
 ## .claude 目录结构
 

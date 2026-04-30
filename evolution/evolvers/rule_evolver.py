@@ -98,21 +98,17 @@ class RuleEvolver(BaseEvolver):
     def apply_evolution(self, rule_name: str, improvements: List[str]) -> bool:
         """应用 Rule 进化"""
         rule_file = self.config.rules_dir / f"{rule_name}.md"
-        
+
         if not rule_file.exists():
             return False
-        
+
         try:
             with open(rule_file, 'r', encoding='utf-8') as f:
                 content = f.read()
-            
-            # 添加合规统计
+
             content = self._update_compliance_section(content, rule_name)
-            
-            with open(rule_file, 'w', encoding='utf-8') as f:
-                f.write(content)
-            
-            return True
+
+            return self._safe_atomic_write(rule_file, content)
         except Exception as e:
             print(f"更新 Rule 失败 {rule_name}: {e}")
             return False

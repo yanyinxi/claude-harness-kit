@@ -1,256 +1,151 @@
----
-paths:
-  - main/backend/src/main/java/**/*.java
-  - main/backend/src/main/resources/**/*.xml
-  - main/backend/src/main/resources/**/*.yml
----
+# Backend Rules Templates
 
-# Backend Development Rules（Java / Spring Boot）
+> ⚠️ **注意**: 这些是后端开发规则模板，实际规则应根据具体项目技术栈创建。
 
-**更新时间**: 2026-04-28（v3 — 加入安全过滤器链、统一响应格式规范）
-**技术栈**: Java 17 + Spring Boot 3.3 + MyBatis-Plus 3.5 + PostgreSQL 15 + Flyway + Testcontainers
+## 技术栈检测
 
-## 最佳实践
+这些规则模板通过路径自动匹配项目类型：
 
-### ✅ 异常处理：统一用 ApiException + GlobalExceptionHandler
+| 技术栈 | 检测路径 |
+|--------|---------|
+| Java/Spring | `**/*.java` |
+| Python/Django | `**/*.py` |
+| Node/Express | `**/*.js`, `**/*.ts` |
+| Go | `**/*.go` |
+| Rust | `**/*.rs` |
+
+## 通用后端最佳实践
+
+### 1. 异常处理
+
+统一异常处理，避免泄露内部细节：
 
 ```java
-// ✅ 正确
-throw new ApiException(404, "Asset not found: " + id);
-throw new ApiException(400, "Invalid filter field: " + rawField);
-
-// ❌ 错误：绕过统一响应格式
-throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not found");
+// ✅ 正确：统一异常类型
+throw new ApiException(404, "Resource not found");
+throw new ApiException(400, "Invalid parameter: " + field);
 ```
 
-`GlobalExceptionHandler` 捕获后统一返回 `{ "code": 4xx, "message": "..." }`。
-
----
-
-### ✅ 数据访问：BaseMapper 做简单查询，XML 做动态 DSL 查询
-
 ```java
-// ✅ 简单查询
-Asset asset = assetMapper.selectById(id);
-
-// ✅ 动态 DSL 查询（复杂过滤/排序）
-List<Map<String, Object>> result = assetMapper.selectByDsl(params, fields, orderClauses, limit, offset);
-
-// ❌ 错误：QueryWrapper 不支持 @> / jsonb_path_ops
+// ❌ 错误：直接抛出原始异常
+throw new RuntimeException("Database error");
 ```
 
----
+### 2. SQL注入防护
 
-### ✅ PostgreSQL text[] 的正确 TypeHandler
-
-`JacksonTypeHandler` 产出 JSON `["a","b"]`，PostgreSQL **不能** 直接 `::text[]` cast（PG 数组字面量是 `{a,b}` 格式）。
-必须用自定义 TypeHandler：
+使用参数化查询，禁止字符串拼接：
 
 ```java
-// ✅ 正确注解：@MappedTypes（不是 @MappedJavaTypes，后者在 MyBatis 中不存在）
-@MappedTypes(List.class)
-public class PgStringArrayTypeHandler extends BaseTypeHandler<List<String>> {
-    @Override
-    public void setNonNullParameter(PreparedStatement ps, int i,
-            List<String> parameter, JdbcType jdbcType) throws SQLException {
-        // 用 JDBC createArrayOf 正确传递 PG text[]
-        Array array = ps.getConnection().createArrayOf("text", parameter.toArray(new String[0]));
-        ps.setArray(i, array);
-    }
-    // getNullableResult: toList((Object[]) rs.getArray(columnName).getArray())
+// ✅ 正确：参数化查询
+List<User> users = userMapper.selectByMap(params);
+
+// ❌ 错误：字符串拼接
+String sql = "SELECT * FROM users WHERE id = " + userId;
+```
+
+### 3. 输入验证
+
+所有外部输入必须验证：
+
+```java
+// ✅ 正确：验证输入
+if (id == null || id <= 0) {
+    throw new ApiException(400, "Invalid id");
 }
 ```
 
-实体字段：
-```java
-@TableField(typeHandler = PgStringArrayTypeHandler.class)
-private List<String> tags;
-```
+### 4. 日志规范
 
-XML 写入（无需 `::text[]` cast，TypeHandler 已创建正确 JDBC Array）：
-```xml
-#{tags, typeHandler=com.homework.asset.config.PgStringArrayTypeHandler}
-```
-
----
-
-### ✅ 排序安全：用 `<foreach>/<choose>` 内置列名，禁止 `${orderBy}`
-
-```xml
-<!-- ✅ 正确：orderClauses 是 List<SortClause>，字段名 hardcode 在 XML -->
-<if test="orderClauses != null and !orderClauses.isEmpty()">
-    ORDER BY
-    <foreach collection="orderClauses" item="clause" separator=",">
-        <choose>
-            <when test="clause.columnName == 'uploaded_at'">uploaded_at</when>
-            <when test="clause.columnName == 'file_size_bytes'">file_size_bytes</when>
-            <otherwise>uploaded_at</otherwise>
-        </choose>
-        <choose>
-            <when test="clause.direction == 'DESC'"> DESC</when>
-            <otherwise> ASC</otherwise>
-        </choose>
-    </foreach>
-</if>
-
-<!-- ❌ 错误：即使 Java 层做了白名单，${orderBy} 也违反项目规范 -->
-ORDER BY ${orderBy}
-```
-
-Java 侧 `QueryDslParser.parseSort()` 返回 `List<SortClause>`，每个 `SortClause` 的 `columnName` 来自枚举，不含用户输入。
-
----
-
-### ✅ ETL Normalizer 设计原则
+不记录敏感信息：
 
 ```java
-// ✅ 纯函数，无副作用，可单元测试
-public final class StatusNormalizer {
-    private static final Map<String, String> MAP = Map.of(
-        "待审核", "pending", "已通过", "approved", "通过", "approved", "已拒绝", "rejected",
-        "pending", "pending", "approved", "approved", "rejected", "rejected"
-    );
-    public static String normalize(String raw) {
-        if (raw == null || raw.isBlank()) return null;
-        String canonical = MAP.get(raw.strip());
-        if (canonical == null) throw new EtlNormalizeException("Unknown status: " + raw);
-        return canonical;
-    }
+// ✅ 正确：脱敏日志
+logger.info("User login: {}", maskEmail(email));
+
+// ❌ 错误：记录敏感信息
+logger.info("Password: {}", password);
+```
+
+### 5. 并发安全
+
+使用线程安全的数据结构：
+
+```java
+// ✅ 正确：线程安全
+private final ConcurrentHashMap<String, Cache> cache =
+    new ConcurrentHashMap<>();
+
+// ❌ 错误：非线程安全
+private final HashMap<String, Cache> cache = new HashMap<>();
+```
+
+## 数据库最佳实践
+
+### ORM使用原则
+
+| 操作 | 建议 |
+|------|------|
+| 简单CRUD | 使用框架提供的Mapper/Repository |
+| 复杂查询 | 使用XML/Query DSL |
+| 批量操作 | 批次处理，避免OOM |
+
+### 事务管理
+
+```java
+// ✅ 正确：明确事务边界
+@Transactional(rollbackFor = Exception.class)
+public void updateBatch(List<Entity> entities) {
+    // 事务操作
 }
 ```
 
----
+## API设计原则
 
-### ✅ 幂等 ETL 导入（ON CONFLICT DO UPDATE）
+### RESTful规范
 
-```xml
-<insert id="upsert">
-    INSERT INTO assets (source_dataset, source_id, title, uploader, uploaded_at,
-        file_size_bytes, status,
-        tags, city, platform, ...)
-    VALUES (#{sourceDataset}, #{sourceId}, #{title}, #{uploader}, #{uploadedAt},
-        #{fileSizeBytes}, #{status},
-        #{tags, typeHandler=com.homework.asset.config.PgStringArrayTypeHandler},
-        #{city}, #{platform}, ...)
-    ON CONFLICT (source_dataset, source_id)
-    DO UPDATE SET title = EXCLUDED.title, ..., ingested_at = now()
-</insert>
+| 方法 | 用途 | 示例 |
+|------|------|------|
+| GET | 查询 | `GET /users` |
+| POST | 创建 | `POST /users` |
+| PUT | 更新 | `PUT /users/{id}` |
+| DELETE | 删除 | `DELETE /users/{id}` |
+
+### 统一响应格式
+
+```json
+{
+  "code": 200,
+  "message": "success",
+  "data": {}
+}
 ```
 
----
+## 安全最佳实践
 
-### ✅ 集成测试：Testcontainers（真实 PG，禁止 H2）
+### 认证授权
 
 ```java
-@Testcontainers
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AssetControllerIT {
+// ✅ 正确：使用框架安全机制
+@PreAuthorize("hasRole('ADMIN')")
+public void deleteUser(Long id) {
+    // 仅管理员可执行
+}
+```
 
-    @Container
-    static PostgreSQLContainer<?> postgres =
-        new PostgreSQLContainer<>("postgres:15-alpine")
-            .withDatabaseName("asset_test").withUsername("test").withPassword("test");
+### 数据脱敏
 
-    @DynamicPropertySource
-    static void props(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
+```java
+// 手机号脱敏：138****5678
+public String maskPhone(String phone) {
+    if (phone == null || phone.length() < 11) return phone;
+    return phone.substring(0, 3) + "****" + phone.substring(7);
 }
 ```
 
 ---
 
-### ✅ 连接池配置（HikariCP）
+## 📈 合规统计
 
-```yaml
-spring.datasource.hikari:
-  maximum-pool-size: 20
-  minimum-idle: 5
-  connection-timeout: 30000
-  pool-name: AssetHikariPool
-```
+此文件为模板，合规统计应在实际项目中追踪。
 
----
-
-### ✅ 安全过滤器链（Spring Security 6.x）
-
-请求处理顺序：`RateLimitFilter → ApiKeyAuthFilter → Controller`
-
-```java
-// ✅ 正确：addFilterBefore 的第二个参数必须是 Spring Security 内置 Filter Class
-// （如 UsernamePasswordAuthenticationFilter.class），不能用自定义 Filter
-.addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
-.addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
-```
-
-```java
-// ⚠️ OncePerRequestFilter 防重复注册：必须禁止 Spring Boot 自动注册为通用 Servlet Filter
-// 否则 OncePerRequestFilter 在 Security 链中会被跳过，返回 403
-@Bean
-public FilterRegistrationBean<ApiKeyAuthFilter> apiKeyAuthFilterRegistration(ApiKeyAuthFilter filter) {
-    FilterRegistrationBean<ApiKeyAuthFilter> registration = new FilterRegistrationBean<>(filter);
-    registration.setEnabled(false);  // 仅通过 Security 链执行，不注册为通用 Filter
-    return registration;
-}
-// RateLimitFilter 同理，需要对应的 FilterRegistrationBean
-```
-
-**执行顺序控制**：自定义 Filter 通过实现 `Ordered` 接口的 `getOrder()` 方法排定顺序，不要依赖 `addFilterBefore` 的位置顺序。
-
----
-
-## 反模式
-
-### ⚠️ 禁止 H2 替代 PostgreSQL 做集成测试
-
-- **原因**：H2 不支持 `text[] @>`, `JSONB`, `ON CONFLICT DO UPDATE`, `gen_random_uuid()`
-- **正确做法**：Testcontainers 起真实 PG 容器
-
-### ⚠️ 禁止 MyBatis `${}` 占位符
-
-- **原因**：直接拼字符串，SQL 注入漏洞
-- **正确做法**：所有值 `#{}`；字段名通过白名单枚举后内置到 XML `<choose>` 分支
-
-### ⚠️ 禁止 `${orderBy}` 排序（即使有 Java 白名单）
-
-- **原因**：违反项目规范；调用链被绕过时即注入
-- **正确做法**：`List<SortClause>` + XML `<foreach>/<choose>` 硬编码列名
-
-### ⚠️ JacksonTypeHandler + `::text[]` 不兼容
-
-- **原因**：JSON `["a","b"]` ≠ PG 数组 `{a,b}`，cast 失败
-- **正确做法**：`PgStringArrayTypeHandler`（`createArrayOf("text", ...)`）
-
-### ⚠️ `@MappedJavaTypes` 注解不存在
-
-- **原因**：MyBatis 中没有这个注解
-- **正确做法**：`@MappedTypes(List.class)`
-
-### ⚠️ Controller 直接注入 Mapper
-
-- **原因**：破坏分层，绕过 Service
-- **正确做法**：Controller → Service → Mapper，统计聚合放 `AssetStatsService`
-
-### ⚠️ 禁止在 ETL Normalizer 里 eval 外部数据
-
-- **原因**：Python list 字符串不能 eval，代码注入风险
-- **正确做法**：正则提取或 Jackson JSON 解析
-
-## 相关文档
-
-- **项目标准**: `.claude/project_standards.md`
-- **TypeHandler**: `main/backend/src/main/java/com/homework/asset/config/PgStringArrayTypeHandler.java`
-- **技术设计**: `main/docs/design.md`
-
-## 📈 合规统计（自动更新）
-
-- **检查次数**: 513
-- **违规次数**: 0
-- **合规率**: 100.0%
-- **最后更新**: 2026-04-28
-
-_此章节由进化系统自动维护_
-
-<!-- 进化: 2026-04-28 — 检查到项目新增 SecurityConfig 过滤器链模式（RateLimitFilter→ApiKeyAuthFilter with FilterRegistrationBean 防重复注册），补充到最佳实践中；零违规，推动原因是规则定期刷新 -->
+_最后更新: 2026-04-30_

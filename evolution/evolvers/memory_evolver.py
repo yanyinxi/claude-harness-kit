@@ -137,13 +137,10 @@ _此文档由进化系统自动维护_
 """
         
         try:
-            with open(memory_file, 'w', encoding='utf-8') as f:
-                f.write(content)
-            
-            # 同时更新 MEMORY.md 索引
-            self._update_memory_index(theme, memory_file.name)
-            
-            return True
+            success = self._safe_atomic_write(memory_file, content)
+            if success:
+                self._update_memory_index(theme, memory_file.name)
+            return success
         except Exception as e:
             print(f"创建 Memory 失败 {theme}: {e}")
             return False
@@ -160,12 +157,18 @@ _此文档由进化系统自动维护_
             
             if filename not in content:
                 content = content.rstrip() + f"\n{new_entry}\n"
-                with open(index_file, 'w', encoding='utf-8') as f:
+                import os
+                tmp = index_file.with_suffix('.tmp')
+                with open(tmp, 'w', encoding='utf-8') as f:
                     f.write(content)
+                os.replace(str(tmp), str(index_file))
         else:
             content = f"""# Memory Index
 
 {new_entry}
 """
-            with open(index_file, 'w', encoding='utf-8') as f:
+            import os
+            tmp = index_file.with_suffix('.tmp')
+            with open(tmp, 'w', encoding='utf-8') as f:
                 f.write(content)
+            os.replace(str(tmp), str(index_file))

@@ -5,13 +5,15 @@
 原则: 进化前检查，进化后记录，异常时自动熔断。
 """
 
+import fcntl
 import hashlib
 import json
 import os
 import re
 import shutil
+import subprocess
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional, Dict, Any, List, Tuple
 
@@ -22,7 +24,7 @@ from typing import Optional, Dict, Any, List, Tuple
 
 def snapshot_file(file_path: str) -> str:
     with open(file_path, "rb") as f:
-        return hashlib.md5(f.read()).hexdigest()
+        return hashlib.sha256(f.read()).hexdigest()
 
 
 def backup_file(file_path: str, backup_dir: str = ".claude/data/backups") -> str:
@@ -107,7 +109,12 @@ class EvolutionCircuitBreaker:
     def _read_metrics(self) -> dict:
         if self.metrics_path.exists():
             try:
-                return json.loads(self.metrics_path.read_text())
+                with open(self.metrics_path, 'r', encoding='utf-8') as f:
+                    fcntl.flock(f.fileno(), fcntl.LOCK_SH)
+                    try:
+                        return json.loads(f.read())
+                    finally:
+                        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
             except (json.JSONDecodeError, OSError):
                 return {}
         return {}
@@ -115,7 +122,14 @@ class EvolutionCircuitBreaker:
     def _write_metrics(self, data: dict):
         self.metrics_path.parent.mkdir(parents=True, exist_ok=True)
         tmp = self.metrics_path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(data, indent=2, ensure_ascii=False))
+        with open(tmp, 'w', encoding='utf-8') as f:
+            fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+            try:
+                f.write(json.dumps(data, indent=2, ensure_ascii=False))
+                f.flush()
+                os.fsync(f.fileno())
+            finally:
+                fcntl.flock(f.fileno(), fcntl.LOCK_UN)
         os.replace(str(tmp), str(self.metrics_path))
 
 
@@ -179,12 +193,16 @@ class EvolutionRateLimiter:
         if not self.history_path.exists():
             return []
         records = []
-        with open(self.history_path, encoding="utf-8") as f:
-            for line in f:
-                try:
-                    records.append(json.loads(line))
-                except json.JSONDecodeError:
-                    continue
+        with open(self.history_path, encoding='utf-8') as f:
+            fcntl.flock(f.fileno(), fcntl.LOCK_SH)
+            try:
+                for line in f:
+                    try:
+                        records.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        continue
+            finally:
+                fcntl.flock(f.fileno(), fcntl.LOCK_UN)
         return records
 
 
@@ -269,6 +287,50 @@ def sanitize_prompt(text: str, max_length: int = 200) -> str:
 
 
 # ═══════════════════════════════════════════════════════════════
+# Subprocess 安全封装
+# ═══════════════════════════════════════════════════════════════
+
+# 允许的命令白名单（防止命令注入）
+ALLOWED_COMMANDS = {"git", "python3", "python", "node", "npm"}
+
+# 默认超时时间（秒）
+DEFAULT_TIMEOUT = 30
+
+
+def validate_command(cmd: str) -> bool:
+    """验证命令是否在白名单中"""
+    return cmd in ALLOWED_COMMANDS
+
+
+def safe_subprocess_run(args: List[str], cwd: str, timeout: int = DEFAULT_TIMEOUT) -> subprocess.CompletedProcess:
+    """
+    安全的 subprocess.run 封装。
+
+    安全措施：
+    1. 命令白名单验证
+    2. 超时控制
+    3. 不允许 shell=True
+    4. 捕获异常而非让进程失控
+    """
+    if not args:
+        raise ValueError("命令参数不能为空")
+
+    cmd = args[0]
+    if not validate_command(cmd):
+        raise ValueError(f"不允许的命令: {cmd}，仅允许: {ALLOWED_COMMANDS}")
+
+    return subprocess.run(
+        args,
+        cwd=cwd,
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+        check=False,
+        shell=False,  # 强制禁用 shell=True
+    )
+
+
+# ═══════════════════════════════════════════════════════════════
 # 进化前安全检查
 # ═══════════════════════════════════════════════════════════════
 
@@ -285,7 +347,8 @@ def check_data_sufficiency(dimension: str, data_dir: str = ".claude/data") -> di
     if not f.exists():
         return {"sufficient": False, "record_count": 0}
 
-    count = sum(1 for _ in open(f, encoding="utf-8") if _.strip())
+    with open(f, encoding="utf-8") as fp:
+        count = sum(1 for line in fp if line.strip())
     return {"sufficient": count >= 1, "record_count": count}
 
 
@@ -355,7 +418,8 @@ def cli_status():
     data_dir = root / ".claude" / "data"
     print(f"\n📁 数据文件:")
     for f in sorted(data_dir.glob("*.jsonl")):
-        lines = sum(1 for _ in open(f) if _.strip())
+        with open(f) as fp:
+            lines = sum(1 for line in fp if line.strip())
         size_kb = f.stat().st_size / 1024
         print(f"   {f.name}: {lines} 行, {size_kb:.1f} KB")
 

@@ -282,12 +282,14 @@ docker run -it --rm \
 ```bash
 docker run -d \
   --name postgres \
-  -e POSTGRES_PASSWORD=secret \
+  -e POSTGRES_PASSWORD \
   -e POSTGRES_DB=mydb \
   -v postgres-data:/var/lib/postgresql/data \
   -p 5432:5432 \
   postgres:15
 ```
+
+> ⚠️ **安全建议**: 通过 `-e POSTGRES_PASSWORD`（无值）让 Docker 从环境变量读取，或使用 Docker Secrets 管理敏感数据，避免命令行中明文传递密码。
 
 **Quick debugging:**
 ```bash

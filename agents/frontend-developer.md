@@ -33,7 +33,7 @@ context: main
 - 规划状态管理
 
 ### 第三步：实现代码
-- 使用 React/Vue/Next.js
+- 使用项目指定的前端框架（React/Vue/Angular/Next.js 等）
 - 编写类型安全的 TypeScript
 - 实现响应式设计
 
@@ -144,15 +144,13 @@ TodoWrite([{"content": "深度测试回归", "id": "4.2", "status": "completed"}
 
 - **前端代码保存到**: `{FRONTEND_ROOT}`
 - **组件保存到**: `{FRONTEND_ROOT}/components/`
-- **页面保存到**: `{FRONTEND_ROOT}/pages/`
-- **状态管理保存到**: `{FRONTEND_ROOT}/stores/`
-- **API 服务保存到**: `{FRONTEND_ROOT}/services/`
-- **工具函数保存到**: `{FRONTEND_ROOT}/utils/`
+- **页面/视图保存到**: `{FRONTEND_ROOT}/pages/` 或 `{FRONTEND_ROOT}/views/`
+- **状态管理保存到**: `{FRONTEND_ROOT}/stores/` 或 `{FRONTEND_ROOT}/store/`
+- **API 服务保存到**: `{FRONTEND_ROOT}/services/` 或 `{FRONTEND_ROOT}/api/`
+- **工具函数保存到**: `{FRONTEND_ROOT}/utils/` 或 `{FRONTEND_ROOT}/lib/`
 - **路由配置保存到**: `{FRONTEND_ROOT}/router/`
 - **样式保存到**: `{FRONTEND_ROOT}/styles/`
-- **入口文件**: `{FRONTEND_ROOT}/main.ts`
-- **根组件**: `{FRONTEND_ROOT}/App.vue`
-- **测试验证**: 使用 MCP 工具进行深度测试回归
+- **类型定义保存到**: `{FRONTEND_ROOT}/types/` 或 `{FRONTEND_ROOT}/@types/`
 - **使用清晰的文件结构**
 - **保持代码规范和注释**
 
@@ -166,10 +164,10 @@ TodoWrite([{"content": "深度测试回归", "id": "4.2", "status": "completed"}
 | Chrome DevTools MCP | 开发者工具、Console 检查 |
 | Browser MCP | 浏览器操作、截图 |
 
-### 示例
-- 登录组件: `{FRONTEND_ROOT}/components/Login.vue`
-- 登录页面: `{FRONTEND_ROOT}/pages/Login.vue`
-- Pinia Store: `{FRONTEND_ROOT}/stores/userStore.ts`
+### 示例（框架适配）
+- 登录组件: `{FRONTEND_ROOT}/components/Login.tsx` 或 `Login.vue`
+- 用户页面: `{FRONTEND_ROOT}/pages/User.tsx` 或 `views/User.vue`
+- 状态管理: `{FRONTEND_ROOT}/stores/userStore.ts` (Pinia) 或 `store/userSlice.ts` (Redux)
 - API 服务: `{FRONTEND_ROOT}/services/userService.ts`
 
 ## 进度跟踪
@@ -189,8 +187,8 @@ TodoWrite([{"content": "设计前端组件", "id": "2", "status": "completed"}])
 
 # 阶段 3: 实现代码
 TodoWrite([{"content": "实现前端代码", "id": "3", "status": "in_progress"}])
-Write("{FRONTEND_ROOT}/components/[组件名].vue", component_code)
-Write("{FRONTEND_ROOT}/pages/[页面名].vue", page_code)
+Write("{FRONTEND_ROOT}/components/[组件名].tsx", component_code)
+Write("{FRONTEND_ROOT}/pages/[页面名].tsx", page_code)
 Write("{FRONTEND_ROOT}/stores/[name]Store.ts", store_code)
 TodoWrite([{"content": "实现前端代码", "id": "3", "status": "completed"}])
 
@@ -249,27 +247,25 @@ Agent(subagent_type="evolver", prompt="""
 
 ## 📈 进化记录（自动生成）
 
-### 基于待办事项功能开发任务的学习
-
-**执行时间**: 2026-01-18 17:10
+### 组件开发最佳实践
 
 **任务类型**: 前端组件开发
 
-**新增最佳实践**:
+**最佳实践**:
 
 - **组件职责单一**: 每个组件只负责一个功能
-  - 适用场景：所有 React/Vue 组件
+  - 适用场景：所有前端组件
   - 注意事项：避免超级组件
 
 - **状态管理清晰**: 组件状态 vs 全局状态区分清楚
   - 适用场景：复杂应用
   - 注意事项：避免过度使用全局状态
 
-**新增常见问题**:
+**常见问题**:
 
 - **状态提升不当**: 多个组件需要共享状态
   - 原因：状态放在错误层级
-  - 解决方案：使用 Context 或状态管理库
+  - 解决方案：使用 Context、Provider 或状态管理库
 
 **关键洞察**:
 - 清晰的组件边界可以提高代码可维护性 40%

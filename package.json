@@ -3,8 +3,27 @@
   "version": "0.1.0",
   "description": "Claude Code 多 Agent 工作流编排 + 四维度自进化插件",
   "main": "index.js",
-  "files": [".claude-plugin/", "agents/", "skills/", "hooks/", "rules/", "lib/", "evolution/", "config/", "memory/", "tests/", "CLAUDE.md"],
+  "files": [
+    ".claude-plugin/",
+    "agents/",
+    "skills/",
+    "hooks/",
+    "rules/",
+    "lib/",
+    "evolution/",
+    "config/",
+    "memory/",
+    "CLAUDE.md",
+    "README.md",
+    "package.json"
+  ],
   "keywords": ["claude-code", "claude-code-plugin", "workflow", "multi-agent", "self-evolution"],
   "license": "MIT",
-  "engines": { "node": ">=18" }
+  "engines": { "node": ">=18" },
+  "bundledDependencies": [],
+  "devDependencies": {},
+  "scripts": {
+    "test": "python3 -m pytest tests/",
+    "lint": "python3 -m flake8 lib/ hooks/bin/"
+  }
 }

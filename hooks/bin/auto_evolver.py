@@ -460,12 +460,13 @@ def _remove_trigger(pending_path: Path, dim: str, target: str):
 
 
 def _write_history(claude_dir: Path, dim: str, target: str, result, session_id: str):
-    """追加进化记录到 evolution_history.jsonl（统一 schema）。"""
+    """追加进化记录到 evolution_history.jsonl（统一 schema，带文件锁）。"""
+    import fcntl
     history_file = claude_dir / "data" / "evolution_history.jsonl"
     history_file.parent.mkdir(parents=True, exist_ok=True)
 
     record = {
-        "timestamp": datetime.now(datetime.timezone.utc).isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "session_id": session_id,
         "dimension": dim,
         "target": target,
@@ -477,7 +478,13 @@ def _write_history(claude_dir: Path, dim: str, target: str, result, session_id: 
         "summary": getattr(result, 'summary', ''),
     }
     with open(history_file, "a", encoding="utf-8") as f:
-        f.write(json.dumps(record, ensure_ascii=False) + "\n")
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
 
 
 if __name__ == "__main__":

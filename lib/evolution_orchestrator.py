@@ -67,9 +67,11 @@ def aggregate_session_data(project_root: str = None) -> Dict[str, Any]:
     # Skill 统计
     skill_records = _read_jsonl(data_dir / "skill_usage.jsonl")
     skill_counts: Dict[str, int] = {}
+    skill_records_by_skill: Dict[str, list] = {}
     for r in skill_records:
         skill = r.get("skill", "unknown")
         skill_counts[skill] = skill_counts.get(skill, 0) + 1
+        skill_records_by_skill.setdefault(skill, []).append(r)
 
     # Agent 统计
     agent_records = _read_jsonl(data_dir / "agent_performance.jsonl")
@@ -109,6 +111,7 @@ def aggregate_session_data(project_root: str = None) -> Dict[str, Any]:
 
     return {
         "skills_used": skill_counts,
+        "skill_records": skill_records_by_skill,
         "total_skill_calls": sum(skill_counts.values()),
         "agents_used": list(agent_data.keys()),
         "agent_tasks": {a: len(v) for a, v in agent_data.items()},
@@ -231,40 +234,6 @@ def compute_escalated_priority(base_priority: float, trigger_count: int) -> floa
     else:
         # 第 3 次及以上，强制执行
         return 1.0
-    """
-    计算进化优先级，返回值 0.0-1.0，> 0.5 触发进化。
-    """
-    if dimension == "skill":
-        call_count = metrics.get("total_calls", 0)
-        success_rate = metrics.get("success_rate", 1.0)
-        if call_count < 10:
-            return 0.0
-        return min(1.0, (1 - success_rate) * call_count / 10)
-
-    elif dimension == "agent":
-        avg_turns = metrics.get("avg_turns", 10)
-        baseline = metrics.get("baseline_turns", 10)
-        failure_rate = metrics.get("failure_rate", 0)
-        task_count = metrics.get("similar_tasks", 0)
-        if task_count < 5:
-            return 0.0
-        turn_penalty = max(0, (avg_turns - baseline) / baseline)
-        failure_penalty = failure_rate / 0.3 if failure_rate > 0.3 else 0
-        return min(1.0, turn_penalty * 0.5 + failure_penalty * 0.5)
-
-    elif dimension == "rule":
-        violation_count = metrics.get("violation_count", 0)
-        if violation_count < 3:
-            return 0.0
-        return min(1.0, violation_count / 3 * 0.5)
-
-    elif dimension == "memory":
-        signal_count = metrics.get("pending_signals", 0)
-        if signal_count == 0:
-            return 0.0
-        return min(1.0, signal_count * 0.5)
-
-    return 0.0
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -299,12 +268,9 @@ def check_triggers(project_root: str = None) -> dict:
             continue
 
         # 计算该 skill 的失败率
-        skill_failures = sum(
-            1 for f in data.get("failure_records", [])
-            if f.get("tool") == "Skill"
-            and f.get("context", {}).get("skill") == skill_name
-        )
-        skill_success_rate = 1.0 - (skill_failures / max(call_count, 1))
+        skill_records = data.get("skill_records", {}).get(skill_name, [])
+        skill_failures = sum(1 for r in skill_records if not r.get("success", True))
+        skill_success_rate = 1.0 - (skill_failures / max(len(skill_records), 1))
 
         priority = compute_priority("skill", {
             "total_calls": call_count,
@@ -435,28 +401,52 @@ def check_triggers(project_root: str = None) -> dict:
 
 def run_orchestrator(project_root: str = None, execute: bool = False) -> dict:
     """
-    完整的编排流程: check → safety → persist → notify
+    完整的编排流程: check → safety → persist → evolve
 
-    设计原则（来自 evolution-system-design.md）:
-    - Stop Hook 无法启动 Agent 工具（会话已结束）
-    - 因此 trigger 决策持久化到 data/，待下次会话由 Claude 主 Agent 调度 Agent 进化器
-    - Python 进化引擎 (evolution/) 作为备用实现，Agent 进化器 (agents/*-evolver.md) 是首选路径
+    直接调用 Python EvolutionEngine 执行进化，无需等待下次会话。
     """
     decision = check_triggers(project_root)
     root = _find_root() if project_root is None else Path(project_root)
 
     if not decision["should_evolve"]:
+        decision["evolved"] = False
         return decision
 
     if execute:
-        # 将触发决策持久化，供下次会话的 Agent 进化器消费
-        data_dir = root / ".claude" / "data"
-        data_dir.mkdir(parents=True, exist_ok=True)
+        triggers = decision.get("triggers", [])
 
-        pending_path = data_dir / "pending_evolution.json"
-        data_dir.mkdir(parents=True, exist_ok=True)
+        if triggers:
+            try:
+                sys.path.insert(0, str(root / ".claude" / "lib"))
+                from evolution.engine import EvolutionEngine
+                from evolution.config import EvolutionConfig
 
-        # fcntl 锁保护的原子 read-modify-write，防止与 detect_feedback.py 冲突
+                config = EvolutionConfig(project_root=root)
+                engine = EvolutionEngine(config)
+
+                evo_results = engine.run_full_cycle()
+
+                # evo_results 是 Dict[str, List[EvolutionResult]]，需要遍历所有结果
+                all_results = []
+                for dim_results in evo_results.values():
+                    for r in dim_results:
+                        all_results.append({
+                            "dimension": r.dimension,
+                            "target_id": r.target_id,
+                            "success": r.success,
+                            "changes_made": r.changes_made,
+                        })
+                decision["evolution_results"] = all_results
+                decision["evolved"] = True
+                decision["evolver_used"] = "python_engine"
+
+            except Exception as e:
+                decision["evolver_error"] = str(e)
+                decision["evolved"] = False
+
+        pending_path = root / ".claude" / "data" / "pending_evolution.json"
+        pending_path.parent.mkdir(parents=True, exist_ok=True)
+
         import fcntl as _fcntl_orch
         with open(pending_path, "a+") as f:
             _fcntl_orch.flock(f.fileno(), _fcntl_orch.LOCK_EX)
@@ -470,9 +460,8 @@ def run_orchestrator(project_root: str = None, execute: bool = False) -> dict:
                     except (json.JSONDecodeError, OSError):
                         existing = {}
 
-                # 合并本会话的触发决策
                 existing_triggers = existing.get("pending_triggers", [])
-                for t in decision.get("triggers", []):
+                for t in triggers:
                     key = f"{t['dimension']}:{t['target']}"
                     if not any(f"{et.get('dimension')}:{et.get('target')}" == key for et in existing_triggers):
                         existing_triggers.append(t)
@@ -484,13 +473,11 @@ def run_orchestrator(project_root: str = None, execute: bool = False) -> dict:
                 f.truncate()
                 f.write(json.dumps(existing, indent=2, ensure_ascii=False))
 
-                # 递增触发计数（用于下次优先级升级）
-                for t in decision.get("triggers", []):
+                for t in triggers:
                     _increment_trigger_count(root, t["dimension"], t["target"])
             finally:
                 _fcntl_orch.flock(f.fileno(), _fcntl_orch.LOCK_UN)
 
-        decision["evolved"] = True
         decision["persisted_to"] = str(pending_path)
     else:
         decision["evolved"] = False

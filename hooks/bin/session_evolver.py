@@ -39,6 +39,21 @@ def run_git(args: List[str], cwd: str) -> str:
         return ""
 
 
+def run_command(cmd: str, args: List[str], cwd: str, timeout: int = 30) -> str:
+    """安全地运行命令，支持白名单验证和超时控制。"""
+    allowed = {"git", "python3", "python", "node", "npm"}
+    if cmd not in allowed:
+        return ""
+    try:
+        result = subprocess.run(
+            [cmd] + args, cwd=cwd,
+            capture_output=True, text=True, timeout=timeout, check=False
+        )
+        return result.stdout.strip()
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+
+
 def _load_domains_config(project_root: str) -> Dict[str, Any]:
     """从 config/domains.json 加载领域配置"""
     config_file = Path(project_root) / ".claude" / "config" / "domains.json"
@@ -240,7 +255,7 @@ def main():
     try:
         from evolution_scoring import save_daily_score
         save_daily_score(project_root)
-    except Exception:
+    except (ImportError, OSError):
         pass
 
     # 触发进化编排（聚合数据 → 检查触发条件 → 安全门禁 → 持久化决策）

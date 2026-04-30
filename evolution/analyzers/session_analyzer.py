@@ -68,7 +68,7 @@ class SessionAnalyzer:
             for line in f:
                 try:
                     sessions.append(json.loads(line))
-                except:
+                except (json.JSONDecodeError, ValueError):
                     continue
         
         return sessions
@@ -78,7 +78,7 @@ class SessionAnalyzer:
         try:
             dt = datetime.fromisoformat(ts.replace('Z', '+00:00'))
             return dt.timestamp()
-        except:
+        except (ValueError, OSError):
             return 0
     
     def _calculate_quality_score(self, sessions: List[Dict]) -> float:

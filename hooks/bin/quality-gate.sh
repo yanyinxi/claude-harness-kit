@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # 质量门禁：验证代码和配置文件
 # Claude Code PostToolUse Hook - 从 stdin 读取 JSON 输入
 

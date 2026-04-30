@@ -125,24 +125,18 @@ class SkillEvolver(BaseEvolver):
     def apply_evolution(self, skill_name: str, improvements: List[str]) -> bool:
         """应用 Skill 进化"""
         skill_file = self.config.skills_dir / skill_name / "SKILL.md"
-        
+
         if not skill_file.exists():
             return False
-        
+
         try:
             with open(skill_file, 'r', encoding='utf-8') as f:
                 content = f.read()
-            
-            # 更新或添加进化记录章节
+
             content = self._update_evolution_section(content, skill_name, improvements)
-            
-            # 更新使用数据区块
             content = self._update_usage_section(content, skill_name)
-            
-            with open(skill_file, 'w', encoding='utf-8') as f:
-                f.write(content)
-            
-            return True
+
+            return self._safe_atomic_write(skill_file, content)
         except Exception as e:
             print(f"更新 Skill 失败 {skill_name}: {e}")
             return False
