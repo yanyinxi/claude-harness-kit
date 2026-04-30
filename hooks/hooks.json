@@ -1,35 +1,13 @@
 {
-  "$schema": "https://claude.com/docs/claude-code/hooks",
-  "description": "Claude Team Kit Hooks",
+  "description": "Claude Team Kit — 精简 Hook 配置",
   "hooks": {
-    "SessionStart": [{
-      "matcher": "*",
-      "hooks": [{
-        "type": "command",
-        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/load_evolution_state.py",
-        "timeout": 5,
-        "async": false
-      }]
-    }],
     "PreToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_violations.py",
-            "timeout": 10,
-            "async": false
-          }
-        ]
-      },
       {
         "matcher": "Bash",
         "hooks": [{
           "type": "command",
           "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/safety-check.sh",
-          "timeout": 5,
-          "async": false
+          "timeout": 5
         }]
       }
     ],
@@ -39,64 +17,8 @@
         "hooks": [{
           "type": "command",
           "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/quality-gate.sh",
-          "timeout": 10,
-          "async": false
+          "timeout": 10
         }]
-      },
-      {
-        "matcher": "Agent",
-        "hooks": [{
-          "type": "command",
-          "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_agent_launch.py",
-          "timeout": 10,
-          "async": false
-        }]
-      },
-      {
-        "matcher": "Skill",
-        "hooks": [{
-          "type": "command",
-          "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_skill_usage.py",
-          "timeout": 10,
-          "async": false
-        }]
-      }
-    ],
-    "PostToolUseFailure": [{
-      "matcher": "*",
-      "hooks": [{
-        "type": "command",
-        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_tool_failure.py",
-        "timeout": 5,
-        "async": false
-      }]
-    }],
-    "UserPromptSubmit": [{
-      "matcher": "*",
-      "hooks": [{
-        "type": "command",
-        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/detect_feedback.py",
-        "timeout": 5,
-        "async": false
-      }]
-    }],
-    "Stop": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/session_evolver.py",
-            "timeout": 30,
-            "async": false
-          },
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/strategy_updater.py",
-            "timeout": 10,
-            "async": false
-          }
-        ]
       }
     ]
   }

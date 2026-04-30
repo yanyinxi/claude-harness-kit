@@ -1,7 +1,7 @@
 {
   "name": "claude-team-kit",
   "version": "0.1.0",
-  "description": "Claude Code 多 Agent 工作流编排 + 四维度自进化插件",
+  "description": "Claude Code 团队插件 — 多 Agent 协作、通用 Skills、持续进化",
   "main": "index.js",
   "files": [
     ".claude-plugin/",
@@ -9,21 +9,11 @@
     "skills/",
     "hooks/",
     "rules/",
-    "lib/",
-    "evolution/",
-    "config/",
-    "memory/",
     "CLAUDE.md",
     "README.md",
     "package.json"
   ],
-  "keywords": ["claude-code", "claude-code-plugin", "workflow", "multi-agent", "self-evolution"],
+  "keywords": ["claude-code", "claude-code-plugin", "team", "multi-agent"],
   "license": "MIT",
-  "engines": { "node": ">=18" },
-  "bundledDependencies": [],
-  "devDependencies": {},
-  "scripts": {
-    "test": "python3 -m pytest tests/",
-    "lint": "python3 -m flake8 lib/ hooks/bin/"
-  }
+  "engines": { "node": ">=18" }
 }
