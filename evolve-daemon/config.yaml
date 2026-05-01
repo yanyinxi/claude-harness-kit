@@ -12,10 +12,10 @@ thresholds:
   max_hours_since_last_analyze: 6   # 最长分析间隔（强制触发）
 
 claude_api:
-  extract_model: "claude-haiku-4-5-20251001"    # 语义提取用（成本 $0.0001/次）
+  extract_model: "claude-haiku-4-5"        # 语义提取用（成本 $0.0001/次）
   extract_max_tokens: 512
   extract_temperature: 0.1
-  analyze_model: "claude-sonnet-4-6"            # 深度分析用
+  analyze_model: "claude-sonnet-4-6"       # 深度分析用
   analyze_max_tokens: 4096
   analyze_temperature: 0.3
 

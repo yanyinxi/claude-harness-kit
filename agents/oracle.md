@@ -14,7 +14,7 @@ tools: Read, Grep, Glob
 model: opus
 permissionMode: default
 skills: karpathy-guidelines, architecture-design
-disallowed-tools: Write, Edit, Bash
+disallowed-tools: Write, Edit, Bash, Agent
 context: global
 ---
 

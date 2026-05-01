@@ -18,6 +18,14 @@
           "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/safety-check.sh",
           "timeout": 5
         }]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [{
+          "type": "command",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/tdd-check.sh",
+          "timeout": 3
+        }]
       }
     ],
     "PostToolUse": [
