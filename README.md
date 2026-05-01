@@ -196,7 +196,7 @@ CHK 自动处理：
 
 ## 快速开始
 
-### 安装（三步搞定）
+### 安装（两步搞定）
 
 **Step 1：克隆项目**
 
@@ -205,22 +205,30 @@ git clone https://github.com/yanyinxi/claude-harness-kit.git
 cd claude-harness-kit
 ```
 
-**Step 2：安装到 Claude Code**
+**Step 2：一键安装（插件 + 斜杠命令，一次搞定）**
 
 ```bash
-claude plugins marketplace add --scope local $(pwd)
-claude plugins install claude-harness-kit
-claude plugins list
-# 应该看到: claude-harness-kit  enabled ✅
+bash ./cli/install.sh
 ```
 
-**Step 3：复制斜杠命令到用户目录**
+输出示例：
 
-```bash
-cp -r ~/.claude/plugins/cache/claude-harness-kit/claude-harness-kit/0.4.0/skills/* ~/.claude/skills/
+```text
+CHK 一键安装开始...
+
+Step 1: 安装 Claude Code 插件
+  ✅ marketplace 已添加
+  ✅ 插件安装成功
+
+Step 2: 复制斜杠命令
+  ✅ chk-init
+  ✅ chk-team
+  ✅ chk-auto
+  ...
+  ✅ 斜杠命令已复制到 ~/.claude/skills
+
+✅ 安装完成！
 ```
-
-> Step 3 的作用：将 11 个 `/chk-xxx` 斜杠命令（Skills）复制到用户目录，这样在 Claude Code 聊天框输入 `/chk-init` 等命令才会生效。
 
 ---
 
