@@ -1,6 +1,9 @@
 ---
 name: api-designer
-description: RESTful API design standards. Use when designing new API endpoints, reviewing API contracts, or establishing API conventions for a project.
+description: >
+  Sonnet agents设计新API端点、审查API契约或建立API规范时调用。
+  涵盖RESTful URL设计、响应格式、状态码和分页约定。
+  激活条件：涉及api、endpoint、REST相关讨论。
 ---
 
 # API Designer — RESTful API 设计规范

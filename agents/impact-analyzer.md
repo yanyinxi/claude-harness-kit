@@ -1,6 +1,8 @@
 ---
 name: impact-analyzer
-description: 变更影响范围评估，分析修改影响哪些文件和模块。Use before making changes to understand the blast radius.
+description: >
+  变更影响范围评估，分析修改影响哪些文件和模块，量化改动规模估算风险。
+  在修改代码前调用，帮助理解影响边界和制定测试计划。触发词：影响范围、blast radius
 model: haiku
 permissionMode: default
 maxTurns: 30

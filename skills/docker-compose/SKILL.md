@@ -1,6 +1,9 @@
 ---
 name: docker-compose
-description: Docker Compose configuration and containerization patterns. Use when creating Dockerfiles, docker-compose.yml, or containerizing services.
+description: >
+  Sonnet agents创建Dockerfile、docker-compose.yml或容器化服务时调用。
+  涵盖单容器单进程、非root运行、多阶段构建和healthcheck配置。
+  激活条件：涉及docker、container、dockerfile、compose相关讨论。
 ---
 
 # Docker Compose — 容器化部署

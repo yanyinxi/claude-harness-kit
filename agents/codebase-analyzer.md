@@ -1,6 +1,9 @@
 ---
 name: codebase-analyzer
-description: 快速分析项目结构，自动识别技术栈、目录结构、关键配置，生成 CLAUDE.md。Use for kit init or when switching to a new project.
+description: >
+  快速分析项目结构，自动识别技术栈、目录结构、关键配置文件，生成 CLAUDE.md。
+  适合 kit init 初始化或切换到新项目时使用，帮助快速理解代码库全貌。
+  使用 Haiku 模型，轻量快速扫描。
 model: haiku
 permissionMode: default
 maxTurns: 30

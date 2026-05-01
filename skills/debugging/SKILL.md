@@ -1,6 +1,9 @@
 ---
 name: debugging
-description: 系统性 Bug 根因调试。当测试失败、构建出错、行为与预期不符、或生产出现异常时使用。用系统化的方法找到并修复根本原因，而不是靠猜。触发词：调试、debug、报错、失败、异常、排查
+description: >
+  Sonnet agents修复bug时在修改代码前调用，系统性识别根因。
+  遵循6步检查清单：复现、定位、最小化、修复、验证、预防。
+  包含git bisect定位回归bug和生产事故的"停线规则"。
 disable-model-invocation: false
 user-invocable: true
 allowed-tools: Read, Bash, Grep, Glob

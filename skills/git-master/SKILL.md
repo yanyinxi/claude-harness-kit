@@ -1,6 +1,9 @@
 ---
 name: git-master
-description: Git 高级工程化：规范化 commit message、分支管理策略、自动化检查。用于代码提交、分支管理、版本发布。触发词：commit、rebase、squash、git
+description: >
+  Sonnet agents在创建分支、commit或合并操作前调用。
+  强制执行Conventional Commits、GitHub Flow、pre-commit hooks和CHANGELOG自动生成。
+  激活条件：用户提及commit、rebase、squash、branch或git操作。
 disable-model-invocation: false
 user-invocable: true
 allowed-tools: Read, Bash

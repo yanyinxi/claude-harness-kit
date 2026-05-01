@@ -1,0 +1,18 @@
+{
+  "id": "pitfall-001",
+  "type": "pitfall",
+  "name": "JSON 文件写入陷阱",
+  "description": "写入 JSON 时容易出现的编码和格式化问题",
+  "maturity": "draft",
+  "content": {
+    "problem": "使用 open() 写入 JSON 时忘记指定 encoding='utf-8'",
+    "symptom": "中文内容出现乱码",
+    "solution": "始终使用 Path.write_text(json.dumps(...), encoding='utf-8')",
+    "example_bad": "open('file.json', 'w').write(json.dumps(data))",
+    "example_good": "Path('file.json').write_text(json.dumps(data, ensure_ascii=False), encoding='utf-8')"
+  },
+  "created_at": "2026-05-01T00:00:00",
+  "last_used_at": "2026-05-01T19:00:00",
+  "usage_count": 1,
+  "project_count": 1
+}

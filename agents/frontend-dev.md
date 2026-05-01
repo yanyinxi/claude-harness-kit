@@ -1,6 +1,9 @@
 ---
 name: frontend-dev
-description: 通用前端开发专家，负责 UI 组件、状态管理、路由、用户体验。Use for frontend tasks, UI component creation, page implementation. 触发词：前端、UI、组件、页面、界面
+description: >
+  通用前端开发专家，负责 UI 组件开发、状态管理、路由配置和用户体验优化。
+  使用场景：前端任务、UI 组件创建、页面实现、样式调整、性能优化。
+  触发词：前端、UI、组件、页面、React、Vue、样式
 model: sonnet
 permissionMode: acceptEdits
 isolation: worktree

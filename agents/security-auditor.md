@@ -1,6 +1,9 @@
 ---
 name: security-auditor
-description: 安全审计专家，负责代码安全审查、漏洞检测、OWASP 合规检查。Use proactively for security-sensitive code changes, auth logic, data handling.
+description: >
+  安全审计专家，负责代码安全审查、漏洞检测、OWASP Top 10 合规检查。
+  只读模式不写代码，使用场景：安全敏感代码变更、认证逻辑、支付数据处理。
+  触发词：安全、审计、OWASP、漏洞、渗透测试
 model: opus
 permissionMode: default
 tools: Read, Grep, Glob

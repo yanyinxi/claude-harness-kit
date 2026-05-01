@@ -1,6 +1,9 @@
 ---
 name: verifier
-description: 专项验证器，负责功能验证、性能测试、兼容性检查。Use for verifying changes work correctly across different environments, running regression tests, performance benchmarks.
+description: >
+  专项验证器，负责功能验证、性能测试、跨环境兼容性检查。
+  在代码变更后运行，确保修改在多种环境下正确工作。触发词：验证、回归测试、性能基准
+  适用于 CI 流水线中的自动化验证环节。
 model: sonnet
 permissionMode: default
 tools: Read, Bash, Grep, Glob

@@ -1,6 +1,9 @@
 ---
 name: tdd
-description: Test-Driven Development workflow. Use when writing new features, fixing bugs, or any code change that should be verified. Enforces RED → GREEN → REFACTOR cycle.
+description: >
+  测试驱动开发工作流。编写新功能、修复bug或任何需要验证的代码变更时调用。
+  强制执行RED→GREEN→REFACTOR三阶段循环。
+  激活条件：涉及TDD、测试驱动、红绿重构相关讨论。
 ---
 
 # TDD — 测试驱动开发

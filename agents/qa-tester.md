@@ -1,6 +1,8 @@
 ---
 name: qa-tester
-description: QA 测试工程师，负责测试用例设计、边界条件覆盖、测试代码生成。Use for generating test cases, expanding test coverage, designing integration tests.
+description: >
+  QA 测试工程师，负责测试用例设计、边界条件覆盖、测试代码生成。
+  使用场景：生成测试用例、扩大测试覆盖率、设计集成测试。触发词：测试、QA、覆盖率
 model: sonnet
 permissionMode: default
 tools: Read, Write, Edit, Bash, Grep, Glob, TodoWrite

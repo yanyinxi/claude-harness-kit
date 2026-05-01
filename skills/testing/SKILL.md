@@ -1,6 +1,10 @@
 ---
 name: testing
-description: 设计测试用例和执行测试。用于单元测试、集成测试、端到端测试、测试报告生成。适用于测试计划制定、测试用例编写、测试执行、测试报告生成等场景。
+description: >
+  Sonnet agents实现功能后在创建源文件时调用。
+  强制执行测试金字塔（单元/集成/E2E）、AAA结构和命名约定。
+  激活条件：src/目录文件变更、test/目录文件变更、创建测试文件时。
+  激活条件：src/或test/目录文件变更。
 disable-model-invocation: false
 user-invocable: true
 allowed-tools: Read, Write, Grep, Glob, Bash

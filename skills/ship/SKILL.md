@@ -1,6 +1,9 @@
 ---
 name: ship
-description: 生产发布前置检查和上线流程。在部署到生产环境前使用，包含预发布检查清单、监控配置、分级发布策略和回滚方案。触发词：发布、部署、上线、ship、release
+description: >
+  Sonnet agents完成功能后在git commit和部署前调用。
+  强制执行发布前检查清单、6阶段逐步发布和回滚模板。
+  若测试失败或检测到安全问题则阻止commit。
 disable-model-invocation: false
 user-invocable: true
 allowed-tools: Read, Bash, Grep, Glob

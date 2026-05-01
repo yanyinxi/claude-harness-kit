@@ -1,6 +1,9 @@
 ---
 name: task-distribution
-description: 分析任务复杂度并分配开发任务。用于任务拆分、工作量估算、开发者分配、开发计划制定。适用于项目启动、Sprint 规划、任务分配、工作量评估等场景。
+description: >
+  分析任务复杂度并分配开发任务。任务拆分、工作量估算、开发者分配、开发计划制定时调用。
+  遵循收集任务→评估复杂度→估算工作量→分配任务的四步流程。
+  激活条件：涉及Sprint规划、任务分配、工作量评估相关讨论。
 disable-model-invocation: false
 user-invocable: true
 allowed-tools: Read, Write, Grep, Glob

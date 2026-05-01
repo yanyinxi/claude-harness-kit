@@ -1,6 +1,9 @@
 ---
 name: multi-model-review
-description: Cross-model code review using multiple AI models for independent verification. Use for critical code paths, security-sensitive changes, or when second opinion is needed.
+description: >
+  使用多个AI模型进行独立验证的交叉审查。适用于关键代码路径、安全敏感变更或需要第二意见时。
+  同时发3个独立Agent（Sonnet代码审查+Opus安全审计+Sonnet测试覆盖），
+  汇总结果并对比差异。激活条件：用户要求多方面审查或涉及安全/支付代码。
 ---
 
 # Multi-Model Review — 多模型交叉审查

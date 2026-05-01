@@ -1,0 +1,33 @@
+{
+  "id": "model-001",
+  "type": "model",
+  "name": "Evolve Daemon 配置模型",
+  "description": "evolve-daemon 的配置数据结构定义",
+  "maturity": "draft",
+  "content": {
+    "schema": {
+      "daemon": {
+        "schedule": "cron 表达式",
+        "idle_trigger_minutes": "number",
+        "extract_timeout_seconds": "number"
+      },
+      "thresholds": {
+        "min_new_sessions": "number - 最小触发会话数",
+        "min_same_pattern_corrections": "number - 模式纠正次数阈值",
+        "max_hours_since_last_analyze": "number - 最大分析间隔"
+      },
+      "safety": {
+        "max_proposals_per_day": "number - 每日最大提案数",
+        "auto_close_days": "number - 自动关闭天数",
+        "breaker": {
+          "max_consecutive_rejects": "number - 连续拒绝熔断阈值",
+          "pause_days": "number - 暂停天数"
+        }
+      }
+    }
+  },
+  "created_at": "2026-05-01T00:00:00",
+  "last_used_at": "2026-05-01T19:00:00",
+  "usage_count": 1,
+  "project_count": 1
+}

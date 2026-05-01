@@ -1,6 +1,9 @@
 ---
 name: architecture-design
-description: 设计系统架构和技术方案。用于系统架构设计、技术栈选择、技术风险评估、技术决策制定。适用于新项目架构设计、技术选型、架构重构、技术方案评审等场景。
+description: >
+  Opus agents在新项目或重大重构写代码前调用。
+  输出架构决策记录（ADR）、架构图和技术栈决策及风险评估。
+  激活条件：架构设计、技术选型、ADR评审、重大重构开始前。
 disable-model-invocation: false
 user-invocable: true
 allowed-tools: Read, Write, Grep, Glob

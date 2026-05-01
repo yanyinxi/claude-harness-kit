@@ -1,6 +1,9 @@
 ---
 name: performance
-description: Performance analysis and optimization guidelines. Use when investigating slow responses, high resource usage, or before deploying performance-sensitive features.
+description: >
+  性能分析与优化指南。调查响应慢、高资源占用或部署性能敏感功能前调用。
+  遵循测量先行→定位热点→优化→复测的四步流程。
+  激活条件：涉及性能、慢查询、瓶颈、optimization相关讨论。
 ---
 
 # Performance — 性能分析与优化

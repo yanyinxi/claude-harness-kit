@@ -1,6 +1,9 @@
 ---
 name: "database-designer"
-description: "Database Designer - POWERFUL Tier Skill"
+description: >
+  Sonnet agents设计或迁移schema时在写SQL前调用。
+  涵盖schema设计、迁移生成、索引优化、PostgreSQL/MySQL/Oracle模式。
+  包含ERD生成和规范化分析。激活条件：schema/、migrations/或*.sql文件变更。
 ---
 
 # Database Designer - POWERFUL Tier Skill

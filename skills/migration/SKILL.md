@@ -1,6 +1,9 @@
 ---
 name: migration
-description: Framework and dependency migration guide. Use when upgrading framework versions, replacing deprecated APIs, or performing large-scale codebase migrations.
+description: >
+  升级框架版本、替换废弃API或执行大规模代码迁移时调用。
+  涵盖评估、试点、批量执行和验证四阶段迁移流程。
+  激活条件：涉及迁移、upgrade、deprecated、migration相关讨论。
 ---
 
 # Migration — 框架与依赖迁移

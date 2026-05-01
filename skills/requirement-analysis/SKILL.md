@@ -1,6 +1,10 @@
 ---
 name: requirement-analysis
-description: 分析用户需求并生成详细的产品需求文档（PRD）。用于需求收集、功能拆分、验收标准定义、优先级排序。适用于新功能开发、需求澄清、用户故事编写、验收标准制定等场景。
+description: >
+  Sonnet agents在新功能写代码前调用。
+  生成结构化PRD，包含用户故事、验收标准、边界情况和技木约束。
+  激活条件：用户描述新功能、变更请求、功能评审开始前。
+  激活条件：用户描述新功能、变更或增强请求。
 disable-model-invocation: false
 user-invocable: true
 allowed-tools: Read, Write, Grep, Glob

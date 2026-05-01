@@ -11,7 +11,7 @@ Verify, then ship.
 Evolve, don't just learn.
 ```
 
-[![Version](https://img.shields.io/badge/CHK-v0.4-blue?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/CHK-v2.0-blue?style=flat-square)](#)
 [![Platform](https://img.shields.io/badge/Platform-Claude%20Code%20CLI-green?style=flat-square)](#)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square)](LICENSE)
 
@@ -108,7 +108,7 @@ Evolve, don't just learn.
 ├── 5 个 Hook 事件（上下文注入、安全拦截、质量门禁...）
 └── 进化闭环（犯错 → 学习 → 固化，不再犯第二次）
 
-这就是 CHK v0.4
+这就是 CHK v2.0
 ```
 
 ---
@@ -238,29 +238,13 @@ Step 2: 复制斜杠命令
 
 ```bash
 cd /path/to/your-project
+
 claude
 ```
 
 **Step 2：在聊天框输入斜杠命令**
 
 在 Claude Code 聊天框输入 `/chk-init` 等命令即可：
-
-| 你想做什么 | 输入命令 | 备注 |
-| ---------- | -------- | ---- |
-| 初始化新项目 | `/chk-init` | 自动分析技术栈，生成 CLAUDE.md |
-| 快速修复 Bug | `/chk-auto` | 全自动端到端，5 分钟搞定 |
-| 功能开发（默认） | `/chk-team` | 标准 5 阶段流程（研究→设计→实现→审查→交付） |
-| 批量代码改造 | `/chk-ultra` | 极限并行，3-5 个 Agent 同时工作 |
-| 数据库迁移 | `/chk-pipeline` | 严格阶段顺序，每一步验证通过才进入下一步 |
-| 写支付/安全代码 | `/chk-ralph` | TDD 强制，不通过测试不停止 |
-| 架构决策 | `/chk-ccg` | 三方（Claude + Codex + Gemini）独立审查 |
-| 简单问答 | `/chk-solo` | 直接对话，不用 Agent，零开销 |
-| 查看状态 | `/chk-status` | 查看当前模式、Hooks、Sessions、Instinct |
-| 清理过期知识 | `/chk-gc` | 扫描 .claude/knowledge/，清理漂移和过时内容 |
-| 查看帮助 | `/chk-help` | 显示所有命令和场景选择指南 |
-
-### 场景对照（闭眼选）
-
 ```
 线上有个 Bug      → /chk-auto
 新功能要从零做    → /chk-team
@@ -315,13 +299,6 @@ CHK: (自动启动 Ultrawork Mode)
 ✅ 完成: 20 个文件全部添加日志
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
-
-**场景 2: 激活特定 Agent**
-
-```
-你: 用 architect Agent 设计这个模块的架构
-
-CHK: (切换到 architect Agent, 使用 Opus 模型)
 
 **场景 2: 激活特定 Agent**
 

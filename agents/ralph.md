@@ -1,6 +1,8 @@
 ---
 name: ralph
-description: 持久执行循环，不通过验证不停止。Use for critical quality requirements, core business logic that must not fail, security-sensitive code paths. 当要求零容忍质量时使用。
+description: >
+  持久执行循环 Agent，不通过验证不停止。适合核心业务逻辑实现、安全敏感代码路径。
+  当要求零容忍质量标准时使用，触发词：零容忍、质量优先、核心逻辑
 model: sonnet
 permissionMode: acceptEdits
 isolation: worktree

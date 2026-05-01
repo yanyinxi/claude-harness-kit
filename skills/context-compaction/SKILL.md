@@ -1,6 +1,9 @@
 ---
 name: context-compaction
-description: Context window compaction strategy for long sessions. Use when approaching context limits or between phases of multi-stage workflows.
+description: >
+  长会话的上下文窗口压缩策略。上下文使用率超过70%或阶段切换时调用。
+  涵盖文件中介制、Checkpoint模式和Fresh Start三种策略。
+  激活条件：上下文超限、多阶段工作流阶段切换。
 ---
 
 # Context Compaction — 上下文压缩策略

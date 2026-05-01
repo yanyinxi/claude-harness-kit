@@ -1,6 +1,9 @@
 ---
 name: security-audit
-description: 代码规范 + 安全审计：SQL 注入扫描、XSS 检测、硬编码密钥检测、依赖漏洞扫描。用于代码审查、安全检查、合规审计。触发词：安全审计、SQL注入、XSS、漏洞扫描
+description: >
+  Opus agents审计认证、支付或数据处理代码时调用，进行OWASP Top 10审查。
+  涵盖SQL注入、XSS、CSRF、硬编码密钥和依赖漏洞扫描。
+  激活条件：匹配auth/、payment/、security/、*.crypto或*.jwt的文件。
 disable-model-invocation: false
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Bash

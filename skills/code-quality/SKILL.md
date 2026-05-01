@@ -1,6 +1,10 @@
 ---
 name: code-quality
-description: 审查代码质量和安全问题。用于代码审查、安全扫描、性能优化、代码规范检查。适用于 PR 审查、代码质量检查、安全漏洞扫描、性能优化建议等场景。
+description: >
+  Sonnet agents在PostToolUse的Write/Edit操作时调用。
+  涵盖6个维度：正确性、可读性、架构、安全、性能、可维护性。
+  激活条件：代码审查、PR评审、Write/Edit操作后自动触发。
+  输出带严重等级的结构化审查报告。
 disable-model-invocation: false
 user-invocable: true
 allowed-tools: Read, Grep, Glob, Bash

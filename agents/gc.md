@@ -1,6 +1,8 @@
 ---
 name: gc
-description: 知识垃圾回收 Agent，定期扫描模式漂移、过期知识、技术债务，自动提交修复 PR
+description: >
+  知识垃圾回收 Agent，定期扫描模式漂移、过期知识和无效技术债务。
+  自动生成修复提案并提交 PR，保持知识库的健康度。触发词：清理、知识回收、过期
 model: sonnet
 tools: Read, Grep, Glob, Bash
 disallowed-tools: Write, Edit

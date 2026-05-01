@@ -1,6 +1,8 @@
 ---
 name: migration-dev
-description: 代码迁移专家，负责框架升级、依赖更新、API 迁移等跨文件变更。Use for framework version upgrades, API migrations, large-scale refactoring.
+description: >
+  代码迁移专家，负责框架升级、依赖更新、API 迁移等大规模跨文件变更。
+  遵循小步提交原则，确保每步可独立 revert。使用场景：框架版本升级、API 迁移。
 model: sonnet
 permissionMode: acceptEdits
 isolation: worktree

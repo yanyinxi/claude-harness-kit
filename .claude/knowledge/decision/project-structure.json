@@ -1,0 +1,24 @@
+{
+  "id": "decision-001",
+  "type": "decision",
+  "name": "CLI 工具采用 Python 而非 Bash",
+  "description": "为什么选择 Python 作为主要 CLI 实现语言",
+  "maturity": "draft",
+  "content": {
+    "decision": "CLI 工具使用 Python 3 实现",
+    "context": "项目需要跨平台支持 (macOS/Linux/Windows)",
+    "options": [
+      "Bash 脚本 - 简单但不跨平台",
+      "Node.js - 与项目技术栈一致但启动慢",
+      "Python 3 - 跨平台、标准库丰富、启动快"
+    ],
+    "consequences": {
+      "positive": ["跨平台兼容", "丰富的标准库", "易于测试"],
+      "negative": ["需要 Python 运行时", "与 Node.js 生态割裂"]
+    }
+  },
+  "created_at": "2026-05-01T00:00:00",
+  "last_used_at": "2026-05-01T19:00:00",
+  "usage_count": 1,
+  "project_count": 1
+}

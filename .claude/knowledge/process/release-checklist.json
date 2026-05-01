@@ -1,0 +1,25 @@
+{
+  "id": "process-001",
+  "type": "process",
+  "name": "发布前检查清单",
+  "description": "每次发布前的标准检查流程",
+  "maturity": "draft",
+  "content": {
+    "steps": [
+      "运行全部测试: npm test",
+      "检查版本号: cat package.json | grep version",
+      "更新 CHANGELOG.md",
+      "创建 Git tag: git tag v$x.x.x",
+      "推送到远程: git push && git push --tags"
+    ],
+    "checklist": [
+      {"item": "测试全部通过", "status": "pending"},
+      {"item": "文档已更新", "status": "pending"},
+      {"item": "版本号已 bump", "status": "pending"}
+    ]
+  },
+  "created_at": "2026-05-01T00:00:00",
+  "last_used_at": "2026-05-01T19:00:00",
+  "usage_count": 1,
+  "project_count": 1
+}

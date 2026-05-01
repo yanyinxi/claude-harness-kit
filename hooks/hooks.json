@@ -26,6 +26,22 @@
           "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/tdd-check.sh",
           "timeout": 3
         }]
+      },
+      {
+        "matcher": "*",
+        "hooks": [{
+          "type": "command",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/rate-limiter.sh",
+          "timeout": 3
+        }]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [{
+          "type": "command",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/checkpoint-auto-save.sh",
+          "timeout": 3
+        }]
       }
     ],
     "PostToolUse": [
@@ -52,6 +68,22 @@
           "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect-skill.py",
           "timeout": 5
         }]
+      },
+      {
+        "matcher": "*",
+        "hooks": [{
+          "type": "command",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/security-auto-trigger.sh",
+          "timeout": 3
+        }]
+      },
+      {
+        "matcher": "*",
+        "hooks": [{
+          "type": "command",
+          "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/output-secret-filter.py",
+          "timeout": 3
+        }]
       }
     ],
     "PostToolUseFailure": [
@@ -64,12 +96,39 @@
         }]
       }
     ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [{
+          "type": "command",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/observe.sh",
+          "timeout": 3
+        }]
+      }
+    ],
     "Stop": [
       {
         "hooks": [{
           "type": "command",
           "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect-session.py",
           "timeout": 10
+        }]
+      }
+    ],
+    "WorktreeCreate": [
+      {
+        "hooks": [{
+          "type": "command",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/worktree-sync.sh",
+          "timeout": 10
+        }]
+      }
+    ],
+    "WorktreeRemove": [
+      {
+        "hooks": [{
+          "type": "command",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/worktree-cleanup.sh",
+          "timeout": 5
         }]
       }
     ]
