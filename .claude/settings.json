@@ -15,10 +15,25 @@
       "Bash(chmod +x /Users/yanyinxi/工作/code/github/claude-harness-kit/hooks/bin/output-secret-filter.py)",
       "mcp__filesystem__write_file",
       "Bash(git pull *)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Read(//Users/yanyinxi/工作/code/github/kafka-2.3.1-src/.claude/**)",
+      "Bash(cp /Users/yanyinxi/.claude/plugins/cache/claude-harness-kit/claude-harness-kit/0.4.0/hooks/bin/observe.py /Users/yanyinxi/工作/code/github/claude-harness-kit/hooks/bin/observe.py)",
+      "Bash(cp /Users/yanyinxi/.claude/plugins/cache/claude-harness-kit/claude-harness-kit/0.4.0/hooks/bin/observe.sh /Users/yanyinxi/工作/code/github/claude-harness-kit/hooks/bin/observe.sh)",
+      "Bash(chmod +x /Users/yanyinxi/工作/code/github/claude-harness-kit/hooks/bin/observe.py)",
+      "Bash(chmod +x /Users/yanyinxi/工作/code/github/claude-harness-kit/hooks/bin/observe.sh)",
+      "Bash(cp /Users/yanyinxi/工作/code/github/claude-harness-kit/hooks/bin/observe.py /Users/yanyinxi/.claude/plugins/cache/claude-harness-kit/claude-harness-kit/0.4.0/hooks/bin/observe.py)",
+      "Bash(cp /Users/yanyinxi/工作/code/github/claude-harness-kit/hooks/bin/observe.sh /Users/yanyinxi/.claude/plugins/cache/claude-harness-kit/claude-harness-kit/0.4.0/hooks/bin/observe.sh)",
+      "Bash(chmod +x /Users/yanyinxi/.claude/plugins/cache/claude-harness-kit/claude-harness-kit/0.4.0/hooks/bin/observe.py /Users/yanyinxi/.claude/plugins/cache/claude-harness-kit/claude-harness-kit/0.4.0/hooks/bin/observe.sh)",
+      "Bash(env CLAUDE_PLUGIN_ROOT=\"$\\(pwd\\)/../..\" bash rate-limiter.sh)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(cp /Users/yanyinxi/工作/code/github/claude-harness-kit/hooks/bin/rate-limiter.sh /Users/yanyinxi/.claude/plugins/cache/claude-harness-kit/claude-harness-kit/0.4.0/hooks/bin/rate-limiter.sh)",
+      "Bash(chmod +x /Users/yanyinxi/.claude/plugins/cache/claude-harness-kit/claude-harness-kit/0.4.0/hooks/bin/rate-limiter.sh)",
+      "Bash(git checkout *)"
     ],
     "additionalDirectories": [
-      "/Users/yanyinxi/工作/code/github/claude-harness-kit/.claude/tasks"
+      "/Users/yanyinxi/工作/code/github/claude-harness-kit/.claude/tasks",
+      "/Users/yanyinxi/.claude/plugins/cache/claude-harness-kit/claude-harness-kit/0.4.0/hooks/bin",
+      "/Users/yanyinxi/工作/code/github/kafka-2.3.1-src/.claude"
     ]
   }
 }

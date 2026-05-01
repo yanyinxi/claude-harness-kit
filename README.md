@@ -209,6 +209,16 @@ cd claude-harness-kit
 
 ```bash
 bash ./cli/install.sh
+
+# 查看插件是否安装成功
+claude plugins list 
+
+显示表示成功
+  ❯ claude-harness-kit@claude-harness-kit
+    Version: 0.4.0
+    Scope: user
+    Status: ✔ enabled
+
 ```
 
 输出示例：
@@ -230,6 +240,12 @@ Step 2: 复制斜杠命令
 ✅ 安装完成！
 ```
 
+
+### 卸载插件
+
+```bash
+claude plugins uninstall claude-harness-kit@claude-harness-kit --scope user  
+```
 ---
 
 ### 使用
@@ -554,11 +570,6 @@ Phase 5: Ship (交付) — ~3 min
 | 插件已安装但不生效 | 重启 Claude Code，或重新安装插件 |
 | 找不到 chk 命令 | 重新安装：`claude plugins install claude-harness-kit@claude-harness-kit --scope local $(pwd)` |
 
-### 卸载插件
-
-```bash
-claude plugins uninstall claude-harness-kit@claude-harness-kit --scope local
-```
 
 ---
 
