@@ -556,8 +556,14 @@ Phase 5: Ship (交付) — ~3 min
 |------|---------|
 | `Plugin not found in marketplace` | 先运行 `claude plugins marketplace add --scope local $(pwd)` |
 | `marketplace.json not found` | 确保 marketplace.json 在 `.claude-plugin/` 目录下 |
-| 插件已安装但不生效 | 重启 Claude Code，或运行 `claude plugins update claude-harness-kit` |
-| 找不到 chk 命令 | 重新运行 `claude plugins install claude-harness-kit`，确保插件已启用 |
+| 插件已安装但不生效 | 重启 Claude Code，或重新安装插件 |
+| 找不到 chk 命令 | 重新安装：`claude plugins install claude-harness-kit@claude-harness-kit --scope local $(pwd)` |
+
+### 卸载插件
+
+```bash
+claude plugins uninstall claude-harness-kit@claude-harness-kit --scope local
+```
 
 ---
 
