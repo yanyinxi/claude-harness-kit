@@ -71,7 +71,13 @@
       "Bash(./cli/kit.sh *)",
       "Bash(git commit *)",
       "Bash(git rm *)",
-      "Bash(git reset *)"
+      "Bash(git reset *)",
+      "Bash(sed -n '225,235p' README.md)",
+      "Bash(sed -n '185,195p' cli/init.py)",
+      "Bash(claude --print \"Analyze OAuth login implementation\")",
+      "Bash(~/claude-harness-kit/cli/kit.sh init *)",
+      "mcp__filesystem__list_directory",
+      "mcp__filesystem__read_text_file"
     ],
     "additionalDirectories": [
       "/tmp/research",

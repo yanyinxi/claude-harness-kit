@@ -25,21 +25,8 @@ def find_project_root() -> Path:
 
 
 def get_session_id_fallback(root: Path) -> str:
-    """尝试从 agent_calls.jsonl 提取 session_id，兜底用 git commit hash"""
-    # 1. 尝试从 agent_calls.jsonl 提取
-    agent_file = root / ".claude" / "data" / "agent_calls.jsonl"
-    if agent_file.exists():
-        try:
-            lines = agent_file.read_text().strip().splitlines()
-            if lines:
-                last = json.loads(lines[-1])
-                sid = last.get("session_id", "")
-                if sid and sid != "unknown":
-                    return sid
-        except (json.JSONDecodeError, OSError):
-            pass
-
-    # 2. 尝试从 git commit hash 生成确定性 ID（格式：git-{hash前8位}）
+    """生成确定性的 session_id"""
+    # 1. 尝试从 git commit hash 生成确定性 ID（格式：git-{hash前8位}-{日期}）
     git_dir = root / ".git"
     if git_dir.exists():
         try:
@@ -51,11 +38,16 @@ def get_session_id_fallback(root: Path) -> str:
             if result.returncode == 0:
                 commit = result.stdout.strip()
                 if commit:
-                    return f"git-{commit}"
+                    from datetime import date
+                    today = date.today().isoformat()
+                    return f"git-{commit}-{today}"
         except Exception:
             pass
 
-    return "unknown"
+    # 2. 用项目名 + 时间戳兜底
+    from datetime import datetime
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+    return f"{root.name}-{ts}"
 
 
 def build_session_summary(root: Path) -> dict:
