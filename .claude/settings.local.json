@@ -54,10 +54,36 @@
       "Bash(python3 -c \"import py_compile; py_compile.compile\\('hooks/bin/collect-failure.py', doraise=True\\)\")",
       "Bash(python3 -c \"import py_compile; py_compile.compile\\('hooks/bin/collect-skill.py', doraise=True\\)\")",
       "Bash(python3 *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(time git *)",
+      "Bash(curl -I https://github.com --connect-timeout 10)",
+      "Bash(curl -s --connect-timeout 5 https://api.github.com/ -o /dev/null)",
+      "Bash(curl -s --connect-timeout 5 --proxy http://127.0.0.1:7890 https://api.github.com/ -o /dev/null)",
+      "Bash(env)",
+      "Bash(curl -s --connect-timeout 5 https://api.github.com)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Bash(claude plugins *)",
+      "Read(//Users/yanyinxi/.claude/**)",
+      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\" && cat {}')",
+      "Bash(./cli/kit.sh *)",
+      "Bash(git commit *)",
+      "Bash(git rm *)",
+      "Bash(git reset *)"
     ],
     "additionalDirectories": [
-      "/tmp/research"
+      "/tmp/research",
+      "/Users/yanyinxi/工作/code/github/claude-harness-kit"
     ]
+  },
+  "extraKnownMarketplaces": {
+    "claude-harness-kit": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/yanyinxi/工作/code/github/claude-harness-kit"
+      }
+    }
   }
 }
