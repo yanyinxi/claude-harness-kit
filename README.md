@@ -198,150 +198,81 @@ CHK 自动处理：
 
 ### 安装
 
-#### Step 1: 克隆项目
+#### Step 1: 克隆项目（只需做一次）
 
 ```bash
 git clone https://github.com/yanyinxi/claude-harness-kit.git
 cd claude-harness-kit
-```
-
-#### Step 2: 添加本地插件市场
-
-```bash
 claude plugins marketplace add --scope local $(pwd)
-```
-
-#### Step 3: 安装插件
-
-```bash
 claude plugins install claude-harness-kit
-```
-
-#### Step 4: 验证
-
-```bash
 claude plugins list
-# 应该看到: claude-harness-kit  enabled
+# 应该看到: claude-harness-kit  enabled ✅
 ```
 
 ---
 
-### 使用
+### 使用（在你自己的项目里运行）
+
+假设你有一个存量项目：`/path/to/your-project`
+
+#### Step 1: 进入你的项目目录
 
 ```bash
-# 查看可用命令
-./cli/kit.sh --help
+cd /path/to/your-project
+```
 
-# 初始化项目（生成 CLAUDE.md）
-./cli/kit.sh init
+#### Step 2: 初始化（生成 CLAUDE.md）
+
+```bash
+/Users/yanyinxi/工作/code/github/claude-harness-kit/cli/kit.sh init
+# 或简写（如果 CHK 在 home 目录）：
+~/claude-harness-kit/cli/kit.sh init
+
+# 输出示例：
+# kit init: your-project
+#   检测到: PHP / Composer
+#   框架: Laravel
+#   ✅ CLAUDE.md 已生成
+#   ✅ .claude/ 骨架已生成
+```
+
+> **注意**：这里要指定 CHK 的**完整路径**，因为 `kit.sh` 在你的项目目录里不存在。
+
+#### Step 3: 启动 Claude Code
+
+```bash
+claude
+```
+
+现在 Claude Code 会自动读取你项目里的 `CLAUDE.md`，AI 一进来就知道这是什么项目。
+
+---
+
+### 常用命令
+
+```bash
+# 查看 CHK 帮助
+~/claude-harness-kit/cli/kit.sh --help
+
+# 初始化项目（在你的项目目录运行）
+~/claude-harness-kit/cli/kit.sh init
 
 # 标准开发流程
-./cli/kit.sh dev "实现用户登录功能"
+~/claude-harness-kit/cli/kit.sh dev "实现用户登录功能"
 
 # 代码审查
-./cli/kit.sh review
+~/claude-harness-kit/cli/kit.sh review
 
 # 批量迁移
-./cli/kit.sh migrate "升级 Spring Boot 2.x → 3.x"
+~/claude-harness-kit/cli/kit.sh migrate "升级 Spring Boot 2.x → 3.x"
+
+# 查看 CHK 状态
+~/claude-harness-kit/cli/kit.sh status
 ```
 
 ---
 
-### 第二部分：使用
-
-#### 使用方式一：kit CLI 命令行（推荐新手）
-
-**Step 1: 初始化一个存量项目**
-
-```bash
-cd /path/to/your-legacy-project
-
-# 运行初始化，自动分析项目结构
-./cli/kit.sh init
-```
-
-输出示例：
-
-```
-🔍 开始分析项目...
-✅ 检测到技术栈: Spring Boot 3.2 + PostgreSQL + Vue 3
-✅ 检测到构建工具: Maven
-✅ 识别模块数: 12 个
-✅ 关键路径: src/main/java/com/demo/
-
-📄 生成文件:
-   - CLAUDE.md (项目上下文, 150 行)
-   - .claude/settings.json (Hook 配置)
-   - .claude/knowledge/ (知识库目录)
-
-🎉 初始化完成！重新启动 Claude Code 即可生效。
-```
-
-**Step 2: 启动标准开发流程**
-
-```bash
-./cli/kit.sh dev "实现用户登录功能"
-```
-
-输出示例：
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  kit dev — 标准开发流程                                      │
-│  任务: 实现用户登录功能                                      │
-└─────────────────────────────────────────────────────────────┘
-
-📋 Phase 1: 需求澄清
-   ? Q1: 登录方式支持哪些？ (账号密码 / 手机验证码 / OAuth)
-   ? Q2: 是否需要记住登录状态？
-   ? Q3: 登录失败是否需要图形验证码？
-
-📋 Phase 2: 架构设计
-   → 生成 plan/architecture.md
-
-📋 Phase 3: 并行实现
-   → backend-dev | frontend-dev | database-dev
-
-📋 Phase 4: 代码审查
-   → code-reviewer + security-auditor
-
-📋 Phase 5: 交付
-   → git commit + push
-
-总耗时: ~35 min
-```
-
-**Step 3: 代码审查**
-
-```bash
-# 审查当前分支的所有变更
-./cli/kit.sh review
-
-# 只审查特定文件
-./cli/kit.sh review --files "src/service/AuthService.java"
-```
-
-**Step 4: 批量迁移（Java 8 → Java 17 为例）**
-
-```bash
-# 先扫描评估
-./cli/kit.sh scan --repo /path/to/project
-
-# 输出迁移评估报告：
-# 技术栈: Java 8 + Spring Boot 2.5
-# 改动量: High (需要改 45 个文件)
-# 风险点: javax.* → jakarta.* 迁移
-# 建议: 试点项目先跑一遍，积累迁移手册
-
-# 启动迁移流程
-./cli/kit.sh migrate "升级 Java 8 → Java 17 + Spring Boot 2.x → 3.x" \
-  --repo /path/to/project \
-  --mode autopilot
-```
-
----
-
-#### 使用方式二：Claude Code 内直接对话（适合深度用户）
+### 进阶：Claude Code 内直接对话
 
 在 Claude Code CLI 中（`claude` 命令），直接用自然语言指挥：
 
