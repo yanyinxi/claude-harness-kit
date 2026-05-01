@@ -1,6 +1,9 @@
 ---
 name: parallel-dispatch
-description: Parallel task dispatch and aggregation for multi-agent workflows. Use when tasks can be executed independently, maximizing throughput through concurrent execution.
+description: >
+  多Agent工作流的并行任务分派与聚合。任务可独立执行时调用，最大化并发吞吐量。
+  遵循识别独立任务→优先级排序→并行分派→状态追踪→结果汇总的流程。
+  激活条件：涉及并行、并发、多任务、batch相关讨论。
 ---
 
 # Parallel Dispatch — 并行任务分派
