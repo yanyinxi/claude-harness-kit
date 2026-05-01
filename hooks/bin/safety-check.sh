@@ -1,23 +1,27 @@
 #!/bin/bash
-set -euo pipefail
-# 安全检查：阻止危险的 Bash 命令
-# Claude Code PreToolUse Hook - 从 stdin 读取 JSON 输入
+# safety-check.sh — PreToolUse Hook: 阻止危险 Bash 命令
+# 设计：永远 exit 0（Hook 失败不阻断工具调用），危险命令通过 hookSpecificOutput 阻断
+set -uo pipefail
 
-# 从 stdin 读取 JSON
-INPUT=$(cat)
+# 三段式 stdin 读取：空输入 → 静默放行
+INPUT=$(cat 2>/dev/null) || INPUT=""
+[[ -z "$INPUT" ]] && exit 0
 
-# 只处理 Bash 工具调用
-TOOL_NAME=$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('tool_name',''))" 2>/dev/null)
-if [[ "$TOOL_NAME" != "Bash" ]]; then
-    exit 0
-fi
+# Python 解析：失败 → 静默放行（安全优先，宁放过不阻断）
+TOOL_NAME=$(echo "$INPUT" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+print(d.get('tool_name', ''))
+" 2>/dev/null) || { exit 0; }
+[[ "$TOOL_NAME" != "Bash" ]] && exit 0
 
-# 提取命令内容
-COMMAND_INPUT=$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('command',''))" 2>/dev/null)
+COMMAND_INPUT=$(echo "$INPUT" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+print(d.get('tool_input', {}).get('command', ''))
+" 2>/dev/null) || { exit 0; }
 
-if [[ -z "$COMMAND_INPUT" ]]; then
-    exit 0
-fi
+[[ -z "$COMMAND_INPUT" ]] && exit 0
 
 block() {
     local pattern="$1"
@@ -42,7 +46,7 @@ print(json.dumps({
 [[ "$COMMAND_INPUT" =~ \>[[:space:]]*/dev/sda ]]               && block "> /dev/sda"
 [[ "$COMMAND_INPUT" =~ dd[[:space:]]+if= ]]                    && block "dd if= (磁盘写入)"
 [[ "$COMMAND_INPUT" =~ mkfs ]]                                 && block "mkfs (格式化)"
-[[ "$COMMAND_INPUT" =~ shutdown|reboot|halt|poweroff ]]        && block "系统关机/重启命令"
+[[ "$COMMAND_INPUT" =~ shutdown|reboot|halt|poweroff ]]         && block "系统关机/重启命令"
 
 # ── Fork Bomb ──
 [[ "$COMMAND_INPUT" =~ :\(\)\{.*:\|:.*\} ]]                   && block "fork bomb (:|:&)"
@@ -52,10 +56,10 @@ print(json.dumps({
 [[ "$COMMAND_INPUT" =~ curl.*\|.*sh ]]                         && block "curl | sh (远程代码执行)"
 [[ "$COMMAND_INPUT" =~ curl.*\|.*bash ]]                       && block "curl | bash (远程代码执行)"
 [[ "$COMMAND_INPUT" =~ wget.*\|.*sh ]]                         && block "wget | sh (远程代码执行)"
-[[ "$COMMAND_INPUT" =~ wget.*-O.*\|.*sh ]]                     && block "wget -O | sh (远程代码执行)"
+[[ "$COMMAND_INPUT" =~ wget.*-O.*\|.*sh ]]                    && block "wget -O | sh (远程代码执行)"
 
 # ── 权限提升类 ──
-[[ "$COMMAND_INPUT" =~ sudo[[:space:]] ]]                    && block "sudo 权限提升"
+[[ "$COMMAND_INPUT" =~ sudo[[:space:]] ]]                      && block "sudo 权限提升"
 [[ "$COMMAND_INPUT" =~ chmod[[:space:]]+(777|a\+rwx) ]]        && block "chmod 777/a+rwx (危险权限)"
 [[ "$COMMAND_INPUT" =~ chown.*root ]]                          && block "chown root (权限变更)"
 
