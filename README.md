@@ -234,21 +234,30 @@ Step 2: 复制斜杠命令
 
 ### 使用
 
-在 Claude Code 聊天框输入斜杠命令即可：
+**Step 1：进入你的项目目录，启动 Claude Code**
 
-| 你想做什么 | 输入命令 |
-| ---------- | -------- |
-| 初始化新项目 | `/chk-init` |
-| 快速修复 Bug | `/chk-auto` |
-| 功能开发（默认） | `/chk-team` |
-| 批量代码改造 | `/chk-ultra` |
-| 数据库迁移 | `/chk-pipeline` |
-| 写支付/安全代码 | `/chk-ralph` |
-| 架构决策 | `/chk-ccg` |
-| 简单问答 | `/chk-solo` |
-| 查看状态 | `/chk-status` |
-| 清理过期知识 | `/chk-gc` |
-| 查看帮助 | `/chk-help` |
+```bash
+cd /path/to/your-project
+claude
+```
+
+**Step 2：在聊天框输入斜杠命令**
+
+在 Claude Code 聊天框输入 `/chk-init` 等命令即可：
+
+| 你想做什么 | 输入命令 | 备注 |
+| ---------- | -------- | ---- |
+| 初始化新项目 | `/chk-init` | 自动分析技术栈，生成 CLAUDE.md |
+| 快速修复 Bug | `/chk-auto` | 全自动端到端，5 分钟搞定 |
+| 功能开发（默认） | `/chk-team` | 标准 5 阶段流程（研究→设计→实现→审查→交付） |
+| 批量代码改造 | `/chk-ultra` | 极限并行，3-5 个 Agent 同时工作 |
+| 数据库迁移 | `/chk-pipeline` | 严格阶段顺序，每一步验证通过才进入下一步 |
+| 写支付/安全代码 | `/chk-ralph` | TDD 强制，不通过测试不停止 |
+| 架构决策 | `/chk-ccg` | 三方（Claude + Codex + Gemini）独立审查 |
+| 简单问答 | `/chk-solo` | 直接对话，不用 Agent，零开销 |
+| 查看状态 | `/chk-status` | 查看当前模式、Hooks、Sessions、Instinct |
+| 清理过期知识 | `/chk-gc` | 扫描 .claude/knowledge/，清理漂移和过时内容 |
+| 查看帮助 | `/chk-help` | 显示所有命令和场景选择指南 |
 
 ### 场景对照（闭眼选）
 
