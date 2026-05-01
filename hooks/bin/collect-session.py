@@ -24,7 +24,41 @@ def find_project_root() -> Path:
     return Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
 
 
-def build_session_summary() -> dict:
+def get_session_id_fallback(root: Path) -> str:
+    """尝试从 agent_calls.jsonl 提取 session_id，兜底用 git commit hash"""
+    # 1. 尝试从 agent_calls.jsonl 提取
+    agent_file = root / ".claude" / "data" / "agent_calls.jsonl"
+    if agent_file.exists():
+        try:
+            lines = agent_file.read_text().strip().splitlines()
+            if lines:
+                last = json.loads(lines[-1])
+                sid = last.get("session_id", "")
+                if sid and sid != "unknown":
+                    return sid
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    # 2. 尝试从 git commit hash 生成确定性 ID（格式：git-{hash前8位}）
+    git_dir = root / ".git"
+    if git_dir.exists():
+        try:
+            import subprocess
+            result = subprocess.run(
+                ["git", "rev-parse", "--short", "HEAD"],
+                cwd=root, capture_output=True, text=True, timeout=5
+            )
+            if result.returncode == 0:
+                commit = result.stdout.strip()
+                if commit:
+                    return f"git-{commit}"
+        except Exception:
+            pass
+
+    return "unknown"
+
+
+def build_session_summary(root: Path) -> dict:
     """从环境变量和 stdin 构建会话摘要"""
     # 从 stdin 读取 hook 传递的数据（如果有）
     try:
@@ -33,7 +67,9 @@ def build_session_summary() -> dict:
     except (json.JSONDecodeError, OSError):
         hook_data = {}
 
-    session_id = hook_data.get("session_id", os.environ.get("CLAUDE_SESSION_ID", "unknown"))
+    session_id = hook_data.get("session_id", os.environ.get("CLAUDE_SESSION_ID"))
+    if not session_id or session_id == "unknown":
+        session_id = get_session_id_fallback(root)
     mode = os.environ.get("CLAUDE_MODE", "solo")
 
     return {
@@ -84,7 +120,7 @@ def trigger_semantic_extraction(root: Path):
 def main():
     root = find_project_root()
 
-    session = build_session_summary()
+    session = build_session_summary(root)
     append_session(root, session)
 
     # 检测 corrections: 优先从 hook_data，其次从 agent_calls/failures 数据

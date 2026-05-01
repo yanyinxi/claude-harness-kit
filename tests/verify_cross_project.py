@@ -3,7 +3,9 @@
 跨项目全链路验证脚本 — 在多个真实项目中跑通 kit init 完整流程。
 用法: python3 tests/verify_cross_project.py [--projects-dir /tmp/verify-projects]
 """
+
 import json
+
 import os
 import shutil
 import subprocess
@@ -21,16 +23,36 @@ HOOKS_BIN = PROJECT_ROOT / "hooks" / "bin"
 
 REPOS = [
     # (name, url, branch_or_tag, expected_lang)
-    ("vuejs/core",        "https://github.com/vuejs/core.git",              "v3.5.13",  "TypeScript"),
-    ("denoland/deno",      "https://github.com/denoland/deno.git",            "v2.2.10",  "TypeScript"),
-    ("sindresorhus/pure",  "https://github.com/sindresorhus/pure.git",       "v4.0.0",   "JavaScript"),
-    ("go-chi/chi",         "https://github.com/go-chi/chi.git",              "v5.2.1",   "Go"),
-    ("labstack/echo",     "https://github.com/labstack/echo.git",            "v4.12.0",  "Go"),
-    ("fastapi/fastapi",   "https://github.com/fastapi/fastapi.git",          "0.115.6",  "Python"),
-    ("tiangolo/fastapi",  "https://github.com/tiangolo/fastapi.git",         "master",   "Python"),
-    ("microsoft/playwright","https://github.com/microsoft/playwright.git",    "v1.51.0",  "TypeScript"),
-    ("elastic/elasticsearch","https://github.com/elastic/elasticsearch.git", "main",     "Java"),
-    ("kubernetes/client-java","https://github.com/kubernetes-client/java.git","master",   "Java"),
+    ("vuejs/core", "https://github.com/vuejs/core.git", "v3.5.13", "TypeScript"),
+    ("denoland/deno", "https://github.com/denoland/deno.git", "v2.2.10", "TypeScript"),
+    (
+        "sindresorhus/pure",
+        "https://github.com/sindresorhus/pure.git",
+        "v4.0.0",
+        "JavaScript",
+    ),
+    ("go-chi/chi", "https://github.com/go-chi/chi.git", "v5.2.1", "Go"),
+    ("labstack/echo", "https://github.com/labstack/echo.git", "v4.12.0", "Go"),
+    ("fastapi/fastapi", "https://github.com/fastapi/fastapi.git", "0.115.6", "Python"),
+    ("tiangolo/fastapi", "https://github.com/tiangolo/fastapi.git", "master", "Python"),
+    (
+        "microsoft/playwright",
+        "https://github.com/microsoft/playwright.git",
+        "v1.51.0",
+        "TypeScript",
+    ),
+    (
+        "elastic/elasticsearch",
+        "https://github.com/elastic/elasticsearch.git",
+        "main",
+        "Java",
+    ),
+    (
+        "kubernetes/client-java",
+        "https://github.com/kubernetes-client/java.git",
+        "master",
+        "Java",
+    ),
 ]
 
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
@@ -39,11 +61,28 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 def git_clone(url: str, dest: Path, branch: str = "main", depth: int = 1) -> bool:
     """Clone with token if available, depth=1 for speed"""
     token_url = url
-    if GITHUB_TOKEN and "github.com" in url and not url.startswith("https://") or \
-       GITHUB_TOKEN and "github.com" in url:
-        token_url = url.replace("https://github.com/", f"https://{GITHUB_TOKEN}@github.com/")
+    if (
+        GITHUB_TOKEN
+        and "github.com" in url
+        and not url.startswith("https://")
+        or GITHUB_TOKEN
+        and "github.com" in url
+    ):
+        token_url = url.replace(
+            "https://github.com/", f"https://{GITHUB_TOKEN}@github.com/"
+        )
 
-    cmd = ["git", "clone", "--depth", str(depth), "--branch", branch, "--single-branch", url, str(dest)]
+    cmd = [
+        "git",
+        "clone",
+        "--depth",
+        str(depth),
+        "--branch",
+        branch,
+        "--single-branch",
+        url,
+        str(dest),
+    ]
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
         if result.returncode != 0:
@@ -73,7 +112,9 @@ def run_kit_init(project_dir: Path) -> dict:
     try:
         proc = subprocess.run(
             [sys.executable, str(INIT_PY), str(project_dir)],
-            capture_output=True, text=True, timeout=60,
+            capture_output=True,
+            text=True,
+            timeout=60,
             cwd=PROJECT_ROOT,
         )
         result["output"] = proc.stdout + proc.stderr
@@ -105,11 +146,13 @@ def run_kit_init(project_dir: Path) -> dict:
                     result["tech_stack"] = line.strip()
                 if "关键目录:" in line and "个" in line:
                     import re
+
                     m = re.search(r"(\d+)\s*个", line)
                     if m:
                         result["key_dirs"] = int(m.group(1))
                 if "入口文件:" in line and "个" in line:
                     import re
+
                     m = re.search(r"(\d+)\s*个", line)
                     if m:
                         result["entry_files"] = int(m.group(1))
@@ -124,7 +167,9 @@ def run_kit_init(project_dir: Path) -> dict:
     return result
 
 
-def verify_project(name: str, url: str, branch: str, expected_lang: str, work_dir: Path) -> dict:
+def verify_project(
+    name: str, url: str, branch: str, expected_lang: str, work_dir: Path
+) -> dict:
     """验证一个项目"""
     project_dir = work_dir / name.replace("/", "_")
     start = time.time()
@@ -143,7 +188,15 @@ def verify_project(name: str, url: str, branch: str, expected_lang: str, work_di
     ok = git_clone(url, project_dir, branch)
     if not ok:
         print("❌ 克隆失败")
-        return {"name": name, "success": False, "error": "克隆失败", "score": 0, "elapsed": time.time()-start}
+        return {
+            "name": name,
+            "url": url,
+            "expected_lang": expected_lang,
+            "success": False,
+            "error": "克隆失败",
+            "score": 0,
+            "elapsed": time.time() - start,
+        }
     print(f"✅ ({time.time()-start:.1f}s)")
 
     # kit init
@@ -248,24 +301,40 @@ def main():
     print(f"平均分: {avg:.1f}/100")
     print()
 
-    print(f"{'项目':<30} {'语言':<12} {'分数':<6} {'耗时':<8} {'关键目录':<10} {'状态'}")
+    print(
+        f"{'项目':<30} {'语言':<12} {'分数':<6} {'耗时':<8} {'关键目录':<10} {'状态'}"
+    )
     print("-" * 75)
     for r in sorted(results, key=lambda x: -x["score"]):
         elapsed_str = f"{r['elapsed']:.0f}s"
-        status = "✅ PASS" if r["score"] >= 60 else "⚠️ WARN" if r["score"] >= 40 else "❌ FAIL"
+        status = (
+            "✅ PASS"
+            if r["score"] >= 60
+            else "⚠️ WARN" if r["score"] >= 40 else "❌ FAIL"
+        )
         tech = r.get("tech_stack", "")[:20]
         kdirs = str(r.get("key_dirs", 0))
-        print(f"{r['name']:<30} {r['expected_lang']:<12} {r['score']:<6} {elapsed_str:<8} {kdirs:<10} {status}")
+        print(
+            f"{r['name']:<30} {r['expected_lang']:<12} {r['score']:<6} {elapsed_str:<8} {kdirs:<10} {status}"
+        )
 
     print(f"\n{'='*70}")
 
     # 保存详细报告
-    report_path = work_dir / f"verify_report_{datetime.now().strftime('%Y%m%d_%H%M')}.json"
-    report_path.write_text(json.dumps({
-        "timestamp": datetime.now().isoformat(),
-        "summary": {"passed": passed, "total": total, "avg_score": avg},
-        "results": results,
-    }, ensure_ascii=False, indent=2))
+    report_path = (
+        work_dir / f"verify_report_{datetime.now().strftime('%Y%m%d_%H%M')}.json"
+    )
+    report_path.write_text(
+        json.dumps(
+            {
+                "timestamp": datetime.now().isoformat(),
+                "summary": {"passed": passed, "total": total, "avg_score": avg},
+                "results": results,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
     print(f"详细报告: {report_path}")
 
     # 清理

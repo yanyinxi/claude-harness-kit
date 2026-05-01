@@ -36,6 +36,14 @@
           "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect-agent.py",
           "timeout": 5
         }]
+      },
+      {
+        "matcher": "Skill",
+        "hooks": [{
+          "type": "command",
+          "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect-skill.py",
+          "timeout": 5
+        }]
       }
     ],
     "PostToolUseFailure": [
