@@ -44,7 +44,7 @@ maxTurns: 30
 
 ### Step 4: 生成报告
 
-产出到 `knowledge/drift-report.md`:
+产出到 `harness/knowledge/drift-report.md`:
 ```
 # GC Report: 2026-XX-XX
 ## Stale entries (N)
