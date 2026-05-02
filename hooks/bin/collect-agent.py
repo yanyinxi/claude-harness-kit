@@ -56,6 +56,9 @@ def main():
         "task": hook_data.get("description", ""),
         "timestamp": datetime.now().isoformat(),
         "session_id": session_id,
+        # 尝试获取执行结果
+        "success": hook_data.get("success", None),
+        "error": hook_data.get("error", ""),
     }
 
     log_file = data_dir / "agent_calls.jsonl"

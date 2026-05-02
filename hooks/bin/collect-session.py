@@ -69,8 +69,13 @@ def calculate_duration(session_start: dict) -> int:
         return 0
 
 
-def aggregate_agent_calls(root: Path) -> dict:
-    """从 agent_calls.jsonl 汇总 agent 使用情况"""
+def aggregate_agent_calls(root: Path, session_id: str = None) -> dict:
+    """从 agent_calls.jsonl 汇总 agent 使用情况
+
+    Args:
+        root: 项目根目录
+        session_id: 如果提供，只统计匹配此 session_id 的记录
+    """
     agent_calls_file = root / ".claude" / "data" / "agent_calls.jsonl"
     result = {
         "agents": [],
@@ -93,6 +98,10 @@ def aggregate_agent_calls(root: Path) -> dict:
         for line in content.splitlines():
             try:
                 call = json.loads(line)
+                # 如果指定了 session_id，只统计匹配的记录
+                if session_id and call.get("session_id") != session_id:
+                    continue
+
                 agent = call.get("agent", "")
                 if agent:
                     agent_list.append(agent)
@@ -117,8 +126,13 @@ def aggregate_agent_calls(root: Path) -> dict:
     return result
 
 
-def aggregate_failures(root: Path) -> dict:
-    """从 failures.jsonl 提取失败模式"""
+def aggregate_failures(root: Path, session_id: str = None) -> dict:
+    """从 failures.jsonl 提取失败模式
+
+    Args:
+        root: 项目根目录
+        session_id: 如果提供，只统计匹配此 session_id 的记录
+    """
     failures_file = root / ".claude" / "data" / "failures.jsonl"
     result = {
         "total": 0,
@@ -141,9 +155,13 @@ def aggregate_failures(root: Path) -> dict:
         tool_counter = Counter()
         recent = []
 
-        for line in lines[-20:]:  # 只保留最近 20 条
+        for line in lines:  # 处理所有行
             try:
                 f = json.loads(line)
+                # 如果指定了 session_id，只统计匹配的记录
+                if session_id and f.get("session_id") != session_id:
+                    continue
+
                 error_type = f.get("error_type", classify_error_type(f.get("error", "")))
                 tool = f.get("tool", "unknown")
                 type_counter[error_type] += 1
@@ -159,7 +177,7 @@ def aggregate_failures(root: Path) -> dict:
 
         result["failure_types"] = dict(type_counter)
         result["failure_tools"] = dict(tool_counter)
-        result["recent_failures"] = recent
+        result["recent_failures"] = recent[-20:]  # 只保留最近 20 条
 
     except OSError:
         pass
@@ -246,8 +264,9 @@ def build_session(root: Path) -> dict:
 
     mode = session_start.get("mode", os.environ.get("CLAUDE_MODE", "solo"))
     duration = calculate_duration(session_start)
-    agent_stats = aggregate_agent_calls(root)
-    failure_stats = aggregate_failures(root)
+    # 传递 session_id 以过滤只属于当前会话的数据
+    agent_stats = aggregate_agent_calls(root, session_id=session_id)
+    failure_stats = aggregate_failures(root, session_id=session_id)
     git_stats = get_git_changes(root)
 
     return {
