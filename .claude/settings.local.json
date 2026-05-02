@@ -13,7 +13,7 @@
       "Bash(curl *)",
       "mcp__*",
       "Bash(pytest * *)",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo *)"
     ],
     "additionalDirectories": [
       "*"
