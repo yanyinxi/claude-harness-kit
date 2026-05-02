@@ -3,7 +3,8 @@
     "allow": [
       "*",
       "Bash(python3 -c ' *)",
-      "Bash(python3 -m * *)"
+      "Bash(python3 -m * *)",
+      "Bash(kill *)"
     ],
     "additionalDirectories": [
       "*"

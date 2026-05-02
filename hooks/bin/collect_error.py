@@ -59,23 +59,31 @@ _HOOK_SOURCE_MAP = {
 
 def _infer_source_from_env() -> str:
     """从环境变量和调用栈推断错误来源"""
-    # 1. 尝试从调用栈获取源文件
+    # 1. 尝试从调用栈获取源文件（排除 collect_error.py 自身）
     try:
         tb = traceback.extract_stack()
         for frame in reversed(tb):
             filename = Path(frame.filename).name
-            if filename.endswith(".py") and filename != "collect-error.py":
+            # 跳过 collect_error.py 自身和标准库
+            if filename == "collect-error.py":
+                continue
+            if filename.endswith(".py") and "site-packages" not in frame.filename:
                 return f"hooks/bin/{filename}:{frame.lineno}"
     except Exception:
         pass
 
-    # 2. 从 CLAUDE_PLUGIN_ROOT 推断
+    # 2. 从 CLAUDE_HOOK_SCRIPT 获取（Claude Code 传递的环境变量）
+    hook_script = os.environ.get("CLAUDE_HOOK_SCRIPT", "")
+    if hook_script:
+        return f"hooks/bin/{hook_script}"
+
+    # 3. 从 CLAUDE_PLUGIN_ROOT 推断
     plugin_root = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
     if plugin_root:
-        return f"{plugin_root}/hooks/bin/collect-error.py:0"
+        return f"{plugin_root}/hooks/bin/collect-error.py"
 
-    # 3. 兜底
-    return "hooks/bin/collect-error.py:0"
+    # 4. 兜底
+    return "hooks/bin/collect-error.py"
 
 
 def _get_hook_script_from_path() -> str:
@@ -246,6 +254,10 @@ def main():
 
         # 判断事件类型
         hook_event = os.environ.get("CLAUDE_HOOK_EVENT", "")
+
+        # 如果 hook_event 为空，尝试从 hook_data 推断
+        if not hook_event and hook_data:
+            hook_event = hook_data.get("hook_event", "") or hook_data.get("hookName", "")
 
         if "PostToolUseFailure" in hook_event:
             # PostToolUseFailure: 工具执行失败（传入已读取的 hook_data）

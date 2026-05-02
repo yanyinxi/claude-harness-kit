@@ -76,6 +76,8 @@ NAME="${BASENAME%.*}"
 CANDIDATES=()
 CANDIDATES+=("$(dirname "$IMP_FILE")/$NAME.test.${BASENAME##*.}")
 CANDIDATES+=("$(dirname "$IMP_FILE")/$NAME.spec.${BASENAME##*.}")
+CANDIDATES+=("$(dirname "$IMP_FILE")/${NAME}_test.${BASENAME##*.}")
+CANDIDATES+=("$(dirname "$IMP_FILE")/${NAME}_spec.${BASENAME##*.}")
 
 if [[ "$IMP_FILE" == *"/main/"* ]]; then
     TEST_DIR="${IMP_FILE/main\//test/}"
@@ -85,7 +87,9 @@ fi
 
 PROJECT_REL="${IMP_FILE#./}"
 CANDIDATES+=("__tests__/${NAME}.test.${BASENAME##*.}")
+CANDIDATES+=("__tests__/${NAME}_test.${BASENAME##*.}")
 CANDIDATES+=("tests/${NAME}_test.${BASENAME##*.}")
+CANDIDATES+=("tests/${NAME}.test.${BASENAME##*.}")
 
 for candidate in "${CANDIDATES[@]}"; do
     [[ -f "$candidate" ]] && exit 0
