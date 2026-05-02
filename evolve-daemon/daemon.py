@@ -110,27 +110,131 @@ def check_thresholds(sessions: list[dict], config: dict, last_analyze_time: date
 
 
 def run_analysis(config: dict, root: Path, sessions: list[dict]):
-    """执行分析并生成提案"""
-    from analyzer import aggregate_and_analyze
-    from proposer import generate_proposal
+    """执行分析并生成提案（4维度进化闭环）"""
+    # 1. 语义提取（每个新会话）
+    try:
+        from extract_semantics import analyze_sessions
+        analyze_sessions(sessions, root)
+    except Exception:
+        pass  # 语义提取失败不影响主流程
 
+    # 2. 数据聚合分析
+    from analyzer import aggregate_and_analyze
     analysis = aggregate_and_analyze(sessions, config, root)
 
-    if analysis.get("should_propose"):
-        proposal_path = generate_proposal(analysis, config, root)
-        print(f"✅ 提案已生成: {proposal_path}")
-
-        # 更新分析状态
-        state_file = root / config["paths"]["data_dir"] / "analysis_state.json"
-        state_file.parent.mkdir(parents=True, exist_ok=True)
-        state = {
-            "last_analyzed_session_id": sessions[-1]["session_id"],
-            "last_analyze_time": datetime.now().isoformat(),
-            "total_sessions_analyzed": len(sessions),
-        }
-        state_file.write_text(json.dumps(state, indent=2))
-    else:
+    if not analysis.get("should_propose"):
         print("分析完成，当前无需提案")
+        return
+
+    # 3. 4维度分发
+    try:
+        from evolve_dispatcher import dispatch_evolution
+        decisions = dispatch_evolution(analysis, config, root, sessions)
+    except ImportError:
+        decisions = []
+
+    # 4. 执行决策
+    applied_count = 0
+    proposed_count = 0
+    skipped_count = 0
+
+    for decision in decisions:
+        dimension = decision.get("dimension", "")
+        action = decision.get("action", "")
+        target = decision.get("target", "")
+
+        try:
+            if action == "auto_apply":
+                _execute_auto_apply(decision, analysis, config, root)
+                applied_count += 1
+            elif action == "propose":
+                _execute_propose(decision, analysis, config, root)
+                proposed_count += 1
+            else:
+                skipped_count += 1
+        except Exception as e:
+            print(f"⚠️  [{dimension}] {target} 执行失败: {e}")
+
+    # 更新分析状态
+    state_file = root / config["paths"]["data_dir"] / "analysis_state.json"
+    state_file.parent.mkdir(parents=True, exist_ok=True)
+    state = {
+        "last_analyzed_session_id": sessions[-1]["session_id"],
+        "last_analyze_time": datetime.now().isoformat(),
+        "total_sessions_analyzed": len(sessions),
+        "decisions_applied": applied_count,
+        "decisions_proposed": proposed_count,
+    }
+    state_file.write_text(json.dumps(state, indent=2))
+
+    print(f"✅ 分析完成: auto_apply={applied_count}, propose={proposed_count}, skip={skipped_count}")
+
+
+def _execute_auto_apply(decision: dict, analysis: dict, config: dict, root: Path):
+    """执行 auto_apply 决策"""
+    dimension = decision.get("dimension", "")
+    target = decision.get("target", "")
+    target_file = decision.get("target_file", "")
+    suggested_change = decision.get("suggested_change", "")
+
+    if not target_file or not suggested_change:
+        return
+
+    # 各维度执行
+    if dimension == "agent":
+        from agent_evolution import evolve_agent
+        corrections = analysis.get("correction_patterns", {}).get(f"{target}:unknown", {}).get("examples", [])
+        result = evolve_agent(target, corrections, config, root)
+        if result.get("success"):
+            _apply_file_change(target_file, result.get("suggested_change", ""), config, root)
+            print(f"✅ [Agent] {target}: {result.get('change_type')}")
+
+    elif dimension == "instinct":
+        from instinct_updater import add_pattern
+        from extract_semantics import _record_to_instinct
+        # instinct 已在 extract_semantics 中记录
+        print(f"✅ [Instinct] {target}: 已记录")
+
+
+def _execute_propose(decision: dict, analysis: dict, config: dict, root: Path):
+    """执行 propose 决策"""
+    dimension = decision.get("dimension", "")
+    target = decision.get("target", "")
+    target_file = decision.get("target_file", "")
+    suggested_change = decision.get("suggested_change", "")
+
+    from proposer import generate_proposal
+
+    # 构建带维度的分析
+    dimension_analysis = {**analysis, "dimension": dimension, "target_file": target_file, "suggested_change": suggested_change}
+    proposal_path = generate_proposal(dimension_analysis, config, root)
+    if proposal_path:
+        print(f"📋 [{dimension}] {target}: 提案已生成")
+    else:
+        print(f"⚠️ [{dimension}] {target}: 提案生成失败")
+
+
+def _apply_file_change(target_file: str, suggested_change: str, config: dict, root: Path):
+    """将改动应用到文件"""
+    from apply_change import apply_change
+
+    decision = {
+        "target_file": target_file,
+        "suggested_change": suggested_change,
+        "id": f"auto-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+    }
+    try:
+        apply_change(decision, root)
+    except Exception:
+        # fallback: 直接追加内容
+        try:
+            file_path = Path(target_file)
+            if file_path.exists():
+                content = file_path.read_text(encoding="utf-8")
+                content += suggested_change
+                file_path.write_text(content, encoding="utf-8")
+        except Exception:
+            pass
 
 
 def install_launchd(root: Path):

@@ -305,6 +305,7 @@ def run_rollback_check(root: Optional[Path] = None, config: Optional[dict] = Non
         elif decision == "keep":
             # 固化
             consolidate_proposal(proposal, root)
+            _promote_instinct_on_observation(proposal, root)
             stats["consolidated"] += 1
 
         else:
@@ -364,6 +365,24 @@ def get_proposal_health(proposal_id: str, root: Path, config: dict) -> dict:
         "days_remaining": max(0, (datetime.fromisoformat(proposal.get("observation_end", datetime.now().isoformat())) - datetime.now()).days),
     }
 
+
+
+def _promote_instinct_on_observation(proposal: dict, root: Path):
+    """
+    观察期通过后：增强 instinct 置信度 + 关联 target_file。
+    """
+    try:
+        from instinct_updater import promote_confidence, find_instinct_by_target
+        target_file = proposal.get("target_file")
+        linked_id = proposal.get("linked_instinct_id")
+        if linked_id:
+            promote_confidence(linked_id, delta=0.1, root=root)
+        elif target_file:
+            records = find_instinct_by_target(target_file, root)
+            if records:
+                promote_confidence(records[0].get("id"), delta=0.1, root=root)
+    except Exception:
+        pass
 
 if __name__ == "__main__":
     import argparse

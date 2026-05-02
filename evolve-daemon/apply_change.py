@@ -216,6 +216,8 @@ def record_proposal(decision: dict, root: Path, backup_path: Optional[Path] = No
         "observation_end": (datetime.now() + __import__("datetime").timedelta(days=observation_days)).isoformat(),
         "backup_path": str(backup_path) if backup_path else None,
         "baseline_metrics": _collect_baseline_metrics(root),
+        "dimension": decision.get("dimension", "agent"),
+        "linked_instinct_id": decision.get("linked_instinct_id"),
     }
 
     history.append(entry)

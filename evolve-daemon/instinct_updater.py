@@ -345,3 +345,24 @@ if __name__ == "__main__":
         high_conf = sum(1 for r in records if r.get("confidence", 0) >= 0.7)
         active = sum(1 for r in records if r.get("decay_status") != "decaying")
         print(f"Total: {total}, High confidence: {high_conf}, Active: {active}")
+
+def link_instinct_to_target(record_id: str, target_file: str, root=None):
+    """将 instinct 记录与目标文件关联"""
+    if root is None:
+        root = find_root()
+    instinct = load_instinct(root)
+    for rec in instinct.get("records", []):
+        if rec.get("id") == record_id:
+            rec["target_file"] = target_file
+            rec["updated_at"] = datetime.now().isoformat()
+            save_instinct(instinct, root)
+            return True
+    return False
+
+
+def find_instinct_by_target(target_file: str, root=None) -> list:
+    """根据 target_file 查找 instinct 记录"""
+    if root is None:
+        root = find_root()
+    instinct = load_instinct(root)
+    return [rec for rec in instinct.get("records", []) if rec.get("target_file") == target_file]
