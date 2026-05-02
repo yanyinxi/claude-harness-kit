@@ -1,18 +1,25 @@
 #!/usr/bin/env python3
 """
-进化守护进程入口 — 由 cron/launchd 定时触发。
+进化守护进程入口 — 支持外部触发和内置定时任务。
 
 用法:
   python3 daemon.py check          # 仅检查触发条件
-  python3 daemon.py run            # 检查并执行分析（cron 模式）
+  python3 daemon.py run            # 检查并执行分析（外部触发模式）
+  python3 daemon.py start          # 启动内置调度器（内部定时触发）
+  python3 daemon.py stop           # 停止内置调度器
   python3 daemon.py status         # 查看系统状态
-  python3 daemon.py install-launchd  # macOS: 安装 LaunchAgent
-  python3 daemon.py install-systemd   # Linux: 安装 systemd timer
+  python3 daemon.py install-launchd  # macOS: 安装 LaunchAgent（外部触发）
 
 触发条件（满足任一即触发）:
-  - 累计 ≥ 5 个新会话未分析
-  - 同一 target 被纠正 ≥ 3 次
-  - 距上次分析 ≥ 6 小时
+  - 累计 >= 5 个新会话未分析
+  - 同一 target 被纠正 >= 3 次
+  - 距上次分析 >= 6 小时
+
+内置调度器配置（config.yaml）:
+  daemon:
+    mode: internal           # external/internal/both
+    scheduler_interval: 30 minutes
+    run_on_startup: true
 """
 import json
 import os
@@ -219,12 +226,54 @@ def main():
     elif cmd == "install-launchd":
         install_launchd(root)
 
-    elif cmd == "install-systemd":
-        print("systemd 安装请参考 docs/evolve-daemon-design.md 第 5.2 节")
+    elif cmd == "start":
+        # 内置调度器模式
+        from scheduler import _manager
+        result = _manager.start()
+        if result.get("success"):
+            print(f"调度器已启动")
+            print(f"   模式: {result.get('mode')}")
+            print(f"   间隔: {result.get('interval')} ({result.get('interval_seconds')}s)")
+            if result.get("run_on_startup"):
+                print(f"   启动时立即运行: 是")
+            print("\n后台运行中，按 Ctrl+C 停止")
+            try:
+                import time as time_module
+                while True:
+                    time_module.sleep(60)
+            except KeyboardInterrupt:
+                print("\n正在停止调度器...")
+                _manager.stop()
+                print("已停止")
+        else:
+            print(f"启动失败: {result.get('error')}")
+            print("提示：确保 config.yaml 中 daemon.mode 包含 'internal'")
+            print("提示：确保已安装 APScheduler: pip install APScheduler")
+
+    elif cmd == "stop":
+        # 停止内置调度器
+        from scheduler import _manager
+        result = _manager.stop()
+        if result.get("success"):
+            print("调度器已停止")
+        else:
+            print(f"停止失败: {result.get('error')}")
 
     else:
         print(f"未知命令: {cmd}")
-        print("用法: python3 daemon.py [check|run|status|install-launchd|install-systemd]")
+        print("用法: python3 daemon.py [check|run|start|stop|status|install-launchd]")
+        print("")
+        print("命令说明：")
+        print("  check           - 仅检查触发条件")
+        print("  run             - 检查并执行分析（外部触发模式）")
+        print("  start           - 启动内置调度器（内部定时触发）")
+        print("  stop            - 停止内置调度器")
+        print("  status          - 查看系统状态")
+        print("  install-launchd - macOS: 安装 LaunchAgent")
+        print("")
+        print("示例：")
+        print("  python3 daemon.py check           # 检查触发条件")
+        print("  python3 daemon.py start          # 启动内置调度器")
 
 
 if __name__ == "__main__":

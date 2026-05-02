@@ -3,11 +3,18 @@
   "hooks": {
     "SessionStart": [
       {
-        "hooks": [{
-          "type": "command",
-          "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/context-injector.py",
-          "timeout": 5
-        }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/context-injector.py",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/auto-start-evolve.py",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "PreToolUse": [
