@@ -305,7 +305,7 @@ paths:
   # 数据文件目录
   # 包含：sessions.jsonl, agent_calls.jsonl, failures.jsonl 等
 
-  instinct_dir: instinct
+  instinct_dir: harness/instinct
   # 本能记录目录
   # 包含：instinct-record.json
 

@@ -156,6 +156,9 @@ def run_analysis(config: dict, root: Path, sessions: list[dict]):
             print(f"⚠️  [{dimension}] {target} 执行失败: {e}")
 
     # 更新分析状态
+    if not sessions:
+        print("⚠️ 无会话数据可分析")
+        return
     state_file = root / config["paths"]["data_dir"] / "analysis_state.json"
     state_file.parent.mkdir(parents=True, exist_ok=True)
     state = {

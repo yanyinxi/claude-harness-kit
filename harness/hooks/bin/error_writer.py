@@ -14,6 +14,7 @@ error_writer.py — 线程安全的 error.jsonl 写入工具
 import json
 import os
 import sys
+import time
 import fcntl
 import errno
 from pathlib import Path
@@ -214,8 +215,8 @@ def write_error(
 
     try:
         with open(lock_file, "w") as lock_f:
-            # macOS 的 flock 不支持 LOCK_NB，换用阻塞模式（等待锁释放）
-            if _is_macos():
+            # macOS 使用阻塞锁（等待释放），Linux 使用非阻塞锁
+            if sys.platform == "darwin":
                 fcntl.flock(lock_f.fileno(), fcntl.LOCK_EX)
             else:
                 fcntl.flock(lock_f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)

@@ -66,7 +66,7 @@ def _default_config():
 
 def load_instinct(root: Path) -> dict:
     """加载 instinct-record.json"""
-    instinct_path = root / "instinct" / "instinct-record.json"
+    instinct_path = root / "harness" / "instinct" / "instinct-record.json"
     if instinct_path.exists():
         try:
             return json.loads(instinct_path.read_text(encoding="utf-8"))
