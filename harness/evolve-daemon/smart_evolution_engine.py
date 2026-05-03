@@ -133,43 +133,89 @@ class SmartEvolutionEngine:
 
     def _call_llm_analysis(self, prompt: str, error_capture: dict) -> dict:
         """
-        调用 LLM 进行分析
-        有 API Key：调用真实 Claude API
-        无 API Key：抛出明确错误，提示用户配置
+        调用 LLM 进行分析。
+        优先级：Claude Code代理 > ANTHROPIC_API_KEY > 本地分析。
         """
-        api_key = os.environ.get("ANTHROPIC_API_KEY")
-
-        if not api_key:
-            raise EnvironmentError(
-                "ANTHROPIC_API_KEY 未设置，无法调用 LLM 进行分析。\n"
-                "请先配置 API Key：\n"
-                "  1. 复制 .env.example 为 .env\n"
-                "  2. 填入 ANTHROPIC_API_KEY=your_key\n"
-                "  3. 或在终端执行: export ANTHROPIC_API_KEY=your_key\n"
-                "获取 API Key: https://console.anthropic.com/settings/keys"
-            )
-
-        return self._call_claude_api(prompt)
+        try:
+            return self._call_claude_api(prompt)
+        except Exception as e:
+            print(f"      ⚠️ LLM 分析失败: {e}，回退到本地分析")
+            return self._local_analysis(error_capture)
 
     def _call_claude_api(self, prompt: str) -> dict:
-        """调用真实 Claude API"""
-        try:
-            from anthropic import Anthropic
-            client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+        """调用 Claude API (代理或直接)"""
+        from anthropic import Anthropic
 
-            response = client.messages.create(
-                model="claude-haiku-4-5-20251001",
-                max_tokens=512,
-                temperature=0.2,
-                system="你是一个 AI 错误分析专家。输出 JSON 格式。",
-                messages=[{"role": "user", "content": prompt}],
+        # 优先级1: Claude Code 本地代理 (复用已登录会话)
+        if os.environ.get("ANTHROPIC_AUTH_TOKEN") == "PROXY_MANAGED":
+            base_url = os.environ.get("ANTHROPIC_BASE_URL", "http://127.0.0.1:5000")
+            client = Anthropic(
+                base_url=base_url,
+                auth_token=os.environ.get("ANTHROPIC_AUTH_TOKEN"),
             )
+        elif os.environ.get("ANTHROPIC_API_KEY"):
+            # 优先级2: 直接 API Key
+            client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+        else:
+            raise EnvironmentError("无可用认证方式")
 
-            return json.loads(response.content[0].text)
-        except Exception as e:
-            print(f"      ⚠️ LLM API 调用失败: {e}，使用本地分析")
-            return {"root_cause": "API unavailable", "error_type": "unknown",
-                    "confidence": 0.5, "suggestion": "需要人工分析"}
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=1024,
+            temperature=0.1,
+            system=(
+                "你是一个AI错误分析专家。严格输出纯JSON对象，不要输出任何其他文字。\n"
+                "JSON格式: {\"root_cause\":\"一句话根因\",\"error_type\":\"类型\",\"confidence\":0.0-1.0,\"suggestion\":\"建议\",\"pattern\":\"模式\",\"knowledge_type\":\"类型\",\"auto_fixable\":true/false,\"risk_level\":\"low/medium/high\"}\n"
+                "要求: 1.只输出JSON 2.不要用代码块包裹 3.不要有解释 4.confidence用数字"
+            ),
+            messages=[{"role": "user", "content": prompt}],
+        )
+
+        # 提取文本内容 (跳过 thinking blocks，处理截断JSON)
+        def _extract_json(text: str):
+            """从文本中提取JSON，支持截断修复"""
+            text = text.strip()
+            if not text:
+                return None
+            # 方法1: 直接解析
+            try:
+                return json.loads(text)
+            except json.JSONDecodeError:
+                pass
+            # 方法2: 找 ```json ... ``` 包裹
+            import re
+            code_match = re.search(r'```(?:json)?\s*(\{[\s\S]*?\})\s*```', text)
+            if code_match:
+                try:
+                    return json.loads(code_match.group(1).strip())
+                except json.JSONDecodeError:
+                    pass
+            # 方法3: 配对括号修复截断JSON
+            start = text.find('{')
+            if start >= 0:
+                depth, end = 0, -1
+                for i, ch in enumerate(text[start:], start):
+                    if ch == '{': depth += 1
+                    elif ch == '}':
+                        depth -= 1
+                        if depth == 0:
+                            end = i
+                            break
+                if end > start:
+                    try:
+                        return json.loads(text[start:end+1])
+                    except json.JSONDecodeError:
+                        pass
+            return None
+
+        for block in response.content:
+            if hasattr(block, 'text') and block.text:
+                result = _extract_json(block.text)
+                if result is not None:
+                    return result
+                raise RuntimeError(f"无法解析JSON: {block.text[:200]}")
+
+        raise RuntimeError("LLM响应无有效文本块")
 
     def _local_analysis(self, error_capture: dict) -> dict:
         """

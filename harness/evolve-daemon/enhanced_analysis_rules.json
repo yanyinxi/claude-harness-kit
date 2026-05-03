@@ -1,0 +1,266 @@
+{
+  "version": "2.0",
+  "created": "2026-05-03T18:07:31.897419",
+  "note": "压力测试v2生成的增强分析规则，源自第一轮测试发现的盲区",
+  "rules": {
+    "performance": [
+      {
+        "pattern": [
+          "n+1",
+          "查询次数",
+          "多次查询",
+          "循环查询",
+          "query"
+        ],
+        "result": {
+          "root_cause": "N+1查询问题，循环内重复查询数据库",
+          "error_type": "performance",
+          "confidence": 0.92,
+          "suggestion": "使用批量查询或JOIN预加载，避免循环内查询",
+          "pattern": "n_plus_one_query",
+          "knowledge_type": "performance",
+          "auto_fixable": true,
+          "risk_level": "high"
+        }
+      },
+      {
+        "pattern": [
+          "内存",
+          "oom",
+          "溢出",
+          "大文件",
+          "stream",
+          "流式"
+        ],
+        "result": {
+          "root_cause": "未使用流式处理，全量加载导致内存溢出",
+          "error_type": "performance",
+          "confidence": 0.88,
+          "suggestion": "使用流式处理或分片处理大文件",
+          "pattern": "memory_overflow_no_stream",
+          "knowledge_type": "performance",
+          "auto_fixable": true,
+          "risk_level": "high"
+        }
+      },
+      {
+        "pattern": [
+          "重复计算",
+          "缓存",
+          "cache",
+          "多次调用",
+          "同样计算"
+        ],
+        "result": {
+          "root_cause": "缺少缓存机制，相同数据被重复计算",
+          "error_type": "performance",
+          "confidence": 0.9,
+          "suggestion": "增加缓存层，避免重复计算",
+          "pattern": "repeated_calculation_no_cache",
+          "knowledge_type": "performance",
+          "auto_fixable": true,
+          "risk_level": "medium"
+        }
+      }
+    ],
+    "security": [
+      {
+        "pattern": [
+          "硬编码",
+          "密码",
+          "password",
+          "secret",
+          "api_key",
+          "密钥"
+        ],
+        "result": {
+          "root_cause": "敏感信息硬编码在源代码中，存在泄露风险",
+          "error_type": "security",
+          "confidence": 0.95,
+          "suggestion": "使用环境变量或密钥管理服务，不在代码中存密码",
+          "pattern": "hardcoded_secret",
+          "knowledge_type": "security",
+          "auto_fixable": true,
+          "risk_level": "high"
+        }
+      },
+      {
+        "pattern": [
+          "sql注入",
+          "sql inject",
+          "拼接sql",
+          "字符串拼接",
+          "用户输入"
+        ],
+        "result": {
+          "root_cause": "SQL拼接导致注入漏洞，用户输入直接拼入SQL",
+          "error_type": "security",
+          "confidence": 0.97,
+          "suggestion": "使用参数化查询或ORM，禁止字符串拼接SQL",
+          "pattern": "sql_injection",
+          "knowledge_type": "security",
+          "auto_fixable": true,
+          "risk_level": "critical"
+        }
+      },
+      {
+        "pattern": [
+          "日志",
+          "log",
+          "敏感信息",
+          "token",
+          "泄露",
+          "打印"
+        ],
+        "result": {
+          "root_cause": "敏感信息写入日志，存在泄露风险",
+          "error_type": "security",
+          "confidence": 0.93,
+          "suggestion": "日志脱敏，禁止打印token/密码/APIKey",
+          "pattern": "sensitive_info_in_log",
+          "knowledge_type": "security",
+          "auto_fixable": true,
+          "risk_level": "high"
+        }
+      }
+    ],
+    "interaction": [
+      {
+        "pattern": [
+          "纠正",
+          "重复",
+          "又犯",
+          "同样错误",
+          "记住了"
+        ],
+        "result": {
+          "root_cause": "Agent没有记住用户的纠正，重复犯相同错误",
+          "error_type": "interaction",
+          "confidence": 0.88,
+          "suggestion": "建立用户纠正的记忆机制，记录到本能系统",
+          "pattern": "correction_not_remembered",
+          "knowledge_type": "interaction",
+          "auto_fixable": false,
+          "risk_level": "medium"
+        }
+      },
+      {
+        "pattern": [
+          "确认",
+          "没有确认",
+          "直接执行",
+          "危险操作",
+          "删除",
+          "未经确认"
+        ],
+        "result": {
+          "root_cause": "Agent未确认关键决策就执行，存在破坏性风险",
+          "error_type": "interaction",
+          "confidence": 0.9,
+          "suggestion": "危险操作前必须确认，理解用户意图",
+          "pattern": "action_without_confirmation",
+          "knowledge_type": "interaction",
+          "auto_fixable": false,
+          "risk_level": "high"
+        }
+      },
+      {
+        "pattern": [
+          "友好",
+          "不友好",
+          "难以理解",
+          "错误码",
+          "internal error"
+        ],
+        "result": {
+          "root_cause": "错误信息不友好，用户无法理解问题所在",
+          "error_type": "interaction",
+          "confidence": 0.85,
+          "suggestion": "使用用户友好的错误描述，避免内部错误码",
+          "pattern": "unfriendly_error_message",
+          "knowledge_type": "interaction",
+          "auto_fixable": true,
+          "risk_level": "low"
+        }
+      }
+    ],
+    "context": [
+      {
+        "pattern": [
+          "遗忘",
+          "忘记",
+          "丢失",
+          "上下文丢失",
+          "中途"
+        ],
+        "result": {
+          "root_cause": "长任务中上下文信息丢失，忘记初始目标",
+          "error_type": "context",
+          "confidence": 0.87,
+          "suggestion": "任务开始时建立checkpoint，定期验证是否偏离目标",
+          "pattern": "context_loss_in_long_task",
+          "knowledge_type": "context",
+          "auto_fixable": false,
+          "risk_level": "medium"
+        }
+      },
+      {
+        "pattern": [
+          "不一致",
+          "状态不一致",
+          "同步",
+          "漏改",
+          "没有改"
+        ],
+        "result": {
+          "root_cause": "多文件修改时状态不一致，相关文件漏改",
+          "error_type": "context",
+          "confidence": 0.89,
+          "suggestion": "使用事务性修改或变更跟踪工具",
+          "pattern": "state_inconsistency",
+          "knowledge_type": "context",
+          "auto_fixable": false,
+          "risk_level": "medium"
+        }
+      },
+      {
+        "pattern": [
+          "复用",
+          "知识复用",
+          "重复",
+          "同样问题",
+          "又出现"
+        ],
+        "result": {
+          "root_cause": "相似问题重复解决，知识复用率低",
+          "error_type": "context",
+          "confidence": 0.85,
+          "suggestion": "将解决方案记录到知识库，下次直接复用",
+          "pattern": "low_knowledge_reuse",
+          "knowledge_type": "context",
+          "auto_fixable": false,
+          "risk_level": "low"
+        }
+      },
+      {
+        "pattern": [
+          "窗口",
+          "截断",
+          "溢出",
+          "上下文不足",
+          "超出"
+        ],
+        "result": {
+          "root_cause": "上下文窗口不足导致关键信息被截断",
+          "error_type": "context",
+          "confidence": 0.88,
+          "suggestion": "使用增量摘要和压缩策略，保持关键上下文",
+          "pattern": "context_window_overflow",
+          "knowledge_type": "context",
+          "auto_fixable": false,
+          "risk_level": "medium"
+        }
+      }
+    ]
+  }
+}

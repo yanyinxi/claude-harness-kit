@@ -9,7 +9,7 @@
 
 ### Auto-Evolve 系统
 - 4 维度自主进化闭环 (v2)
-- 进化数据存储于 `harness/evolve-daemon/`
+- 进化数据存储于 `harness/knowledge/evolved/`
 - sessions.jsonl 提供执行历史追踪
 
 ### 权限模型

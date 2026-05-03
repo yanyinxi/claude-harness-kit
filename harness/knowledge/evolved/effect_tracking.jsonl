@@ -43,3 +43,111 @@
 {"knowledge_id": "caaa9499", "outcome": "success", "timestamp": "2026-05-03T11:37:37.290131"}
 {"knowledge_id": "a6772bed", "outcome": "success", "timestamp": "2026-05-03T11:37:37.293607"}
 {"knowledge_id": "fe65100d", "outcome": "success", "timestamp": "2026-05-03T11:37:37.297212"}
+{"knowledge_id": "1400344d", "outcome": "partial", "dimension": "agent", "round": 1, "timestamp": "2026-05-03T18:03:28.253094"}
+{"knowledge_id": "b5c276ad", "outcome": "failure", "dimension": "agent", "round": 2, "timestamp": "2026-05-03T18:03:28.254220"}
+{"knowledge_id": "a4bd3c48", "outcome": "success", "dimension": "agent", "round": 3, "timestamp": "2026-05-03T18:03:28.254630"}
+{"knowledge_id": "296e1ded", "outcome": "success", "dimension": "skill", "round": 1, "timestamp": "2026-05-03T18:03:28.255035"}
+{"knowledge_id": "b0dd1d42", "outcome": "partial", "dimension": "skill", "round": 2, "timestamp": "2026-05-03T18:03:28.255516"}
+{"knowledge_id": "152a6b0a", "outcome": "partial", "dimension": "skill", "round": 3, "timestamp": "2026-05-03T18:03:28.255895"}
+{"knowledge_id": "cf5ee3ee", "outcome": "success", "dimension": "rule", "round": 1, "timestamp": "2026-05-03T18:03:28.256269"}
+{"knowledge_id": "2f7980ba", "outcome": "partial", "dimension": "rule", "round": 2, "timestamp": "2026-05-03T18:03:28.256790"}
+{"knowledge_id": "a7bb8496", "outcome": "partial", "dimension": "rule", "round": 3, "timestamp": "2026-05-03T18:03:28.257211"}
+{"knowledge_id": "43bb5bfc", "outcome": "success", "dimension": "instinct", "round": 1, "timestamp": "2026-05-03T18:03:28.257688"}
+{"knowledge_id": "cb1451d2", "outcome": "success", "dimension": "instinct", "round": 2, "timestamp": "2026-05-03T18:03:28.258182"}
+{"knowledge_id": "e96762ad", "outcome": "partial", "dimension": "instinct", "round": 3, "timestamp": "2026-05-03T18:03:28.258624"}
+{"knowledge_id": "d060b0ee", "outcome": "failure", "dimension": "performance", "round": 1, "timestamp": "2026-05-03T18:03:28.259040"}
+{"knowledge_id": "1e78c3ea", "outcome": "partial", "dimension": "performance", "round": 2, "timestamp": "2026-05-03T18:03:28.259621"}
+{"knowledge_id": "1de6d3f8", "outcome": "success", "dimension": "performance", "round": 3, "timestamp": "2026-05-03T18:03:28.259999"}
+{"knowledge_id": "03d74ead", "outcome": "partial", "dimension": "interaction", "round": 1, "timestamp": "2026-05-03T18:03:28.260371"}
+{"knowledge_id": "ca87c1ac", "outcome": "success", "dimension": "interaction", "round": 2, "timestamp": "2026-05-03T18:03:28.260774"}
+{"knowledge_id": "3ea4c019", "outcome": "partial", "dimension": "interaction", "round": 3, "timestamp": "2026-05-03T18:03:28.261120"}
+{"knowledge_id": "3b2fc142", "outcome": "failure", "dimension": "security", "round": 1, "timestamp": "2026-05-03T18:03:28.261478"}
+{"knowledge_id": "a018026c", "outcome": "failure", "dimension": "security", "round": 2, "timestamp": "2026-05-03T18:03:28.261875"}
+{"knowledge_id": "c52a9ae8", "outcome": "success", "dimension": "security", "round": 3, "timestamp": "2026-05-03T18:03:28.262226"}
+{"knowledge_id": "9a71c85d", "outcome": "success", "dimension": "context", "round": 1, "timestamp": "2026-05-03T18:03:28.262580"}
+{"knowledge_id": "d9e55c64", "outcome": "success", "dimension": "context", "round": 2, "timestamp": "2026-05-03T18:03:28.262921"}
+{"knowledge_id": "001ece58", "outcome": "success", "dimension": "context", "round": 3, "timestamp": "2026-05-03T18:03:28.263258"}
+{"knowledge_id": "d42f181e", "outcome": "failure", "dimension": "performance", "round": 1, "confidence": 0.92, "is_specific": true, "timestamp": "2026-05-03T18:07:31.892243"}
+{"knowledge_id": "2830b3d3", "outcome": "success", "dimension": "performance", "round": 2, "confidence": 0.88, "is_specific": true, "timestamp": "2026-05-03T18:07:31.893130"}
+{"knowledge_id": "1361461a", "outcome": "success", "dimension": "performance", "round": 3, "confidence": 0.9, "is_specific": true, "timestamp": "2026-05-03T18:07:31.893524"}
+{"knowledge_id": "4983853f", "outcome": "success", "dimension": "security", "round": 1, "confidence": 0.95, "is_specific": true, "timestamp": "2026-05-03T18:07:31.893886"}
+{"knowledge_id": "e073b521", "outcome": "success", "dimension": "security", "round": 2, "confidence": 0.97, "is_specific": true, "timestamp": "2026-05-03T18:07:31.894230"}
+{"knowledge_id": "ac1f85e0", "outcome": "success", "dimension": "security", "round": 3, "confidence": 0.95, "is_specific": true, "timestamp": "2026-05-03T18:07:31.894653"}
+{"knowledge_id": "a078fcf0", "outcome": "partial", "dimension": "interaction", "round": 1, "confidence": 0.5, "is_specific": false, "timestamp": "2026-05-03T18:07:31.895173"}
+{"knowledge_id": "c56281c0", "outcome": "success", "dimension": "interaction", "round": 2, "confidence": 0.9, "is_specific": true, "timestamp": "2026-05-03T18:07:31.895528"}
+{"knowledge_id": "38553e27", "outcome": "success", "dimension": "interaction", "round": 3, "confidence": 0.85, "is_specific": true, "timestamp": "2026-05-03T18:07:31.895973"}
+{"knowledge_id": "d2f25c47", "outcome": "failure", "dimension": "context", "round": 1, "confidence": 0.87, "is_specific": true, "timestamp": "2026-05-03T18:07:31.896391"}
+{"knowledge_id": "c21604f2", "outcome": "success", "dimension": "context", "round": 2, "confidence": 0.87, "is_specific": true, "timestamp": "2026-05-03T18:07:31.896748"}
+{"knowledge_id": "a9c8c5b9", "outcome": "success", "dimension": "context", "round": 3, "confidence": 0.5, "is_specific": false, "timestamp": "2026-05-03T18:07:31.897247"}
+{"knowledge_id": "70429137", "outcome": "failure", "dimension": "agent", "round": 1, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:16:45.301313"}
+{"knowledge_id": "7f4e0f5b", "outcome": "failure", "dimension": "agent", "round": 2, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:17:05.046052"}
+{"knowledge_id": "ee603b44", "outcome": "success", "dimension": "agent", "round": 3, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:17:21.190346"}
+{"knowledge_id": "414fba37", "outcome": "success", "dimension": "skill", "round": 1, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:17:30.855541"}
+{"knowledge_id": "0f04964c", "outcome": "success", "dimension": "skill", "round": 2, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:17:43.622923"}
+{"knowledge_id": "e986e84c", "outcome": "failure", "dimension": "skill", "round": 3, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:17:56.147677"}
+{"knowledge_id": "3911256b", "outcome": "success", "dimension": "rule", "round": 1, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:18:08.879392"}
+{"knowledge_id": "ca78b0b1", "outcome": "failure", "dimension": "rule", "round": 2, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:18:13.994388"}
+{"knowledge_id": "b86e3a46", "outcome": "success", "dimension": "rule", "round": 3, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:18:23.591803"}
+{"knowledge_id": "fb7d55b3", "outcome": "partial", "dimension": "instinct", "round": 1, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:18:35.243224"}
+{"knowledge_id": "a3e5ba8c", "outcome": "success", "dimension": "instinct", "round": 2, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:18:44.482025"}
+{"knowledge_id": "a75bfe2d", "outcome": "success", "dimension": "instinct", "round": 3, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:18:55.344999"}
+{"knowledge_id": "427d350e", "outcome": "partial", "dimension": "performance", "round": 1, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:19:09.876158"}
+{"knowledge_id": "1b029de6", "outcome": "partial", "dimension": "performance", "round": 2, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:19:17.859802"}
+{"knowledge_id": "667dbc79", "outcome": "failure", "dimension": "performance", "round": 3, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:19:36.255286"}
+{"knowledge_id": "11b534d9", "outcome": "success", "dimension": "interaction", "round": 1, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:19:49.951236"}
+{"knowledge_id": "aebe19f8", "outcome": "success", "dimension": "interaction", "round": 2, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:20:01.893878"}
+{"knowledge_id": "8192d325", "outcome": "failure", "dimension": "interaction", "round": 3, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:20:10.017467"}
+{"knowledge_id": "dada838e", "outcome": "success", "dimension": "security", "round": 1, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:20:23.091538"}
+{"knowledge_id": "bae9bdf5", "outcome": "success", "dimension": "security", "round": 2, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:20:31.999516"}
+{"knowledge_id": "e458aab7", "outcome": "success", "dimension": "security", "round": 3, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:20:46.999841"}
+{"knowledge_id": "af679f51", "outcome": "success", "dimension": "context", "round": 1, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:20:58.683123"}
+{"knowledge_id": "29e61a28", "outcome": "success", "dimension": "context", "round": 2, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:21:09.823742"}
+{"knowledge_id": "36ccfb6a", "outcome": "partial", "dimension": "context", "round": 3, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:21:23.846826"}
+{"knowledge_id": "b3082aa2", "outcome": "success", "dimension": "agent", "round": 1, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:23:00.992367"}
+{"knowledge_id": "ab9215e1", "outcome": "success", "dimension": "agent", "round": 2, "confidence": 0.95, "llm_used": true, "timestamp": "2026-05-03T18:23:16.689955"}
+{"knowledge_id": "306e22b3", "outcome": "success", "dimension": "agent", "round": 3, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:23:29.557488"}
+{"knowledge_id": "3b7cea0b", "outcome": "success", "dimension": "skill", "round": 1, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:23:40.939387"}
+{"knowledge_id": "d9513ff0", "outcome": "success", "dimension": "skill", "round": 2, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:23:50.046852"}
+{"knowledge_id": "cc1cd341", "outcome": "success", "dimension": "skill", "round": 3, "confidence": 0.95, "llm_used": true, "timestamp": "2026-05-03T18:24:02.354872"}
+{"knowledge_id": "d5f88af0", "outcome": "failure", "dimension": "rule", "round": 1, "confidence": 0.95, "llm_used": true, "timestamp": "2026-05-03T18:24:12.469750"}
+{"knowledge_id": "29a622bd", "outcome": "success", "dimension": "rule", "round": 2, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:24:18.811028"}
+{"knowledge_id": "151af758", "outcome": "success", "dimension": "rule", "round": 3, "confidence": 1.0, "llm_used": true, "timestamp": "2026-05-03T18:24:27.719739"}
+{"knowledge_id": "bdff841a", "outcome": "failure", "dimension": "instinct", "round": 1, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:24:45.127991"}
+{"knowledge_id": "c6651646", "outcome": "success", "dimension": "instinct", "round": 2, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:24:58.645980"}
+{"knowledge_id": "07e22c15", "outcome": "success", "dimension": "instinct", "round": 3, "confidence": 0.85, "llm_used": true, "timestamp": "2026-05-03T18:25:14.524586"}
+{"knowledge_id": "fb357e14", "outcome": "success", "dimension": "performance", "round": 1, "confidence": 0.97, "llm_used": true, "timestamp": "2026-05-03T18:25:26.189852"}
+{"knowledge_id": "2dec678f", "outcome": "failure", "dimension": "performance", "round": 2, "confidence": 0.5, "llm_used": true, "timestamp": "2026-05-03T18:25:35.114265"}
+{"knowledge_id": "7c6642e1", "outcome": "success", "dimension": "performance", "round": 3, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:25:46.068968"}
+{"knowledge_id": "c111610b", "outcome": "partial", "dimension": "interaction", "round": 1, "confidence": 0.88, "llm_used": true, "timestamp": "2026-05-03T18:26:00.155111"}
+{"knowledge_id": "06b3655b", "outcome": "success", "dimension": "interaction", "round": 2, "confidence": 0.9, "llm_used": true, "timestamp": "2026-05-03T18:26:06.873212"}
+{"knowledge_id": "cfa9562d", "outcome": "success", "dimension": "interaction", "round": 3, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:26:16.449304"}
+{"knowledge_id": "254efbef", "outcome": "failure", "dimension": "security", "round": 1, "confidence": 0.95, "llm_used": true, "timestamp": "2026-05-03T18:26:26.296849"}
+{"knowledge_id": "e0f9ea82", "outcome": "success", "dimension": "security", "round": 2, "confidence": 1.0, "llm_used": true, "timestamp": "2026-05-03T18:26:37.356506"}
+{"knowledge_id": "2140cd7f", "outcome": "success", "dimension": "security", "round": 3, "confidence": 0.95, "llm_used": true, "timestamp": "2026-05-03T18:26:49.746468"}
+{"knowledge_id": "d52d9f72", "outcome": "success", "dimension": "context", "round": 1, "confidence": 0.88, "llm_used": true, "timestamp": "2026-05-03T18:27:03.059561"}
+{"knowledge_id": "3a9fcab5", "outcome": "success", "dimension": "context", "round": 2, "confidence": 0.85, "llm_used": true, "timestamp": "2026-05-03T18:27:14.267139"}
+{"knowledge_id": "0158d627", "outcome": "success", "dimension": "context", "round": 3, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:27:27.951373"}
+{"knowledge_id": "5ad99f8e", "outcome": "failure", "dimension": "agent", "round": 1, "confidence": 0.95, "llm_used": true, "timestamp": "2026-05-03T18:34:00.864135"}
+{"knowledge_id": "5024e159", "outcome": "success", "dimension": "agent", "round": 2, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:34:18.186550"}
+{"knowledge_id": "883662b1", "outcome": "success", "dimension": "agent", "round": 3, "confidence": 0.88, "llm_used": true, "timestamp": "2026-05-03T18:34:40.681904"}
+{"knowledge_id": "318ae312", "outcome": "success", "dimension": "skill", "round": 1, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:34:55.017123"}
+{"knowledge_id": "8a5ffa80", "outcome": "success", "dimension": "skill", "round": 2, "confidence": 0.88, "llm_used": true, "timestamp": "2026-05-03T18:35:03.569652"}
+{"knowledge_id": "8b0f8b3e", "outcome": "success", "dimension": "skill", "round": 3, "confidence": 0.95, "llm_used": true, "timestamp": "2026-05-03T18:35:11.097735"}
+{"knowledge_id": "7fbd7dce", "outcome": "success", "dimension": "rule", "round": 1, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:35:20.707198"}
+{"knowledge_id": "d23464ab", "outcome": "success", "dimension": "rule", "round": 2, "confidence": 0.95, "llm_used": true, "timestamp": "2026-05-03T18:35:30.349254"}
+{"knowledge_id": "8bfad4c2", "outcome": "success", "dimension": "rule", "round": 3, "confidence": 0.95, "llm_used": true, "timestamp": "2026-05-03T18:35:39.359643"}
+{"knowledge_id": "aa98148b", "outcome": "success", "dimension": "instinct", "round": 1, "confidence": 0.89, "llm_used": true, "timestamp": "2026-05-03T18:35:50.521392"}
+{"knowledge_id": "d9b5e3fb", "outcome": "success", "dimension": "instinct", "round": 2, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:36:01.640856"}
+{"knowledge_id": "c7c9bd5e", "outcome": "success", "dimension": "instinct", "round": 3, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:36:09.394933"}
+{"knowledge_id": "b642483e", "outcome": "success", "dimension": "performance", "round": 1, "confidence": 0.98, "llm_used": true, "timestamp": "2026-05-03T18:36:21.343615"}
+{"knowledge_id": "6119c206", "outcome": "success", "dimension": "performance", "round": 2, "confidence": 0.95, "llm_used": true, "timestamp": "2026-05-03T18:36:30.867146"}
+{"knowledge_id": "2578527a", "outcome": "success", "dimension": "performance", "round": 3, "confidence": 0.88, "llm_used": true, "timestamp": "2026-05-03T18:36:45.509179"}
+{"knowledge_id": "cefc9c12", "outcome": "partial", "dimension": "interaction", "round": 1, "confidence": 0.88, "llm_used": true, "timestamp": "2026-05-03T18:37:05.107838"}
+{"knowledge_id": "1a7b28e8", "outcome": "failure", "dimension": "interaction", "round": 2, "confidence": 0.95, "llm_used": true, "timestamp": "2026-05-03T18:37:12.024197"}
+{"knowledge_id": "b1324d80", "outcome": "success", "dimension": "interaction", "round": 3, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:37:21.245711"}
+{"knowledge_id": "c01a9f43", "outcome": "success", "dimension": "security", "round": 1, "confidence": 0.95, "llm_used": true, "timestamp": "2026-05-03T18:37:31.357317"}
+{"knowledge_id": "f3a02f2e", "outcome": "success", "dimension": "security", "round": 2, "confidence": 0.98, "llm_used": true, "timestamp": "2026-05-03T18:37:41.480314"}
+{"knowledge_id": "46efe29e", "outcome": "success", "dimension": "security", "round": 3, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:37:58.826736"}
+{"knowledge_id": "b07d2972", "outcome": "success", "dimension": "context", "round": 1, "confidence": 0.85, "llm_used": true, "timestamp": "2026-05-03T18:38:16.398994"}
+{"knowledge_id": "83504b21", "outcome": "success", "dimension": "context", "round": 2, "confidence": 0.92, "llm_used": true, "timestamp": "2026-05-03T18:38:27.293613"}
+{"knowledge_id": "44cae24f", "outcome": "success", "dimension": "context", "round": 3, "confidence": 0.9, "llm_used": true, "timestamp": "2026-05-03T18:38:31.507979"}

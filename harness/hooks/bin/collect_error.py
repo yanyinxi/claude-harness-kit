@@ -59,6 +59,8 @@ _HOOK_SOURCE_MAP = {
 
 def _infer_source_from_env(hook_data: dict = None) -> str:
     """从环境变量和 hook_data 推断错误来源"""
+    import inspect
+
     # 1. 从 CLAUDE_HOOK_SCRIPT 获取（Claude Code 传递的环境变量）
     hook_script = os.environ.get("CLAUDE_HOOK_SCRIPT", "")
     if hook_script:
@@ -68,10 +70,16 @@ def _infer_source_from_env(hook_data: dict = None) -> str:
     if hook_data:
         tool = hook_data.get("tool_name", "")
         if tool:
-            return f"hooks/{tool.lower()}.py"
+            # 返回 collect_error.py 的行号
+            caller_frame = inspect.currentframe()
+            if caller_frame:
+                lineno = caller_frame.f_lineno
+                return f"hooks/bin/collect_error.py:{lineno}"
 
-    # 3. 兜底
-    return "hooks/bin/collect-error.py"
+    # 3. 兜底 - 返回当前函数位置
+    frame = inspect.currentframe()
+    lineno = frame.f_lineno if frame else 0
+    return f"hooks/bin/collect_error.py:{lineno}"
 
 def _get_hook_script_from_path() -> str:
     """获取触发此 Hook 的脚本名"""

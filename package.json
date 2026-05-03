@@ -3,6 +3,9 @@
   "version": "0.7.0",
   "description": "Claude Harness Kit — Human steers, Agents execute. 多 Agent 协作、通用 Skills、持续进化",
   "main": "index.js",
+  "scripts": {
+    "test": "cd harness && python3 -m pytest tests/ --ignore=tests/evolve-daemon/ -q"
+  },
   "files": [
     ".claude-plugin/",
     "harness/",
