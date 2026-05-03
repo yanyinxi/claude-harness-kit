@@ -12,6 +12,7 @@ CHANGELOG_FILE = Path(__file__).parent.parent.parent / "CHANGELOG.md"
 # 需要同步版本的文件（统一从 version.json 读取）
 UPDATE_FILES = [
     "package.json",
+    "package-lock.json",
     "index.js",
     ".claude-plugin/plugin.json",
     "harness/marketplace.json",
