@@ -42,10 +42,6 @@ def _default_config():
             "days": 7,
             "check_interval_hours": 24,
         },
-        "observation": {
-            "days": 7,
-            "check_interval_hours": 24,
-        },
         "safety": {
             "breaker": {
                 "max_consecutive_rejects": 3,

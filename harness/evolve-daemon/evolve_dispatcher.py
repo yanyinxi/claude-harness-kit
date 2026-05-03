@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-evolve_dispatcher.staging.py — 4维度分发器实现（待重命名）
+进化分发器 — 4维度分析决策引擎
 """
 import json
 import os

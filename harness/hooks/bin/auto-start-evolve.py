@@ -11,7 +11,7 @@ from datetime import datetime
 
 
 def main():
-    """自动启动调度器2222"""
+    """自动启动调度器"""
     try:
         import yaml
 
