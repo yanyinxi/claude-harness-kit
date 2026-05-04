@@ -851,3 +851,13 @@ claude-harness-kit/                         # 插件根目录
 | **Claude Code 源码 (KAIROS)** | 后台 daemon、autoDream 记忆合并、"hint vs truth" 语义 |
 | **ZoomInfo 案例** | Agent-legibility、shared_memory.json 状态机 |
 | **Start.io Ralph Loop** | 持续执行直到完成、显式完成条件 |
+
+---
+
+## 12. 相关文档
+
+| 文档 | 说明 |
+|------|------|
+| **[50-full-plan-v2.0.md](./50-full-plan-v2.0.md)** | 详细实施路线图 — 包含完整的 Hook 矩阵（11 个脚本）、14 个 Python 引擎模块、评分体系、Token 架构等 v2 实现的所有深度设计细节。如需了解具体实现方案（如 `evolution_safety.py` 熔断器、`evolution_scoring.py` 四维度评分引擎），请查阅该文档。 |
+| **[auto-evolve-v2-design.md](./auto-evolve-v2-design.md)** | 进化系统 v2 已实现设计 — 包含合并 smart-evolution 内容后的完整架构、守护进程设计、效果跟踪闭环。 |
+| **[evolve-daemon-design.md](./evolve-daemon-design.md)** | 核心守护进程设计 — 调度逻辑、数据流、与其他模块的关系。 |

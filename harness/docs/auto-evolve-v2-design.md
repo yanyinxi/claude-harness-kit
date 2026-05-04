@@ -1151,3 +1151,108 @@ rollback.py 观察期通过 → _promote_instinct_on_observation()
 - 实际数据端到端测试未执行（无 sessions.jsonl 真实数据）
 - `tool:` 前缀映射到 `instinct` 而非 `tool` 维度（符合设计意图，工具失败走本能管理）
 **维护者**: Architect Agent
+
+---
+
+## 附录 E: 设计演进背景
+
+> 本附录记录 v1 到 v2 的设计思想演进背景，来源于早期 `smart-evolution-system.md` 文档。
+
+### E.1 核心理念：从"统计驱动"到"学习驱动"
+
+| 维度 | 改进前 (伪智能) | 改进后 (真智能) |
+|------|-----------------|-----------------|
+| 触发方式 | 等阈值(3-5次错误) | 每次错误都分析 |
+| 学习方式 | 计数 + 参数调整 | LLM深度分析 + 知识沉淀 |
+| 知识形式 | 版本号++ | 可执行规则 |
+| 效果验证 | 无 | 跟踪 + 验证 |
+| 闭环 | 无 | 自我优化 |
+
+**核心问题**：
+```
+问题场景：
+  第1次错误 → 不分析
+  第2次错误 → 不分析
+  第3次错误 → 终于分析，但只是调整参数
+
+结果：
+  "越用越聪明" = "越用参数越多"
+  实际上：没有理解为什么错，没有积累知识
+```
+
+**设计目标**：
+1. **实时学习**: 每次错误都分析，不错过任何学习机会
+2. **知识沉淀**: 把经验变成可执行规则，而不是版本号
+3. **效果验证**: 跟踪改进是否有效，不是改了就完事
+4. **自我优化**: 无效知识自动回滚，有效知识持续强化
+
+### E.2 知识表示演进
+
+**改进前（伪智能）**：
+```python
+# 只是参数调整
+threshold = 3
+threshold += 1  # 3 → 4
+version = "v1"
+version = "v2"  # 只是版本号++
+```
+
+**改进后（真智能）**：
+```python
+# 可执行规则
+rule = {
+    "id": "k001",
+    "type": "pre_check",
+    "description": "执行前检查权限",
+    "condition": "tool == 'Bash' and 'permission' in error",
+    "action": "check_permissions",
+    "auto_fix": "chmod +x or request_permission",
+    "confidence": 0.9,
+    "status": "verified"  # 有状态管理
+}
+```
+
+### E.3 进化闭环理论
+
+真正的智能进化需要完整闭环：
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│   Error ──→ Capture ──→ Analyze ──→ Store ──→ Apply          │
+│     ↑                                        │                  │
+│     │                                        ↓                  │
+│     └────────────── Verify ←─────────── Track                  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+| 步骤 | 名称 | 说明 |
+|------|------|------|
+| 1 | Error | 错误发生 |
+| 2 | Capture | 捕获错误上下文 |
+| 3 | Analyze | LLM深度根因分析 |
+| 4 | Store | 知识沉淀为规则 |
+| 5 | Apply | 应用知识到实际场景 |
+| 6 | Verify | 验证效果 |
+| 7 | Track | 跟踪成功率 |
+| → | Loop | 形成闭环 |
+
+### E.4 知识库目录结构
+
+> 注：`evolve-daemon/knowledge/` 已符号链接到 `harness/knowledge/evolved/`，保持向后兼容。
+
+```
+harness/knowledge/evolved/        # 进化知识库（符号链接自 evolve-daemon/knowledge/）
+├── evolution_history.jsonl  # 进化历史
+├── effect_tracking.jsonl     # 效果跟踪
+├── effect_summary.json       # 效果摘要
+├── knowledge_base.json       # 知识库索引
+└── knowledge_base.jsonl      # 知识详情
+```
+
+---
+
+**文档版本**: v2.0
+**最后更新**: 2026-05-04
+**附录E添加日期**: 2026-05-04（合并自 smart-evolution-system.md）
