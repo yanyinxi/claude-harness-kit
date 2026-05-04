@@ -46,15 +46,19 @@ class TestApiKeyEnvironmentError:
 
     def test_decide_action_raises_when_no_api_key(self):
         """
-        顶层 decide_action 函数在无 API key 时应将 EnvironmentError 向上传递。
+        顶层 decide_action 函数在无 API key 时应返回保守决策，不崩溃。
+        LLM 失败被捕获 → 返回 propose action，风险 high。
         """
         sessions = [{"session_id": "s1", "corrections": [{"target": "test", "context": "ctx", "user_correction": "fix"}]}]
         analysis = {"correction_hotspots": {"test": 3}, "primary_target": "test"}
         config = {"decision": {"enabled": True}, "claude_api": {}}
 
         with patch.dict("os.environ", {}, clear=True):
-            with pytest.raises(EnvironmentError):
-                llm_decision_mod.decide_action(sessions, analysis, config)
+            result = llm_decision_mod.decide_action(sessions, analysis, config)
+            # 无 API key 时应返回保守决策，不抛异常
+            assert result["action"] == "propose"
+            assert result["risk_level"] == "high"
+            assert result["confidence"] == 0.3
 
 
 # =============================================================================

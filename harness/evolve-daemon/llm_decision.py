@@ -15,11 +15,14 @@ LLM 决策引擎 — 用 LLM 分析会话数据，决定下一步行动。
 - 其他情况 → 生成提案
 """
 import json
+import logging
 import os
 import sys
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 # 添加同级的 kb_shared 到 Python path
 sys.path.insert(0, str(Path(__file__).parent))
