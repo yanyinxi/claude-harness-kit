@@ -19,12 +19,15 @@ from pathlib import Path
 from typing import Optional
 from unittest.mock import patch
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-EVOLVE_DIR = PROJECT_ROOT / "evolve-daemon"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+EVOLVE_DIR = PROJECT_ROOT / "harness" / "evolve-daemon"
+
+# 确保 find_root() 返回正确路径（避免创建 harness/harness/ 幽灵目录）
+os.environ.setdefault("CLAUDE_PROJECT_DIR", str(PROJECT_ROOT))
 
 # 将 evolve-daemon 和 knowledge 加入 path
 sys.path.insert(0, str(EVOLVE_DIR))
-sys.path.insert(0, str(PROJECT_ROOT / "knowledge"))
+sys.path.insert(0, str(PROJECT_ROOT / "harness" / "knowledge"))
 
 PASS = 0
 FAIL = 0

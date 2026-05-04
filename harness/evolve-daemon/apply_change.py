@@ -279,6 +279,7 @@ def _update_instinct(decision: dict, root: Path):
             root_cause=reason,
             confidence=decision.get("confidence", 0.5),
             source="auto-applied",
+            root=root,
         )
 
         increment_applied_count(record_id, root)

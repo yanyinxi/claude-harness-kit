@@ -210,12 +210,12 @@ def _save_proposal(content: str, analysis: dict, config: dict, root: Path) -> Pa
     proposal_path.write_text(content, encoding="utf-8")
 
     # 记录到 instinct（待观察状态）
-    _record_to_instinct(analysis, proposal_path, confidence=0.5, source="proposal-generated")
+    _record_to_instinct(analysis, proposal_path, confidence=0.5, source="proposal-generated", root=root)
 
     return proposal_path
 
 
-def _record_to_instinct(analysis: dict, proposal_path: Path, confidence: float, source: str):
+def _record_to_instinct(analysis: dict, proposal_path: Path, confidence: float, source: str, root: Path = None):
     """将提案内容记录到 instinct-record.json"""
     try:
         from instinct_updater import add_pattern
@@ -228,6 +228,7 @@ def _record_to_instinct(analysis: dict, proposal_path: Path, confidence: float, 
                 root_cause=analysis.get("primary_cause", ""),
                 confidence=confidence,
                 source=source,
+                root=root,
             )
             print(f"  🧠 instinct 已记录: {record_id}")
     except ImportError as e:

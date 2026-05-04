@@ -61,6 +61,7 @@ tmp/
 *.tmp
 harness/.claude/data/rate-limits/
 harness/harness/
+harness/.claude/
 
 # 知识库备份文件
 *.bak

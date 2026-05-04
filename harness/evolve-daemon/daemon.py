@@ -719,6 +719,7 @@ def _record_rollback_to_instinct(proposal: dict, root: Path, reason: str, config
                 root_cause=root_cause,
                 confidence=0.2,
                 source="rollback-event",
+                root=root,
             )
     except Exception:
         pass
