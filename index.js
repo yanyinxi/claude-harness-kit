@@ -31,7 +31,7 @@ function loadAgents() {
     const agents = {};
     if (fs.existsSync(AGENTS_DIR)) {
         fs.readdirSync(AGENTS_DIR).forEach(file => {
-            if (file.endsWith('.md')) {
+            if (file.endsWith('.md') && !file.startsWith('.')) {
                 const name = file.replace('.md', '');
                 agents[name] = path.join(AGENTS_DIR, file);
             }
@@ -111,5 +111,7 @@ module.exports = {
     }
 };
 
-// Auto-initialize when loaded
-module.exports.init();
+// Auto-initialize when loaded (for CLI usage: node index.js)
+if (require.main === module) {
+    module.exports.init();
+}

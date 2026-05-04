@@ -20,6 +20,16 @@ from pathlib import Path
 from typing import Optional
 
 
+def _parse_iso_safe(ts: Optional[str], default: str = "2000-01-01") -> datetime:
+    """安全解析 ISO 时间字符串，失败时返回默认值"""
+    if not ts or str(ts) in ("null", "None", "undefined", ""):
+        ts = default
+    try:
+        return datetime.fromisoformat(str(ts))
+    except (ValueError, TypeError):
+        return datetime.fromisoformat(default)
+
+
 def load_config():
     """加载配置"""
     config_path = Path(__file__).parent / "config.yaml"
@@ -87,15 +97,11 @@ def time_decay_weight(
     if not created_at:
         return 1.0
 
-    try:
-        reference_time = last_reinforced if last_reinforced else created_at
-        ref_dt = datetime.fromisoformat(reference_time)
-    except (ValueError, TypeError):
-        return 1.0
+    ref_dt = _parse_iso_safe(last_reinforced if last_reinforced else created_at)
 
     age_seconds = (datetime.now() - ref_dt).total_seconds()
     age_days = age_seconds / 86400
-    return 0.5 ** (age_days / half_life_days)
+    return min(1.0, max(0.0, 0.5 ** (age_days / half_life_days)))
 
 
 def apply_decay_to_all(instinct: dict, config: Optional[dict] = None) -> dict:
@@ -153,8 +159,8 @@ def apply_decay_to_all(instinct: dict, config: Optional[dict] = None) -> dict:
         if not (
             r.get("confidence", 1) > decay_floor
             and r.get("decay_status") == "decaying"
-            and (datetime.now() - datetime.fromisoformat(
-                r.get("last_reinforced_at", r.get("created_at", "2000-01-01"))
+            and (datetime.now() - _parse_iso_safe(
+                r.get("last_reinforced_at") or r.get("created_at")
             )).days > 180
         )
     ]

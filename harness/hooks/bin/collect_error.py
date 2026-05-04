@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-collect-error.py — 全局错误收集 Hook
+collect_error.py — 全局错误收集 Hook
 
 功能:
   - 捕获工具执行失败 (PostToolUseFailure)

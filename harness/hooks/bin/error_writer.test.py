@@ -47,7 +47,7 @@ def test_write_error_creates_file():
         record = build_error_record(
             error_type="tool_failure",
             error_message="Bash command failed",
-            source="hooks/bin/collect-error.py:42",
+            source="hooks/bin/collect_error.py:42",
             tool="Bash",
         )
 
@@ -63,7 +63,7 @@ def test_write_error_creates_file():
         data = json.loads(lines[0])
         assert data["type"] == "tool_failure"
         assert data["error"] == "Bash command failed"
-        assert data["source"] == "hooks/bin/collect-error.py:42"
+        assert data["source"] == "hooks/bin/collect_error.py:42"
         assert "timestamp" in data
         print("  ✓ test_write_error_creates_file PASS")
     finally:
@@ -108,7 +108,7 @@ def test_error_record_format():
         meta = record["metadata"]
         assert "chk_version" in meta
         assert meta["hook_event"] == "PostToolUse"
-        assert meta["collector"] == "collect-error.py"
+        assert meta["collector"] == "collect_error.py"
 
         print("  ✓ test_error_record_format PASS")
     finally:

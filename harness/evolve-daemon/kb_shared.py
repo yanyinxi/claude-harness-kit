@@ -46,7 +46,7 @@ def get_llm_config() -> dict:
         "decide_temperature": 0.2,
         # API
         "base_url": os.environ.get("ANTHROPIC_BASE_URL", "https://api.anthropic.com"),
-        "api_key": os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN", "PROXY_MANAGED"),
+        "api_key": os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN") or "PROXY_MANAGED",
     }
 
 def create_llm_client() -> "Anthropic":

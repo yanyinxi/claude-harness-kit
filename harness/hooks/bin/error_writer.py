@@ -117,7 +117,8 @@ def _sanitize_tool_input(tool_input: dict) -> dict:
     sensitive_keys = {
         "password", "secret", "token", "key", "api_key", "auth",
         "credential", "private", "secret_key", "access_token",
-        "ANTHROPIC_API_KEY", "GITHUB_TOKEN",
+        "ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "GITHUB_TOKEN",
+        "feishu", "webhook",
     }
 
     for k, v in tool_input.items():
@@ -176,7 +177,7 @@ def build_error_record(
         "metadata": {
             "chk_version": get_chk_version(),
             "hook_event": hook_event,
-            "collector": "collect-error.py",
+            "collector": "collect_error.py",
         },
     }
 
@@ -253,7 +254,7 @@ def main():
     """
     支持两种调用方式:
     1. 管道输入 JSON: cat error_data.json | python3 error_writer.py
-    2. 直接传参: python3 error_writer.py tool_failure "error msg" hooks/bin/collect-error.py:42
+    2. 直接传参: python3 error_writer.py tool_failure "error msg" hooks/bin/collect_error.py:42
     """
     raw = sys.stdin.read().strip()
 

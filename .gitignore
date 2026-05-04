@@ -6,6 +6,10 @@
 .claude/data/failures.jsonl
 .claude/data/homunculus/
 .claude/data/observations.jsonl
+.claude/data/sessions.jsonl
+.claude/data/agent_calls.jsonl
+.claude/data/skill_calls.jsonl
+.claude/proposals/
 
 # harness 运行时数据
 harness/evolve-daemon/instinct/instinct-record.json
@@ -60,3 +64,11 @@ harness/.claude/data/rate-limits/
 # 知识库备份文件
 *.bak
 *.bak_v*
+
+# 进化数据文件（自动生成，避免追踪）
+harness/knowledge/evolved/*.jsonl
+harness/knowledge/evolved/effect_tracking.jsonl
+harness/knowledge/evolved/evolution_history.jsonl
+harness/knowledge/evolved/knowledge_base.jsonl
+harness/knowledge/evolved/merge_cooldown.jsonl
+harness/knowledge/evolved/notify_cooldown.jsonl

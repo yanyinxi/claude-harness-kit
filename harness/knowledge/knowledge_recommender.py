@@ -29,6 +29,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+_KEYWORD_PATTERN = re.compile(r"[a-zA-Z0-9\+\#]+")
+
 # ── 路径配置 ──────────────────────────────────────────────────────────────────
 
 PROJECT_ROOT = Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
@@ -231,7 +233,7 @@ def extract_keywords(text: str) -> set[str]:
         "two", "three", "new", "old", "use", "used", "using", "file", "files",
     }
     # 提取字母和数字组合
-    tokens = re.findall(r"[a-zA-Z0-9\+\#]+", text.lower())
+    tokens = _KEYWORD_PATTERN.findall(text.lower())
     return {t for t in tokens if len(t) >= 2 and t not in stop_words}
 
 

@@ -156,7 +156,7 @@ CLI_MODES_DIR = CLI_DIR / DIR_CLI_MODES   # harness/cli/modes/ — 7 种执行�
 EVOLVE_DIR = PLUGIN_ROOT / "evolve-daemon"
 EVOLVE_TEMPLATES_DIR = EVOLVE_DIR / "templates"        # 进化提案模板
 EVOLVE_CONFIG_FILE = EVOLVE_DIR / "config.yaml"        # 进化配置
-EVOLVE_INSTINCT_DIR = EVOLVE_DIR / DIR_INSTINCT         # 进化本能目录
+EVOLVE_INSTINCT_DIR = INSTINCT_DIR         # 统一到 harness/instinct/（evolve-daemon/instinct/ 已废弃）
 EVOLVE_INSTINCT_FILE = EVOLVE_INSTINCT_DIR / FILE_INSTINCT_RECORD
 
 # ============================================================================

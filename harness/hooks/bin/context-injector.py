@@ -137,7 +137,7 @@ def inject_knowledge_recommendations(root: Path):
                 return "\n".join(context_parts)
             except json.JSONDecodeError:
                 pass
-    except (subprocess.TimeoutExpired, OSError):
+    except (subprocess.TimeoutExpired, OSError, subprocess.CalledProcessError):
         pass
 
     return ""

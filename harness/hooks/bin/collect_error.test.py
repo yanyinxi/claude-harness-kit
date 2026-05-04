@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-collect-error.py 测试套件
+collect_error.py 测试套件
 TDD 流程: RED → GREEN → REFACTOR
 """
 import json
@@ -238,7 +238,7 @@ def test_chk_internal_error_collection():
 
     proj = TempProject()
     try:
-        error_detail = "Traceback (most recent call last):\n  File 'hooks/bin/collect-error.py', line 42\n    raise ValueError('test error')\nValueError: test error"
+        error_detail = "Traceback (most recent call last):\n  File 'hooks/bin/collect_error.py', line 42\n    raise ValueError('test error')\nValueError: test error"
 
         record = collect_error.collect_chk_internal_error(error_detail)
 
@@ -300,6 +300,7 @@ def test_error_type_classification():
 def test_multiple_failures_in_session():
     """✓ 同一会话多次失败都被记录"""
     import collect_error
+    from error_writer import write_error
 
     proj = TempProject()
     try:
@@ -312,7 +313,7 @@ def test_multiple_failures_in_session():
             }
             sys.stdin = __import__("io").StringIO(json.dumps(hook_data))
             record = collect_error.collect_tool_failure()
-            collect_error.write_error(record)
+            write_error(record)
 
         # 验证所有错误都被记录
         error_file = proj.data_dir / "error.jsonl"
@@ -350,7 +351,7 @@ def run_all_tests():
     failed = 0
 
     print("\n" + "=" * 60)
-    print("  collect-error.py 测试套件")
+    print("  collect_error.py 测试套件")
     print("=" * 60)
 
     for test in tests:

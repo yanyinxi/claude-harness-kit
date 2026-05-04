@@ -14,7 +14,10 @@ import json
 import os
 from pathlib import Path
 from typing import Any, Optional, Union
-import yaml
+try:
+    import yaml
+except ImportError:
+    yaml = None
 
 
 class ConfigLoader:
@@ -99,6 +102,9 @@ class ConfigLoader:
         """加载守护进程配置"""
         config_path = self.project_root / "harness" / "evolve-daemon" / "config.yaml"
         if not config_path.exists():
+            return self.DEFAULTS["daemon"].copy()
+
+        if yaml is None:
             return self.DEFAULTS["daemon"].copy()
 
         with open(config_path, encoding="utf-8") as f:
