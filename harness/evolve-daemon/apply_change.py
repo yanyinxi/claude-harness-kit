@@ -18,42 +18,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-
-def find_root() -> Path:
-    return Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
-
-
-def load_config():
-    """加载配置"""
-    config_path = Path(__file__).parent / "config.yaml"
-    if not config_path.exists():
-        return _default_config()
-    try:
-        import yaml
-        with open(config_path) as f:
-            return yaml.safe_load(f)
-    except ImportError:
-        return _default_config()
-
-
-def _default_config():
-    return {
-        "paths": {
-            "data_dir": ".claude/data",
-            "proposals_dir": ".claude/proposals",
-            "skills_dir": "skills",
-            "agents_dir": "agents",
-            "rules_dir": "rules",
-            "instinct_dir": "memory",
-            "backups_dir": ".claude/data/backups",
-        },
-        "observation": {
-            "days": 7,
-        },
-        "safety": {
-            "breaker": {"max_consecutive_rejects": 3, "pause_days": 30},
-        },
-    }
+from _daemon_config import load_config, _default_config
+from _find_root import find_root
 
 
 def backup_file(file_path: Path, backups_dir: Path, decision_id: str) -> Optional[Path]:

@@ -99,8 +99,8 @@ class TestBuildSession:
     """测试会话构建逻辑"""
 
     def test_minimal_session(self):
-        from collect_session import build_session, find_project_root
-        root = find_project_root()
+        from collect_session import build_session, get_project_root
+        root = get_project_root()
         session = build_session(root)
         assert "session_id" in session
         assert "timestamp" in session
@@ -111,8 +111,8 @@ class TestBuildSession:
         assert "git_files_changed" in session
 
     def test_rich_context_structure(self):
-        from collect_session import build_session, find_project_root
-        root = find_project_root()
+        from collect_session import build_session, get_project_root
+        root = get_project_root()
         session = build_session(root)
         assert "rich_context" in session
         ctx = session["rich_context"]
@@ -123,8 +123,8 @@ class TestAppendSession:
     """测试会话追加逻辑"""
 
     def test_append_creates_file(self):
-        from collect_session import append_session, find_project_root
-        root = find_project_root()
+        from collect_session import append_session, get_project_root
+        root = get_project_root()
         data_dir = root / ".claude" / "data"
         data_dir.mkdir(parents=True, exist_ok=True)
 
@@ -142,8 +142,8 @@ class TestAppendSession:
         assert "2026-05-02T10:00:00" in content
 
     def test_append_jsonl_format(self):
-        from collect_session import append_session, find_project_root
-        root = find_project_root()
+        from collect_session import append_session, get_project_root
+        root = get_project_root()
         data_dir = root / ".claude" / "data"
         data_dir.mkdir(parents=True, exist_ok=True)
 

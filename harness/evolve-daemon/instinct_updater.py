@@ -30,30 +30,8 @@ def _parse_iso_safe(ts: Optional[str], default: str = "2000-01-01") -> datetime:
         return datetime.fromisoformat(default)
 
 
-def load_config():
-    """加载配置"""
-    config_path = Path(__file__).parent / "config.yaml"
-    if not config_path.exists():
-        return _default_config()
-    try:
-        import yaml
-        with open(config_path) as f:
-            return yaml.safe_load(f)
-    except ImportError:
-        return _default_config()
-
-
-def _default_config():
-    """默认配置（当 yaml 不可用时）"""
-    return {
-        "decay": {
-            "half_life_days": 90,
-            "decay_floor": 0.1,
-            "min_reinforcement": 3,
-            "reinforcement_bonus": 0.05,
-            "max_confidence": 0.95,
-        }
-    }
+from _daemon_config import load_config, _default_config
+from _find_root import find_root
 
 
 def find_root():

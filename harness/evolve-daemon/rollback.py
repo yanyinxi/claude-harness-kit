@@ -19,40 +19,8 @@ from pathlib import Path
 from typing import Optional
 
 
-def find_root() -> Path:
-    return Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
-
-
-def load_config():
-    """加载配置"""
-    config_path = Path(__file__).parent / "config.yaml"
-    if not config_path.exists():
-        return _default_config()
-    try:
-        import yaml
-        with open(config_path) as f:
-            return yaml.safe_load(f)
-    except ImportError:
-        return _default_config()
-
-
-def _default_config():
-    return {
-        "observation": {
-            "days": 7,
-            "check_interval_hours": 24,
-        },
-        "safety": {
-            "breaker": {
-                "max_consecutive_rejects": 3,
-                "pause_days": 30,
-                "max_rollbacks_per_week": 5,
-            },
-        },
-        "paths": {
-            "data_dir": ".claude/data",
-        },
-    }
+from _daemon_config import load_config, _default_config
+from _find_root import find_root
 
 
 def load_proposal_history(history_file: Path) -> list:

@@ -26,31 +26,8 @@ from harness._core.exceptions import handle_exception, safe_execute
 logger = logging.getLogger(__name__)
 
 
-def find_root() -> Path:
-    return Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
-
-
-def load_config():
-    """加载配置"""
-    config_path = Path(__file__).parent / "config.yaml"
-    if not config_path.exists():
-        return _default_config()
-    try:
-        import yaml
-        with open(config_path) as f:
-            return yaml.safe_load(f)
-    except ImportError:
-        return _default_config()
-
-
-def _default_config():
-    return {
-        "validation": {
-            "enabled": True,
-            "quarantine_malformed": True,
-            "max_age_days": 90,
-        }
-    }
+from _daemon_config import load_config, _default_config
+from _find_root import find_root
 
 
 def validate_session(session: dict) -> tuple[bool, Optional[str]]:

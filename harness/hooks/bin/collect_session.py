@@ -17,33 +17,12 @@ import json
 import os
 import subprocess
 import sys
-from datetime import datetime, date
+from datetime import datetime
 from pathlib import Path
 from collections import Counter
 
 
-def find_project_root() -> Path:
-    return Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
-
-
-def get_session_id_fallback(root: Path) -> str:
-    """生成确定性的 session_id"""
-    git_dir = root / ".git"
-    if git_dir.exists():
-        try:
-            result = subprocess.run(
-                ["git", "rev-parse", "--short", "HEAD"],
-                cwd=root, capture_output=True, text=True, timeout=5
-            )
-            if result.returncode == 0:
-                commit = result.stdout.strip()
-                if commit:
-                    today = date.today().isoformat()
-                    return f"git-{commit}-{today}"
-        except Exception:
-            pass
-    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-    return f"{root.name}-{ts}"
+from _session_utils import get_session_id, get_project_root
 
 
 def read_session_start(root: Path) -> dict:
@@ -319,7 +298,7 @@ def build_session(root: Path) -> dict:
 
     session_id = hook_data.get("session_id", os.environ.get("CLAUDE_SESSION_ID"))
     if not session_id or session_id == "unknown":
-        session_id = get_session_id_fallback(root)
+        session_id = get_session_id()
 
     mode = session_start.get("mode", os.environ.get("CLAUDE_MODE", "solo"))
     duration = calculate_duration(session_start)
@@ -383,7 +362,7 @@ def should_trigger_analysis(session: dict, config: dict) -> bool:
 
 
 def main():
-    root = find_project_root()
+    root = get_project_root()
     session = build_session(root)
     append_session(root, session)
 

@@ -36,34 +36,10 @@ except ImportError:
     APSCHEDULER_AVAILABLE = False
 
 
-def get_project_root():
-    return Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
+from _find_root import get_project_root as find_root
 
 
-def load_config():
-    """加载配置"""
-    config_path = Path(__file__).parent / "config.yaml"
-    try:
-        import yaml
-        with open(config_path, encoding="utf-8") as f:
-            return yaml.safe_load(f)
-    except ImportError as e:
-        handle_exception(e, "PyYAML 未安装，使用默认配置", log_level="info")
-    except OSError as e:
-        handle_exception(e, f"加载配置文件失败: {config_path}", log_level="warning")
-    except Exception as e:
-        handle_exception(e, "加载配置未知错误，使用默认配置", log_level="warning")
-
-    # Fallback 默认配置
-    return {
-        "daemon": {
-            "mode": "external",
-            "scheduler_interval": "30 minutes",
-            "run_on_startup": False,
-            "heartbeat_check_minutes": 180,  # 3 小时
-            "auto_start_on_install": True,
-        }
-    }
+from _daemon_config import load_config
 
 
 def parse_interval(interval_str: str) -> int:

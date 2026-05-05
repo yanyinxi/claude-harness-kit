@@ -45,9 +45,7 @@ from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
-from _load_env import load_env as _load_env
-
-_load_env()
+from _find_root import find_root
 
 
 def handle_exception(e, context, reraise=False, default_return=None, log_level="error"):
@@ -346,10 +344,6 @@ def load_config():
         "safety": {"max_proposals_per_day": 3, "auto_close_days": 7, "breaker": {"max_consecutive_rejects": 3, "pause_days": 30}},
         "paths": {"data_dir": ".claude/data", "proposals_dir": ".claude/proposals", "skills_dir": "skills", "agents_dir": "agents", "rules_dir": "rules", "instinct_dir": "memory"},
     }
-
-
-def find_root():
-    return Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
 
 
 def load_new_sessions(data_dir: Path, last_analyzed_id: str | None = None) -> list[dict]:

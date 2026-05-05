@@ -18,60 +18,27 @@ import json
 import logging
 import os
 import sys
-from pathlib import Path
-from _load_env import load_env as _load_env; _load_env()
+import pathlib
 from datetime import datetime
 from typing import Optional
-
 logger = logging.getLogger(__name__)
 
 # 添加同级的 kb_shared 到 Python path
-sys.path.insert(0, str(Path(__file__).parent))
-from kb_shared import get_sonnet_model, create_llm_client
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from kb_shared import get_sonnet_model, create_llm_client, get_llm_config
 from instinct_updater import load_instinct
-
-
-def find_root() -> Path:
-    return Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
+from _find_root import find_root
 
 
 def load_config():
-    """加载配置"""
-    config_path = Path(__file__).parent / "config.yaml"
-    if not config_path.exists():
-        return _default_config()
-    try:
-        import yaml
-        with open(config_path) as f:
-            return yaml.safe_load(f)
-    except ImportError:
-        return _default_config()
+    """加载配置（使用统一配置模块）"""
+    from _daemon_config import load_config as _lc
+    return _lc("llm_decision")
 
 
 def _default_config():
-    return {
-        "decision": {
-            "enabled": True,
-            "auto_apply_threshold": 0.8,
-            "high_risk_threshold": 0.5,
-        },
-        "claude_api": {
-            "decide_model": os.environ.get("ANTHROPIC_MODEL") or "claude-sonnet-4-6-20250514",
-            "decide_max_tokens": 2048,
-            "decide_temperature": 0.2,
-        },
-        "paths": {
-            "data_dir": ".claude/data",
-            "proposals_dir": ".claude/proposals",
-            "skills_dir": "skills",
-            "agents_dir": "agents",
-            "rules_dir": "rules",
-            "instinct_dir": "memory",
-        },
-        "safety": {
-            "breaker": {"max_consecutive_rejects": 3, "pause_days": 30},
-        },
-    }
+    from _daemon_config import _DEFAULT_CONFIGS
+    return _DEFAULT_CONFIGS.get("llm_decision", {})
 
 
 def get_existing_targets(instinct: dict) -> set:
@@ -132,19 +99,7 @@ def call_claude_api(
     user_message: str,
     config: dict
 ) -> Optional[dict]:
-    """调用 Claude API"""
-
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise EnvironmentError(
-            "ANTHROPIC_API_KEY 未设置，无法调用 LLM 决策引擎。\n"
-            "请先配置 API Key：\n"
-            "  1. 复制 .env.example 为 .env\n"
-            "  2. 填入 ANTHROPIC_API_KEY=your_key\n"
-            "  3. 或在终端执行: export ANTHROPIC_API_KEY=your_key\n"
-            "获取 API Key: https://console.anthropic.com/settings/keys"
-        )
-
+    """调用 Claude API（统一 LLM 配置）"""
     api_config = config.get("claude_api", {})
 
     try:
@@ -157,7 +112,6 @@ def call_claude_api(
             system=system_prompt,
             messages=[{"role": "user", "content": user_message}],
         )
-        # 提取文本内容（跳过 thinking block，处理 ```json 包裹）
         content = ""
         for block in response.content:
             if hasattr(block, "text") and block.text:
@@ -168,10 +122,10 @@ def call_claude_api(
             content = content.rsplit("```", 1)[0].strip()
 
     except ImportError:
-        # 降级为 urllib
+        # 降级为 urllib（使用统一配置）
         try:
             import urllib.request
-
+            cfg = get_llm_config()
             body = json.dumps({
                 "model": api_config.get("decide_model") or get_sonnet_model(),
                 "max_tokens": api_config.get("decide_max_tokens", 2048),
@@ -179,22 +133,18 @@ def call_claude_api(
                 "system": system_prompt,
                 "messages": [{"role": "user", "content": user_message}],
             }).encode("utf-8")
-
-            base_url = os.environ.get("ANTHROPIC_BASE_URL", "https://api.anthropic.com")
             req = urllib.request.Request(
-                f"{base_url}/v1/messages",
+                f"{cfg['base_url']}/v1/messages",
                 data=body,
                 headers={
-                    "x-api-key": api_key,
+                    "x-api-key": cfg["api_key"],
                     "anthropic-version": "2023-06-01",
                     "content-type": "application/json",
                 },
             )
-
             with urllib.request.urlopen(req, timeout=30) as resp:
                 result = json.loads(resp.read())
                 content = result["content"][0]["text"]
-
         except Exception:
             return None
 
@@ -405,7 +355,7 @@ def _check_circuit_breaker(config: dict) -> bool:
     return False
 
 
-def get_decision_stats(history_file: Path) -> dict:
+def get_decision_stats(history_file: pathlib.Path) -> dict:
     """获取决策统计"""
     if not history_file.exists():
         return {"total": 0, "auto_apply": 0, "propose": 0, "skip": 0}
