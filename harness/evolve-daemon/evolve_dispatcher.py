@@ -16,12 +16,12 @@
 """
 import json
 import os
+import sys
 from pathlib import Path
 from datetime import datetime
 
-
-def find_project_root():
-    return Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from _find_root import find_root as get_project_root
 
 
 def get_dimension(target: str) -> str:
@@ -436,7 +436,7 @@ def dispatch_evolution(analysis: dict, config: dict, root: Path | None = None, s
     ]
     """
     if root is None:
-        root = find_project_root()
+        root = get_project_root()
     elif isinstance(root, str):
         root = Path(root)
 
@@ -560,7 +560,7 @@ def _dispatch_extended_dimensions(analysis: dict, instinct_ids: list) -> list[di
 
 def main():
     """CLI 测试入口"""
-    root = find_project_root()
+    root = get_project_root()
     config = {"paths": {"agents_dir": "agents", "skills_dir": "skills", "rules_dir": "rules"}}
 
     # 模拟分析数据

@@ -38,7 +38,11 @@ class EffectTracker:
 
     def __init__(self, root: Optional[Path] = None):
         import os
-        self.root = root or Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
+        if root is None:
+            sys.path.insert(0, str(Path(__file__).parent.parent))
+            from _find_root import find_root
+            root = find_root()
+        self.root = root
         self.knowledge_dir = self.root / "harness" / "evolve-daemon" / "knowledge"
         self.knowledge_dir.mkdir(parents=True, exist_ok=True)
 

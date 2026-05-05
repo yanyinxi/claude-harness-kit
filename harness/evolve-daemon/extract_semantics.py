@@ -15,35 +15,20 @@ import json
 import os
 import sys
 from pathlib import Path
-from _load_env import load_env as _load_env; _load_env()
 
 # 添加同级的 kb_shared 到 Python path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 sys.path.insert(0, str(Path(__file__).parent))
-from kb_shared import get_haiku_model, create_llm_client
-
-
-def find_project_root():
-    return Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
+from kb_shared import get_haiku_model, create_llm_client, get_llm_config
+from _find_root import find_root as get_project_root
 
 
 def extract_with_haiku(session: dict) -> list[dict]:
     """
-    调用 Claude Haiku 提取纠正上下文。
+    调用 Claude Haiku 提取纠正上下文（统一 LLM 配置）。
 
-    有 API Key：调用真实 API
-    无 API Key：抛出明确错误
+    底层使用 kb_shared.get_llm_config()，所有 LLM 调用路径统一。
     """
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise EnvironmentError(
-            "ANTHROPIC_API_KEY 未设置，无法提取语义信息。\n"
-            "请先配置 API Key：\n"
-            "  1. 复制 .env.example 为 .env\n"
-            "  2. 填入 ANTHROPIC_API_KEY=your_key\n"
-            "  3. 或在终端执行: export ANTHROPIC_API_KEY=your_key\n"
-            "获取 API Key: https://console.anthropic.com/settings/keys"
-        )
-
     system_prompt = """你是一个对话分析器。从会话摘要中提取用户纠正 AI 的上下文。
 
 输出 JSON 数组（仅 JSON，无其他文字）:
@@ -62,7 +47,7 @@ def extract_with_haiku(session: dict) -> list[dict]:
 
     user_message = json.dumps(session, ensure_ascii=False)
 
-    # 方案 1: 使用 anthropic SDK
+    # 方案 1: 使用统一 SDK 客户端
     try:
         client = create_llm_client()
         response = client.messages.create(
@@ -72,7 +57,6 @@ def extract_with_haiku(session: dict) -> list[dict]:
             system=system_prompt,
             messages=[{"role": "user", "content": user_message}],
         )
-        # 提取文本内容（跳过 thinking block，处理 ```json 包裹）
         text = ""
         for block in response.content:
             if hasattr(block, 'text') and block.text:
@@ -88,10 +72,10 @@ def extract_with_haiku(session: dict) -> list[dict]:
     except ImportError:
         pass
 
-    # 方案 2: 标准库 REST API（零外部依赖）
+    # 方案 2: 标准库 REST API（零外部依赖，降级）
     try:
         import urllib.request
-        base_url = os.environ.get("ANTHROPIC_BASE_URL", "https://api.anthropic.com")
+        cfg = get_llm_config()
         body = json.dumps({
             "model": get_haiku_model(),
             "max_tokens": 512,
@@ -100,10 +84,10 @@ def extract_with_haiku(session: dict) -> list[dict]:
             "messages": [{"role": "user", "content": user_message}],
         }).encode("utf-8")
         req = urllib.request.Request(
-            f"{base_url}/v1/messages",
+            f"{cfg['base_url']}/v1/messages",
             data=body,
             headers={
-                "x-api-key": api_key,
+                "x-api-key": cfg["api_key"],
                 "anthropic-version": "2023-06-01",
                 "content-type": "application/json",
             },
@@ -138,7 +122,7 @@ def analyze_session(session: dict, root: Path | None = None) -> dict:
         }
     """
     if root is None:
-        root = find_project_root()
+        root = get_project_root()
 
     session_id = session.get("session_id", "unknown")
     data_dir = root / ".claude" / "data"
@@ -232,7 +216,7 @@ def _record_to_instinct(corrections: list[dict], root: Path) -> list[str]:
 
 def main():
     """CLI 测试入口"""
-    root = find_project_root()
+    root = get_project_root()
     sessions_file = root / ".claude" / "data" / "sessions.jsonl"
 
     if not sessions_file.exists():
