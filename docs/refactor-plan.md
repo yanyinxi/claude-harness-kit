@@ -36,16 +36,16 @@
 |---|------|---------|---------|------|
 | A | sessions.jsonl 加载重复（8 处各自内联实现） | daemon, apply_change, llm_decision, rollback, extract_semantics, intent_detector, validator, analyzer | ~80 | ✅ 已修复（统一到 kb_shared.load_sessions + read_jsonl） |
 | B | LLM API 调用模式重复（4 处约 120 行） | extract_semantics, proposer, llm_decision, generalize | ~120 | 🔲 未修复 |
-| C | `classify_error_type()` 重复（2 处） | collect_session.py, collect_failure.py | ~16 | 🔲 未修复 |
-| D | stdin JSON 解析重复（6 个 collect_*.py） | hooks/bin/*.py | ~24 | 🔲 未修复 |
+| C | `classify_error_type()` 重复（2 处） | collect_session.py, collect_failure.py | ~16 | ✅ 已修复（统一到 _session_utils.py） |
+| D | stdin JSON 解析重复（6 个 collect_*.py） | hooks/bin/*.py | ~24 | ✅ 已修复（_session_utils.load_hook_context()，collect_error.py 改用共享函数） |
 
 ### 🟡 中优先级
 
 | # | 问题 | 涉及文件 | 估计行数 | 状态 |
 |---|------|---------|---------|------|
 | E | 异常静默处理模式重复（7 个 hook） | hooks/bin/*.py | ~84 | 🔲 未修复 |
-| F | `daemon.py` `graceful_shutdown()` / `graceful_restart()` 重复 | daemon.py | ~20 | 🔲 未修复 |
-| G | `analyzer.py` `parse_iso_time()` 同文件重复定义 | analyzer.py | ~12 | 🔲 未修复 |
+| F | `daemon.py` `graceful_shutdown()` / `graceful_restart()` 重复 | daemon.py | ~20 | ✅ 已修复（提取 _stop_scheduler + _save_state 共享函数） |
+| G | `analyzer.py` `parse_iso_time()` 同文件重复定义 | analyzer.py | ~12 | ✅ 已修复（提取为模块级函数） |
 | H | 进化函数 `_path()` 重复（3 个 evolution 文件） | skill/agent/rule_evolution.py | ~12 | 🔲 未修复 |
 
 ### 🟢 低优先级
