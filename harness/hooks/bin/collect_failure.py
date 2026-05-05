@@ -10,23 +10,7 @@ from pathlib import Path
 
 # 导入共享工具模块
 sys.path.insert(0, str(Path(__file__).parent))
-from _session_utils import get_session_id, get_project_root, get_data_dir, write_log_record, get_current_timestamp
-
-
-def classify_error_type(error: str) -> str:
-    """分类错误类型"""
-    error_lower = error.lower()
-    if "permission" in error_lower or "denied" in error_lower:
-        return "permission_error"
-    if "not found" in error_lower or "no such" in error_lower:
-        return "not_found_error"
-    if "timeout" in error_lower or "timed out" in error_lower:
-        return "timeout_error"
-    if "syntax" in error_lower or "parse" in error_lower:
-        return "syntax_error"
-    if "connection" in error_lower or "network" in error_lower:
-        return "network_error"
-    return "unknown_error"
+from _session_utils import get_session_id, get_project_root, get_data_dir, write_log_record, get_current_timestamp, classify_error_type
 
 
 def main():

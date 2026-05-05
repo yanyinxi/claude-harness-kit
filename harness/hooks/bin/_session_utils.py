@@ -281,6 +281,28 @@ def truncate_string(s: str, max_length: int = 200) -> str:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# 错误分类
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def classify_error_type(error: str) -> str:
+    """分类错误类型"""
+    error_lower = error.lower()
+    if "permission" in error_lower or "denied" in error_lower:
+        return "permission_error"
+    if "not found" in error_lower or "no such" in error_lower:
+        return "not_found_error"
+    if "timeout" in error_lower or "timed out" in error_lower:
+        return "timeout_error"
+    if "syntax" in error_lower or "parse" in error_lower:
+        return "syntax_error"
+    if "connection" in error_lower or "network" in error_lower:
+        return "network_error"
+    if "read" in error_lower or "write" in error_lower or "io" in error_lower:
+        return "io_error"
+    return "unknown_error"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # 主入口（CLI 测试）
 # ═══════════════════════════════════════════════════════════════════════════════
 

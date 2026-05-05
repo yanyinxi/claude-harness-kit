@@ -19,12 +19,29 @@ import json
 import re
 import statistics
 from collections import Counter, defaultdict
+from datetime import datetime
 from pathlib import Path
 
 
 def _safe_div(numerator, denominator, default=0):
     """安全除法，避免除零"""
     return round(numerator / denominator, 4) if denominator > 0 else default
+
+
+def parse_iso_time(ts: str) -> datetime | None:
+    """解析 ISO 时间字符串，支持 Z 和时区后缀"""
+    if not ts:
+        return None
+    ts = ts.strip()
+    ts = ts.replace("Z", "+00:00")
+    if "+" in ts:
+        ts = ts.split("+")[0]
+    elif "-" in ts and ts.count("-") > 2:
+        ts = ts.rsplit("-", 1)[0]
+    try:
+        return datetime.fromisoformat(ts)
+    except ValueError:
+        return None
 
 
 def aggregate_and_analyze(sessions: list[dict], config: dict, root: Path) -> dict:
@@ -154,20 +171,6 @@ def _analyze_performance(sessions: list[dict]) -> dict:
         end_time = s.get("ended_at", "")
         if start_time and end_time:
             try:
-                from datetime import datetime
-                # 标准化时间字符串：处理 Z 和时区
-                def parse_iso_time(ts: str) -> datetime | None:
-                    if not ts:
-                        return None
-                    ts = ts.strip()
-                    # 去掉 UTC 标记
-                    ts = ts.replace("Z", "+00:00")
-                    # 去掉时区部分以避免 fromisoformat 在某些格式上失败
-                    if "+" in ts:
-                        ts = ts.split("+")[0]
-                    elif "-" in ts and ts.count("-") > 2:  # 可能是带时区的负偏移
-                        ts = ts.rsplit("-", 1)[0]
-                    return datetime.fromisoformat(ts)
                 start = parse_iso_time(start_time)
                 end = parse_iso_time(end_time)
                 if start and end:
@@ -276,17 +279,6 @@ def _analyze_interaction(sessions: list[dict]) -> dict:
         end = s.get("ended_at", "")
         if start and end:
             try:
-                from datetime import datetime
-                def parse_iso_time(ts: str) -> datetime | None:
-                    if not ts:
-                        return None
-                    ts = ts.strip()
-                    ts = ts.replace("Z", "+00:00")
-                    if "+" in ts:
-                        ts = ts.split("+")[0]
-                    elif "-" in ts and ts.count("-") > 2:
-                        ts = ts.rsplit("-", 1)[0]
-                    return datetime.fromisoformat(ts)
                 start_dt = parse_iso_time(start)
                 end_dt = parse_iso_time(end)
                 if start_dt and end_dt:

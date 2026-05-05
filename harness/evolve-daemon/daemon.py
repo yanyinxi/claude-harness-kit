@@ -65,6 +65,38 @@ _graceful_restart_requested = False
 _open_files = []
 _pid_file = None
 
+def _stop_scheduler():
+    """停止调度器（共享逻辑）"""
+    try:
+        from scheduler import _manager
+        if _manager.is_running():
+            print("正在停止调度器...")
+            _manager.stop()
+            print("调度器已停止")
+    except Exception as e:
+        print(f"停止调度器失败: {e}")
+
+
+def _save_state(signame: str, key: str):
+    """保存状态（共享逻辑）"""
+    try:
+        root = find_root()
+        config = load_config()
+        data_dir = root / config["paths"]["data_dir"]
+        state_file = data_dir / "analysis_state.json"
+        if state_file.exists():
+            try:
+                state = json.loads(state_file.read_text())
+                state[key] = datetime.now().isoformat()
+                state["signal"] = signame
+                state_file.write_text(json.dumps(state, indent=2))
+                print(f"状态已保存: {state_file}")
+            except (json.JSONDecodeError, OSError) as e:
+                handle_exception(e, "保存状态失败", log_level="warning")
+    except Exception as e:
+        print(f"保存状态失败: {e}")
+
+
 def graceful_shutdown(signum, frame):
     """优雅退出处理函数"""
     global _shutdown_requested
@@ -72,48 +104,21 @@ def graceful_shutdown(signum, frame):
     print(f"\n[{datetime.now().isoformat()}] 收到 {signame} 信号，正在优雅关闭...")
     _shutdown_requested = True
 
-    # 停止调度器（如果正在运行）
-    try:
-        from scheduler import _manager
-        if _manager.is_running():
-            print("正在停止调度器...")
-            _manager.stop()
-            print("调度器已停止")
-    except Exception as e:
-        print(f"停止调度器失败: {e}")
+    _stop_scheduler()
 
-    # 关闭打开的文件
     for f in _open_files:
         try:
             if f and not f.closed:
                 f.close()
         except OSError:
-            pass  # 文件已关闭或不存在
+            pass
         except Exception:
-            pass  # 其他错误忽略
+            pass
 
-    # 保存状态（确保分析状态不丢失）
-    try:
-        root = find_root()
-        config = load_config()
-        data_dir = root / config["paths"]["data_dir"]
-        state_file = data_dir / "analysis_state.json"
-        if state_file.exists():
-            # 更新时间戳表明最后一次检查
-            try:
-                state = json.loads(state_file.read_text())
-                state["last_shutdown_time"] = datetime.now().isoformat()
-                state["shutdown_signal"] = signame
-                state_file.write_text(json.dumps(state, indent=2))
-                print(f"状态已保存: {state_file}")
-            except (json.JSONDecodeError, OSError) as e:
-                handle_exception(e, f"解析/写入分析状态失败", log_level="warning")
-    except Exception as e:
-        handle_exception(e, "保存关闭状态失败", log_level="warning")
-        print(f"保存状态失败: {e}")
-
+    _save_state(signame, "last_shutdown_time")
     print("[退出] 优雅关闭完成")
     sys.exit(0)
+
 
 def graceful_restart(signum, frame):
     """优雅重启处理函数（SIGUSR1）"""
@@ -121,39 +126,12 @@ def graceful_restart(signum, frame):
     signame = signal.Signals(signum).name
     print(f"\n[{datetime.now().isoformat()}] 收到 {signame} 信号，正在优雅重启...")
 
-    # 标记需要重启
     _graceful_restart_requested = True
-
-    # 停止调度器（如果正在运行）
-    try:
-        from scheduler import _manager
-        if _manager.is_running():
-            print("正在停止调度器...")
-            _manager.stop()
-            print("调度器已停止")
-    except Exception as e:
-        print(f"停止调度器失败: {e}")
-
-    # 保存当前状态
-    try:
-        root = find_root()
-        config = load_config()
-        data_dir = root / config["paths"]["data_dir"]
-        state_file = data_dir / "analysis_state.json"
-        if state_file.exists():
-            try:
-                state = json.loads(state_file.read_text())
-                state["last_restart_time"] = datetime.now().isoformat()
-                state["restart_signal"] = signame
-                state_file.write_text(json.dumps(state, indent=2))
-                print(f"状态已保存: {state_file}")
-            except (json.JSONDecodeError, OSError):
-                pass
-    except Exception as e:
-        print(f"保存状态失败: {e}")
+    _stop_scheduler()
+    _save_state(signame, "last_restart_time")
 
     print("[重启] 优雅重启完成，准备重新启动调度器")
-    sys.exit(0)  # 外部可以用启动脚本重新启动
+    sys.exit(0)
 
 
 # 注册信号处理器

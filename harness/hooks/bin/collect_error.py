@@ -33,6 +33,7 @@ from error_writer import (
     _get_recent_tools,
     _sanitize_tool_input,
 )
+from _session_utils import load_hook_context as _load_hook_context
 
 
 # ── CHK 源码溯源表 ───────────────────────────────────────────────────────────
@@ -83,19 +84,7 @@ def _infer_source_from_env(hook_data: dict = None) -> str:
 
 def _get_hook_script_from_path() -> str:
     """获取触发此 Hook 的脚本名"""
-    # Claude Code 传递的环境变量
     return os.environ.get("CLAUDE_HOOK_SCRIPT", "unknown")
-
-
-def _load_hook_context() -> dict:
-    """从 stdin 加载 Hook 事件数据"""
-    try:
-        raw = sys.stdin.read().strip()
-        if raw:
-            return json.loads(raw)
-    except (json.JSONDecodeError, OSError, ValueError):
-        pass
-    return {}
 
 
 def _get_mode() -> str:

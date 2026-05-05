@@ -22,7 +22,7 @@ from pathlib import Path
 from collections import Counter
 
 
-from _session_utils import get_session_id, get_project_root
+from _session_utils import get_session_id, get_project_root, classify_error_type
 
 
 def read_session_start(root: Path) -> dict:
@@ -221,24 +221,6 @@ def _read_failures_jsonl(failures_file: Path, session_id: str, result: dict) -> 
 
     except OSError:
         pass
-
-
-def classify_error_type(error: str) -> str:
-    """分类错误类型"""
-    error_lower = error.lower()
-    if "permission" in error_lower or "denied" in error_lower:
-        return "permission_error"
-    if "not found" in error_lower or "no such" in error_lower:
-        return "not_found_error"
-    if "timeout" in error_lower or "timed out" in error_lower:
-        return "timeout_error"
-    if "syntax" in error_lower or "parse" in error_lower:
-        return "syntax_error"
-    if "connection" in error_lower or "network" in error_lower:
-        return "network_error"
-    if "read" in error_lower or "write" in error_lower or "io" in error_lower:
-        return "io_error"
-    return "unknown_error"
 
 
 def get_git_changes(root: Path) -> dict:
