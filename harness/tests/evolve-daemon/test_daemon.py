@@ -7,6 +7,9 @@ import sys
 from pathlib import Path
 
 EVOLVE_DIR = Path(__file__).parent.parent.parent / "evolve-daemon"
+PROJECT_ROOT = EVOLVE_DIR.parent.parent
+import os
+os.environ.setdefault("CLAUDE_PROJECT_DIR", str(PROJECT_ROOT))
 import importlib.util
 spec = importlib.util.spec_from_file_location("daemon_mod", EVOLVE_DIR / "daemon.py")
 daemon_mod = importlib.util.module_from_spec(spec)

@@ -15,6 +15,9 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 EVOLVE_DIR = Path(__file__).parent.parent.parent / "evolve-daemon"
+PROJECT_ROOT = EVOLVE_DIR.parent.parent
+import os
+os.environ.setdefault("CLAUDE_PROJECT_DIR", str(PROJECT_ROOT))
 import importlib.util
 
 spec = importlib.util.spec_from_file_location("llm_decision_mod", EVOLVE_DIR / "llm_decision.py")
