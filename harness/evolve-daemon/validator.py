@@ -101,18 +101,16 @@ def validate_sessions_file(sessions_file: Path, quarantine_dir: Optional[Path] =
 
         for i, line in enumerate(lines):
             if not line.strip():
+                total -= 1
                 continue
-
             try:
                 session = json.loads(line)
                 is_valid, error_msg = validate_session(session)
-
                 if is_valid:
                     valid_sessions.append(session)
                 else:
                     invalid_lines.append((i, line, error_msg))
                     errors.append(f"Line {i + 1}: {error_msg}")
-
             except json.JSONDecodeError as e:
                 invalid_lines.append((i, line, f"JSON decode error: {e}"))
                 errors.append(f"Line {i + 1}: JSON decode error")
@@ -228,16 +226,11 @@ def get_data_quality_stats(sessions_file: Path) -> dict:
     }
 
     try:
-        content = sessions_file.read_text().strip()
-        if not content:
+        sessions = kb_shared.read_jsonl(sessions_file)
+        if not sessions:
             return stats
 
-        for line in content.splitlines():
-            if not line.strip():
-                continue
-
-            try:
-                session = json.loads(line)
+        for session in sessions:
                 stats["total_sessions"] += 1
 
                 if session.get("agents_used"):
@@ -251,9 +244,6 @@ def get_data_quality_stats(sessions_file: Path) -> dict:
 
                 stats["total_duration"] += session.get("duration_minutes", 0)
                 stats["total_failures"] += session.get("tool_failures", 0)
-
-            except json.JSONDecodeError:
-                continue
 
         total = max(stats["total_sessions"], 1)
         stats["average_duration"] = round(stats["total_duration"] / total, 1)
