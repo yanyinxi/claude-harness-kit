@@ -21,7 +21,7 @@ _harness_root = Path(__file__).parent.parent.parent
 if str(_harness_root) not in sys.path:
     sys.path.insert(0, str(_harness_root))
 
-from harness._core.exceptions import handle_exception, safe_execute
+from harness._core.exceptions import handle_exception
 
 logger = logging.getLogger(__name__)
 
@@ -120,9 +120,8 @@ def validate_sessions_file(sessions_file: Path, quarantine_dir: Optional[Path] =
         if quarantine_dir and invalid_lines:
             quarantine_dir.mkdir(parents=True, exist_ok=True)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-            quarantine_file = quarantine_dir / f"sessions_invalid_{timestamp}.jsonl"
-            with open(quarantine_file, "w") as f:
+            quarantine_path = quarantine_dir / f"sessions_invalid_{timestamp}.jsonl"
+            with open(quarantine_path, "w") as f:
                 for _, line, _ in invalid_lines:
                     f.write(line + "\n")
                     quarantined_count += 1
