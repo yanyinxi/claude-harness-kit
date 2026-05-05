@@ -29,21 +29,27 @@ def temp_project(tmp_path):
     """创建临时项目结构"""
     # 项目根
     (tmp_path / "CLAUDE.md").write_text("# Test Project\n")
-    (tmp_path / ".claude").mkdir(parents=True)
-    (tmp_path / ".claude" / "data").mkdir(parents=True)
+    (tmp_path / ".claude").mkdir(parents=True, exist_ok=True)
+    (tmp_path / ".claude" / "data").mkdir(parents=True, exist_ok=True)
 
     # 知识库目录结构
     knowledge_dir = tmp_path / "harness" / "knowledge"
-    for subdir in ["decision", "guideline", "pitfall", "process", "model"]:
-        (knowledge_dir / subdir).mkdir(parents=True)
+    for subdir in ["decision", "guideline", "pitfall", "process", "model", "evolved"]:
+        (knowledge_dir / subdir).mkdir(parents=True, exist_ok=True)
 
     # 进化知识目录 (新路径)
     evolve_dir = tmp_path / "harness" / "knowledge" / "evolved"
-    evolve_dir.mkdir(parents=True)
+    evolve_dir.mkdir(parents=True, exist_ok=True)
 
     # 本能记录目录
     instinct_dir = tmp_path / "harness" / "memory"
-    instinct_dir.mkdir(parents=True)
+    instinct_dir.mkdir(parents=True, exist_ok=True)
+
+    # 其他 harness 子目录
+    for subdir in ["skills", "agents", "rules", "hooks", "tests", "cli", "docs", "_core"]:
+        (tmp_path / "harness" / subdir).mkdir(parents=True, exist_ok=True)
+    # 防止 pytest 从 harness/ 运行时 find_root() 返回 harness/ 而非项目根
+    (tmp_path / "harness" / "skills").mkdir(parents=True, exist_ok=True)
 
     return tmp_path
 

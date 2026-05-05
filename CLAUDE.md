@@ -114,7 +114,7 @@ daemon.py (调度 + 执行)
 - `gc` — 知识垃圾回收
 
 ### 22 个 Agent
-architect, backend-dev, code-reviewer, codebase-analyzer, database-dev, debugger, developer, devops, documentation, elicitor, executor, expert, frontend-dev, generalist, infrastructure, ml-engineer, planner, qa-tester, researcher, reviewer, security-auditor, tester
+architect, backend-dev, code-reviewer, codebase-analyzer, database-dev, devops, executor, explore, frontend-dev, gc, impact-analyzer, learner, migration-dev, oracle, orchestrator, product-manager, qa-tester, ralph, security-auditor, tech-lead, test, verifier
 
 ### 35+ 个 Skill
 涵盖: testing, debugging, tdd, security-review, architecture-design, api-designer, migration, database-designer, ml-engineer, data-engineer, sre, performance, mobile-dev, iac, docker-essentials, lark-* (飞书全家桶), wechat-*, xiaohongshu-*, 等

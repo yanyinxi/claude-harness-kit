@@ -45,6 +45,10 @@ from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
+from _load_env import load_env as _load_env
+
+_load_env()
+
 
 def handle_exception(e, context, reraise=False, default_return=None, log_level="error"):
     """统一异常处理包装函数（本地定义避免循环依赖）"""

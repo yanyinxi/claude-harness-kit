@@ -19,6 +19,7 @@ import logging
 import os
 import sys
 from pathlib import Path
+from _load_env import load_env as _load_env; _load_env()
 from datetime import datetime
 from typing import Optional
 

@@ -21,6 +21,7 @@ integrated_evolution.py — 会话级进化引擎（重写版）
 import json
 import os
 import sys
+from _load_env import load_env as _load_env; _load_env()
 from datetime import datetime
 from pathlib import Path
 

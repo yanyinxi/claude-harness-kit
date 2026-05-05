@@ -15,6 +15,7 @@ import json
 import os
 import sys
 from pathlib import Path
+from _load_env import load_env as _load_env; _load_env()
 
 # 添加同级的 kb_shared 到 Python path
 sys.path.insert(0, str(Path(__file__).parent))
