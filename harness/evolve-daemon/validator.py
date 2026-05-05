@@ -10,7 +10,6 @@
 """
 import json
 import logging
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -27,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 import kb_shared
-from _daemon_config import load_config, _default_config
+from _daemon_config import load_config
 from _find_root import find_root
 
 

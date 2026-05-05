@@ -9,7 +9,6 @@
 import json
 import os
 import sys
-import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -261,7 +260,6 @@ class TestKnowledgeRecommender:
 
         try:
             import sys
-            import importlib
             sys.path.insert(0, str(temp_project / "harness"))
 
             # 强制重新加载模块以使用新的 PROJECT_ROOT
@@ -460,9 +458,7 @@ class TestPaths:
     def test_path_constants(self):
         """测试路径常量定义"""
         from paths import (
-            DIR_CLAUDE, DIR_DATA, DIR_SKILLS, DIR_AGENTS,
-            FILE_SESSIONS, FILE_ERRORS,
-            ANTHROPIC_API_URL
+            DIR_CLAUDE, DIR_SKILLS, FILE_SESSIONS, ANTHROPIC_API_URL
         )
 
         # 验证常量类型和值

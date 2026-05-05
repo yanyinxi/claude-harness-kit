@@ -24,8 +24,7 @@ import argparse
 import json
 import re
 import sys
-from collections import defaultdict, OrderedDict
-from typing import Dict, List, Set, Tuple, Optional, Any, Union
+from typing import Dict, List, Set, Optional, Any
 from dataclasses import dataclass, asdict
 from datetime import datetime
 import hashlib

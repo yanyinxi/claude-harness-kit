@@ -16,8 +16,7 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
-from collections import defaultdict
+from typing import List, Optional
 
 # 导入本能更新器，用于置信度恢复
 EVOLVE_DIR = Path(__file__).parent
@@ -26,6 +25,10 @@ spec = importlib.util.spec_from_file_location("instinct_updater", EVOLVE_DIR / "
 instinct_mod = importlib.util.module_from_spec(spec)
 sys.modules["instinct_updater"] = instinct_mod
 spec.loader.exec_module(instinct_mod)
+
+# 统一路径：复用 kb_shared 中的路径常量，避免硬编码重复
+sys.path.insert(0, str(EVOLVE_DIR))
+from kb_shared import _knowledge_dir, _find_root
 
 # 支持的维度列表
 SUPPORTED_DIMENSIONS = [
@@ -37,13 +40,10 @@ class EffectTracker:
     """效果跟踪器"""
 
     def __init__(self, root: Optional[Path] = None):
-        import os
         if root is None:
-            sys.path.insert(0, str(Path(__file__).parent.parent))
-            from _find_root import find_root
-            root = find_root()
+            root = _find_root()
         self.root = root
-        self.knowledge_dir = self.root / "harness" / "evolve-daemon" / "knowledge"
+        self.knowledge_dir = _knowledge_dir()
         self.knowledge_dir.mkdir(parents=True, exist_ok=True)
 
         self.effects_file = self.knowledge_dir / "effect_tracking.jsonl"
@@ -87,9 +87,8 @@ class EffectTracker:
         """
         try:
             instinct_mod.promote_confidence(knowledge_id, delta=boost, root=self.root)
-        except Exception:
-            # 提升失败不阻塞主流程（本能记录可能不存在）
-            pass
+        except Exception as e:
+            print(f"[effect_tracker] warn: instinct promote failed for {knowledge_id}: {e}", file=sys.stderr)
 
     def _update_kb_confidence(self, knowledge_id: str, outcome: str):
         """
@@ -103,8 +102,8 @@ class EffectTracker:
             sys.path.insert(0, str(EVOLVE_DIR))
             from kb_shared import update_kb_confidence
             update_kb_confidence(knowledge_id, outcome, self.root)
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[effect_tracker] warn: kb confidence update failed for {knowledge_id}: {e}", file=sys.stderr)
 
     def run_test(self, knowledge_id: str, kb_entry: dict) -> dict:
         """

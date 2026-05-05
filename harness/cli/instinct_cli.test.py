@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """instinct_cli 测试"""
 import sys
-import json
-import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))

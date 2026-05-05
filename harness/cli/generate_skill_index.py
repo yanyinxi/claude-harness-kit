@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Generate INDEX.md for all skills"""
-import os
 from pathlib import Path
 
 SKILLS_DIR = Path(__file__).parent.parent / "skills"

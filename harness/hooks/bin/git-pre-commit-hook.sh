@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 # 运行版本检查
-cd "$ROOT_DIR"
+cd "$ROOT_DIR" || exit
 python3 harness/hooks/bin/version-consistency-check.py
 exit_code=$?
 

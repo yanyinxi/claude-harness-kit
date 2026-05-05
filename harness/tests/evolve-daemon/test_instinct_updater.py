@@ -11,10 +11,8 @@ instinct_updater.py 测试文件
 - 置信度恢复机制：success 跟踪后本能记录置信度提升
 """
 import pytest
-import json
 import sys
 from pathlib import Path
-from datetime import datetime
 
 EVOLVE_DIR = Path(__file__).parent.parent.parent / "evolve-daemon"
 import importlib.util

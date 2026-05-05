@@ -2,7 +2,6 @@
 """
 进化系统改进对比 - 展示改进前后的差异
 """
-from pathlib import Path
 
 def print_comparison():
     print("""

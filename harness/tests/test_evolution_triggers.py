@@ -16,7 +16,6 @@ import sys
 import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
-from unittest.mock import patch
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 os.environ["CLAUDE_PROJECT_DIR"] = str(PROJECT_ROOT)
@@ -24,10 +23,10 @@ sys.path.insert(0, str(PROJECT_ROOT / "harness"))
 sys.path.insert(0, str(PROJECT_ROOT / "harness" / "evolve-daemon"))
 sys.path.insert(0, str(PROJECT_ROOT / "evolve-daemon"))
 
-from daemon import check_thresholds, load_new_sessions, load_config
+from daemon import check_thresholds, load_new_sessions
 from analyzer import aggregate_and_analyze
-from proposer import generate_proposal, _generate_from_template, _save_proposal
-from rollback import evaluate_proposal, collect_metrics
+from proposer import _generate_from_template
+from rollback import evaluate_proposal
 
 PASS = 0
 FAIL = 0

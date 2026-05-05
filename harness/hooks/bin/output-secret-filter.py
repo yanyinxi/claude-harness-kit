@@ -11,7 +11,6 @@ Exit codes: 0 (safe/checked), 2 (blocked CRITICAL secret)
 import sys
 import json
 import re
-import os
 import datetime
 import base64
 from pathlib import Path

@@ -15,12 +15,11 @@ collect_success.py — 成功工具调用收集 Hook
 import json
 import os
 import sys
-import traceback
 from pathlib import Path
 
 # 导入共享工具模块
 sys.path.insert(0, str(Path(__file__).parent))
-from _session_utils import get_session_id, get_project_root, get_data_dir, load_hook_context, get_hook_event, get_current_timestamp
+from _session_utils import get_project_root, get_data_dir, load_hook_context, get_hook_event, get_current_timestamp
 
 # ── 路径配置 ──────────────────────────────────────────────────────────────────
 PROJECT_ROOT = get_project_root()
@@ -76,8 +75,24 @@ def track_success(tool: str, context: dict = None) -> bool:
         if knowledge_id:
             tracker.track(knowledge_id, "success", context or {})
             return True
+
+        # 没有显式 knowledge_id 时，读取本次 session 注入的知识 ID（每 session 只跟踪一次）
+        session_file = DATA_DIR / ".session_injected.json"
+        if session_file.exists():
+            try:
+                session_data = json.loads(session_file.read_text())
+                if not session_data.get("tracked"):
+                    ids = [i for i in session_data.get("ids", []) if i]
+                    for kid in ids:
+                        tracker.track(kid, "success", context or {})
+                    session_data["tracked"] = True
+                    session_file.write_text(json.dumps(session_data))
+                    return len(ids) > 0
+            except Exception:
+                pass
+
         return False
-    except Exception as e:
+    except Exception:
         # 静默失败，不阻断主流程
         return False
 
@@ -88,7 +103,6 @@ def collect_tool_success(hook_data: dict = None) -> dict:
         hook_data = load_hook_context()
 
     tool = hook_data.get("tool_name", "unknown")
-    tool_input = hook_data.get("tool_input", {})
 
     # 构建成功记录
     record = {

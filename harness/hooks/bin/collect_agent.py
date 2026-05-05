@@ -4,7 +4,6 @@ PostToolUse[Agent] Hook: 记录 Agent 调用。
 轻量采集，写入一行 JSONL，耗时 < 1ms。
 """
 import json
-import os
 import sys
 from pathlib import Path
 

@@ -7,7 +7,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 echo "🔍 检查版本一致性..."
 
-cd "$ROOT_DIR"
+cd "$ROOT_DIR" || exit
 
 # 运行版本检查
 python3 "$SCRIPT_DIR/version-consistency-check.py"
@@ -21,7 +21,7 @@ if [ $exit_code -ne 0 ]; then
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         python3 harness/_core/bump_version.py auto
-        if [ $? -eq 0 ]; then
+        if [[ $exit_code -ne 0 ]]; then
             echo ""
             echo "✅ 版本已修复，请重新 commit"
             exit 1

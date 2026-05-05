@@ -103,7 +103,7 @@ class TestErrorCollection:
 
     def test_source_traceability(self):
         """✓ source 字段可溯源到 CHK 源码"""
-        from collect_error import collect_tool_failure, write_error
+        from collect_error import collect_tool_failure
 
         hook_data = {"tool_name": "Edit", "error": "permission denied"}
         sys.stdin = __import__("io").StringIO(json.dumps(hook_data))
@@ -198,7 +198,7 @@ class TestErrorCollection:
     def test_error_type_classification(self):
         """✓ 错误类型分类正确"""
         from collect_error import collect_tool_failure, collect_chk_internal_error
-        from error_writer import write_error, ErrorType
+        from error_writer import ErrorType
 
         # 测试 tool_failure
         hook_data = {"tool_name": "Bash", "error": "failed"}
@@ -215,7 +215,7 @@ class TestErrorCollection:
 
     def test_recent_tools_context(self):
         """✓ 从 sessions.jsonl 补全 recent_tools"""
-        from collect_error import collect_tool_failure, write_error
+        from collect_error import collect_tool_failure
 
         # 创建 sessions.jsonl
         sessions_file = self.data_dir / "sessions.jsonl"

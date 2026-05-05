@@ -8,10 +8,8 @@ conftest.py — pytest 共享 fixtures
   - get_module(): 动态模块加载
   - EVOLVE_DIR: evolve-daemon 目录路径
 """
-import json
 import os
 import sys
-import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import Optional

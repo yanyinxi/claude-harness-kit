@@ -10,30 +10,28 @@ PLUGIN_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 HOOK_DATA="$(cat)"
 [[ -z "$HOOK_DATA" ]] && exit 0
 
-WORKTREE_PATH=$(echo "$HOOK_DATA" | python3 -c "
+WORKTREE_PATH=$(echo "$HOOK_DATA" | python3 -c '
 import json,sys
 d=json.load(sys.stdin)
-# The worktree path is in the message content or tool result
-msg = d.get('message',{})
-content = msg.get('content','')
+msg = d.get("message",{})
+content = msg.get("content","")
 if isinstance(content, list):
     for block in content:
-        if isinstance(block, dict) and block.get('type') == 'tool_result':
-            text = block.get('content', '')
+        if isinstance(block, dict) and block.get("type") == "tool_result":
+            text = block.get("content","")
             if isinstance(text, list):
                 for t in text:
                     if isinstance(t, dict):
-                        text = t.get('text', '')
-            # Extract path from git output like "Preparing worktree (new branch) .../worktree-xxx"
+                        text = t.get("text","")
             import re
-            m = re.search(r'(\S*worktree\S*|\.\./worktree-\S+)', str(text))
+            m = re.search(r"(\S*worktree\S*)", str(text))
             if m:
                 print(m.group(1))
                 sys.exit(0)
-    print('')
+    print("")
 else:
-    print('')
-" 2>/dev/null) || WORKTREE_PATH=""
+    print("")
+' 2>/dev/null) || WORKTREE_PATH=""
 
 # If path not found in hook data, look in worktree-map.json
 if [[ -z "$WORKTREE_PATH" ]]; then

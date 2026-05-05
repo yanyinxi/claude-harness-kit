@@ -14,8 +14,7 @@ Usage:
 import sys
 import json
 import argparse
-import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from collections import defaultdict
 

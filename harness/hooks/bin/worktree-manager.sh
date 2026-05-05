@@ -119,7 +119,7 @@ cmd_enter() {
   init_map
 
   local wt_path
-  wt_path=$(echo "$(read_map)" | python3 -c "
+  wt_path=$(read_map | python3 -c "
 import json,sys
 d=json.load(sys.stdin)
 name='$name'
@@ -142,7 +142,7 @@ cmd_cleanup() {
   init_map
 
   local expired
-  expired=$(echo "$(read_map)" | python3 -c "
+  expired=$(read_map | python3 -c "
 import json,sys,json as m,datetime
 d=json.load(sys.stdin)
 now=datetime.datetime.utcnow()
@@ -174,7 +174,7 @@ cmd_delete() {
   init_map
 
   local wt_path
-  wt_path=$(echo "$(read_map)" | python3 -c "
+  wt_path=$(read_map | python3 -c "
 import json,sys
 d=json.load(sys.stdin)
 name='$name'

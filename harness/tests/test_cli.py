@@ -9,7 +9,6 @@ CLI 集成测试套件 — 测试 kit init / kit mode / kit scan / kit gc / kit 
   - kit status: 验证输出包含 5 个信息板块
 """
 import json
-import os
 import subprocess
 import sys
 import tempfile

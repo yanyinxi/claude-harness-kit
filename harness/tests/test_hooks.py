@@ -17,7 +17,6 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import Optional
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 HOOKS_DIR = PROJECT_ROOT / "hooks" / "bin"

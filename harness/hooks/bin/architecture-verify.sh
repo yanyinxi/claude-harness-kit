@@ -2,7 +2,6 @@
 # architecture-verify.sh - 架构决策步骤验证
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-RULES_FILE="$PROJECT_ROOT/harness/rules/expert-mode.md"
 
 cd "$PROJECT_ROOT" || exit 1
 

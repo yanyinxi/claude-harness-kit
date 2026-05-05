@@ -191,7 +191,6 @@ def test_agents_skills_tracked():
 def test_main_writes_to_error_jsonl():
     """✓ main() 正确写入 error.jsonl"""
     import collect_error
-    from error_writer import write_error
 
     proj = TempProject()
     try:

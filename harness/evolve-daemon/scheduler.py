@@ -23,7 +23,7 @@ _harness_root = Path(__file__).parent.parent.parent
 if str(_harness_root) not in sys.path:
     sys.path.insert(0, str(_harness_root))
 
-from harness._core.exceptions import handle_exception, safe_execute
+from harness._core.exceptions import handle_exception
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +36,6 @@ except ImportError:
     APSCHEDULER_AVAILABLE = False
 
 
-from _find_root import get_project_root as find_root
 
 
 from _daemon_config import load_config
@@ -338,7 +337,6 @@ class SchedulerManager:
     def _rollback_check(self):
         """定期回滚检查"""
         try:
-            import json
             root = get_project_root()
             daemon_path = root / "evolve-daemon" / "daemon.py"
 

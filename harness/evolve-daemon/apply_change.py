@@ -10,15 +10,13 @@
 5. 进入观察期
 """
 import json
-import os
 import re
-import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from _daemon_config import load_config, _default_config
+from _daemon_config import load_config
 from _find_root import find_root
 import kb_shared
 
@@ -292,7 +290,7 @@ def rollback_proposal(proposal_id: str, root: Optional[Path] = None, reason: str
 
             # 更新 instinct
             try:
-                from instinct_updater import demote_confidence
+                pass
                 # 找到对应的 instinct 记录并降低置信度
             except Exception:
                 pass

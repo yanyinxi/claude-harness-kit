@@ -116,6 +116,20 @@ def inject_knowledge_recommendations(root: Path):
                 if not merged:
                     return ""
 
+                # 保存推荐 ID 供反馈跟踪使用
+                injected_ids = [rec.get("id") or rec.get("name", "") for rec in merged[:5]]
+                injected_ids = [i for i in injected_ids if i]
+                if injected_ids:
+                    session_file = root / ".claude" / "data" / ".session_injected.json"
+                    try:
+                        session_file.write_text(json.dumps({
+                            "ids": injected_ids,
+                            "timestamp": datetime.now().isoformat(),
+                            "tracked": False,
+                        }))
+                    except Exception:
+                        pass
+
                 # 格式化为 Markdown 上下文
                 context_parts = ["\n## Knowledge Recommendations\n"]
                 for rec in merged[:5]:

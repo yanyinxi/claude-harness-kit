@@ -76,7 +76,7 @@ def switch_mode(mode_name: str, root: Path) -> bool:
 
     # 备份当前配置
     backup_path = root / ".claude" / f"settings.local.json.backup"
-    current = settings_path = root / ".claude" / "settings.local.json"
+    current = root / ".claude" / "settings.local.json"
     if current.exists():
         shutil.copy(current, backup_path)
 

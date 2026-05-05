@@ -14,8 +14,7 @@ import pytest
 import sys
 import json
 from pathlib import Path
-from unittest.mock import patch, MagicMock
-import os
+from unittest.mock import patch
 
 EVOLVE_DIR = Path(__file__).parent.parent.parent / "evolve-daemon"
 import importlib.util

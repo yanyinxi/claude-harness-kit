@@ -14,7 +14,6 @@ error_writer.py — 线程安全的 error.jsonl 写入工具
 import json
 import os
 import sys
-import time
 import fcntl
 import errno
 from pathlib import Path

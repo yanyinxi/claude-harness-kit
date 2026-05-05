@@ -113,8 +113,7 @@ def test_claude_data_subdirs():
 def test_path_constants_no_instinct():
     """反向: paths.py 不再导出 instinct 路径常量"""
     from paths import (
-        DIR_MEMORY, MEMORY_DIR, KNOWLEDGE_DIR, TESTS_DIR, DOCS_DIR,
-        EVOLVE_DIR,
+        DIR_MEMORY, MEMORY_DIR, KNOWLEDGE_DIR, EVOLVE_DIR,
     )
     assert DIR_MEMORY == "memory"
     assert MEMORY_DIR.name == "memory"

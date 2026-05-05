@@ -12,7 +12,6 @@
 4. 执行回滚并通知
 """
 import json
-import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -21,7 +20,7 @@ from typing import Optional
 import kb_shared
 
 
-from _daemon_config import load_config, _default_config
+from _daemon_config import load_config
 from _find_root import find_root
 
 

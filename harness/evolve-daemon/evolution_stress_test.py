@@ -6,7 +6,6 @@ evolution_stress_test.py — 全维度全场景进化压力测试
 验证完整闭环：
   Session → 错误收集 → LLM泛化 → KnowledgeBase → Daemon分析 → 执行 → 效果跟踪 → 置信度更新
 """
-import json
 import os
 import sys
 import random
@@ -24,11 +23,8 @@ sys.path.insert(0, str(EVOLVE_DIR))
 
 from kb_shared import (
     load_knowledge_base, save_kb_entry, update_kb_all,
-    generate_kb_id, create_new_knowledge, now_iso,
-    load_active_kb, find_kb_by_dimension, should_auto_apply,
-    update_kb_confidence, check_merge_cooldown,
-    record_merge_abort, get_kb_stats, print_kb_stats,
-    is_covered_by_kb, decay_knowledge,
+    generate_kb_id, now_iso,
+    load_active_kb, update_kb_confidence, is_covered_by_kb, decay_knowledge,
 )
 from effect_tracker import EffectTracker
 

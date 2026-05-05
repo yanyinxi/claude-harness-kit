@@ -8,7 +8,6 @@ import os
 import sys
 import tempfile
 import threading
-import time
 from pathlib import Path
 
 # 添加项目路径
@@ -262,14 +261,12 @@ def test_multiple_error_types():
 
 def test_cli_pipe_input():
     """✓ CLI 管道输入模式"""
-    import io
-    import subprocess
 
     proj = TempProject()
     try:
         os.environ["CLAUDE_PROJECT_DIR"] = proj.path()
 
-        test_record = {
+        _test_record = {
             "type": "tool_failure",
             "source": "test.py:10",
             "tool": "Bash",
@@ -309,7 +306,7 @@ def test_lock_file_created():
         )
 
         log_file = proj.data_dir / "error.jsonl"
-        lock_file = _get_lock_file(log_file)
+        _lock_file = _get_lock_file(log_file)
 
         write_error(record, project_dir=proj.path())
 

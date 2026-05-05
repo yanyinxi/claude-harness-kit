@@ -13,7 +13,6 @@ kit migrate — 项目迁移编排器。
   4. 生成迁移报告
 """
 import argparse
-import os
 import sys
 from pathlib import Path
 from datetime import datetime

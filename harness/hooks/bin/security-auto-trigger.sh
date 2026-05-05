@@ -4,15 +4,12 @@
 set -uo pipefail
 
 PLUGIN_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TRIGGER_LOG="${PLUGIN_ROOT}/.claude/security/.auto-trigger-log.json"
 
 SECURITY_PATTERNS=(
     "auth" "security" "jwt" "token" "crypto"
     "password" "credential" "oauth" "permission"
     "role" "payment" "billing"
 )
-
-SESSION_TRIGGER_LOG="${PLUGIN_ROOT}/.claude/security/.session-triggers-$$.json"
 
 HOOK_DATA=$(cat 2>/dev/null) || HOOK_DATA=""
 [[ -z "$HOOK_DATA" ]] && exit 0

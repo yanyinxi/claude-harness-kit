@@ -181,7 +181,6 @@ def extract_git_insights(root: Path) -> list[str]:
 
 def generate_claude_md(root: Path, tech: dict, structure: dict) -> str:
     """Map Not Manual 风格 — <100 行，含关键信息 + 指针"""
-    name = root.name
     now = datetime.now().strftime("%Y-%m-%d")
 
     lines = [

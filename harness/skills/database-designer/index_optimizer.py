@@ -22,8 +22,8 @@ import argparse
 import json
 import re
 import sys
-from collections import defaultdict, namedtuple, Counter
-from typing import Dict, List, Set, Tuple, Optional, Any
+from collections import defaultdict, Counter
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, asdict
 import hashlib
 

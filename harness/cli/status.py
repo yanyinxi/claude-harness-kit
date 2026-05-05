@@ -11,8 +11,6 @@ kit status — 查看 Claude Harness Kit 当前状态。
 """
 import json
 import os
-import sys
-from datetime import datetime
 from pathlib import Path
 from collections import Counter
 
@@ -49,11 +47,7 @@ def main():
     if hooks:
         print(f"\n2️⃣  活跃 Hooks ({len(hooks)} 个事件):")
         for event, configs in hooks.items():
-            if configs:
-                names = [c.get("hooks", [{}])[0].get("command", "").split()[-1]
-                         if isinstance(c, dict) else str(c)
-                         for c in configs]
-                print(f"   {event}: {len(configs)} 个配置")
+            print(f"   {event}: {len(configs)} 个配置")
     else:
         print("\n2️⃣  Hooks: 未配置（运行 kit mode 启用）")
 

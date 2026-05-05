@@ -8,12 +8,6 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
 INPUT=$(cat 2>/dev/null) || INPUT=""
 [[ -z "$INPUT" ]] && exit 0
 
-TOOL_NAME=$(echo "$INPUT" | python3 -c "
-import sys, json
-d = json.load(sys.stdin)
-print(d.get('tool_name', ''))
-" 2>/dev/null) || { exit 0; }
-
 FILE_PATH=$(echo "$INPUT" | python3 -c "
 import sys, json
 d = json.load(sys.stdin)
@@ -60,13 +54,27 @@ if [[ "$FILE_PATH" =~ \.py$ ]] && [[ -f "$FILE_PATH" ]]; then
 fi
 
 # ── 测试先行检测（建议，不阻断）──
+# bash 3.2 (macOS) uses first char of RHS as regex delimiter.
+# [[ $f =~ /test/ ]] → delimiter "/", regex "test/" (not "/test/")
+# [[ $f =~ /\. ]]   → delimiter "/", regex "\." (ok, matches literal dot)
+# But [[ $f =~ \. ]] → delimiter ".", regex "" (empty) → matches EVERYTHING!
+# Fix: use glob patterns for simple prefix/suffix matching, regex only for =~.
 _is_impl_file() {
     local f="$1"
-    [[ "$f" =~ /test/ ]] || [[ "$f" =~ /__tests__/ ]] || [[ "$f" =~ /spec/ ]] || \
-    [[ "$f" =~ \.test\. ]] || [[ "$f" =~ \.spec\. ]] || [[ "$f" =~ \.config\. ]] || \
-    [[ "$f" =~ \.json$ ]] || [[ "$f" =~ \.ya?ml$ ]] || [[ "$f" =~ \.md$ ]] || \
-    [[ "$f" =~ \.txt$ ]] || [[ "$f" =~ \.csv$ ]] || [[ "$f" =~ /docs/ ]] || \
+    # Use glob matching (no regex, no delimiter issue)
+    case "$f" in
+        */test/*|*/test|test/*|*/tests/*|*/tests|tests/*) return 1 ;;
+        */__tests__/*|*/__tests__) return 1 ;;
+        */spec/*|*/spec|spec/*|*/specs/*|*/specs|specs/*) return 1 ;;
+        */docs/*|*/docs|docs/*|*/doc/*|*/doc|doc/*) return 1 ;;
+        *.json|*.yaml|*.yml|*.md|*.txt|*.csv) return 1 ;;
+        *.test.*|*.spec.*|*.config.*) return 1 ;;
+        *_test.py|test_*.py|*_spec.py|*_spec.rb) return 1 ;;
+    esac
+    # Hidden files/dirs (use regex with "/" as delimiter to safely match "/.")
     [[ "$f" =~ /\. ]] && return 1
+    [[ "$f" =~ ^\. ]] && return 1
+    # Impl file → trigger test suggestion
     return 0
 }
 
@@ -74,10 +82,10 @@ if _is_impl_file "$FILE_PATH" && git -C "$PROJECT_DIR" rev-parse --git-dir >/dev
     STAGED_FILES=$(git -C "$PROJECT_DIR" diff --cached --name-only 2>/dev/null) || STAGED_FILES=""
     TEST_IN_STAGED=0
     for f in $STAGED_FILES; do
-        if [[ "$f" =~ \.test\. ]] || [[ "$f" =~ \.spec\. ]] || [[ "$f" =~ /test/ ]] || [[ "$f" =~ /__tests__/ ]]; then
-            TEST_IN_STAGED=1
-            break
-        fi
+        # Use glob patterns for test file detection (avoid bash 3.2 delimiter bugs)
+        case "$f" in
+            *.test.*|*.spec.*|*/test/*|*/__tests__/*) TEST_IN_STAGED=1; break ;;
+        esac
     done
     [[ "$TEST_IN_STAGED" -eq 0 ]] && echo "💡 建议: 实现文件 $FILE_PATH 已变更，但未检测到对应测试文件变更。请确认是否需要添加测试。"
 fi

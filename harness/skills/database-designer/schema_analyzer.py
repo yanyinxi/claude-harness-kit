@@ -24,8 +24,8 @@ import argparse
 import json
 import re
 import sys
-from collections import defaultdict, namedtuple
-from typing import Dict, List, Set, Tuple, Optional, Any
+from collections import defaultdict
+from typing import Dict, List, Tuple, Optional, Any
 from dataclasses import dataclass, asdict
 
 

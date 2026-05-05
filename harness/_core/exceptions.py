@@ -182,15 +182,12 @@ def safe_call_api(
     Returns:
         函数的返回值，或 default
     """
-    last_error = None
     for attempt in range(max_retries + 1):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            last_error = e
             if attempt < max_retries:
                 logger.warning(f"{context} 失败，{attempt + 1}/{max_retries + 1} 次尝试: {e}")
-            else:
                 handle_exception(e, context, default_return=default, log_level="warning")
 
     return default

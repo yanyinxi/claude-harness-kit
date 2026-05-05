@@ -17,17 +17,14 @@ CHK 智能进化系统 - 全维度全场景测试
 使用新版 unified evolution 系统:
   - integrated_evolution + generalize + kb_shared
 """
-import json
 import random
-from datetime import datetime
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
 
 from kb_shared import (
-    load_knowledge_base, save_kb_entry, generate_kb_id,
-    now_iso, load_active_kb, create_new_knowledge,
+    load_knowledge_base, save_kb_entry, now_iso, load_active_kb, create_new_knowledge,
 )
 from effect_tracker import EffectTracker
 

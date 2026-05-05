@@ -37,7 +37,6 @@ from kb_shared import (
     migrate_from_instinct,
     decay_knowledge,
     print_kb_stats,
-    check_merge_cooldown,
     notify_llm_failure,
     now_iso,
     get_llm_config,

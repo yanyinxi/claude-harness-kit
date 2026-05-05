@@ -10,11 +10,9 @@ import os
 import shutil
 import subprocess
 import sys
-import tempfile
 import time
 from datetime import datetime
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 INIT_PY = PROJECT_ROOT / "cli" / "init.py"

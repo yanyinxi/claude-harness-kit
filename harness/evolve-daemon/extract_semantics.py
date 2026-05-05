@@ -12,7 +12,6 @@
   analyze_session(session, root)
 """
 import json
-import os
 import sys
 from pathlib import Path
 

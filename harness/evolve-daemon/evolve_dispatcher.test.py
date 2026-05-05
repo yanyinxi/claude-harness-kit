@@ -4,7 +4,7 @@ evolve_dispatcher.test.py — TDD 测试文件
 """
 import pytest
 from pathlib import Path
-import sys, os
+import sys
 
 EVOLVE_DIR = Path(__file__).parent
 import importlib.util

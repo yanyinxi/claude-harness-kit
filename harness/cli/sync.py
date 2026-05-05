@@ -12,7 +12,6 @@ kit sync — 从中央配置仓库同步团队共享规则。
   - repo-index.json 更新
 """
 import argparse
-import json
 import os
 import sys
 from pathlib import Path

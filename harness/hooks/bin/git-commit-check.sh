@@ -2,7 +2,6 @@
 # git-commit-check.sh - 检查 Git 提交规范
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-RULES_FILE="$PROJECT_ROOT/harness/rules/general.md"
 
 cd "$PROJECT_ROOT" || exit 1
 

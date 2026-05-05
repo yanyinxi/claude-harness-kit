@@ -32,16 +32,14 @@
 """
 import json
 import logging
-import os
 import signal
 import sys
-import time
 try:
     import yaml
 except ImportError:
     yaml = None
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -579,8 +577,6 @@ def _execute_auto_apply(decision: dict, analysis: dict, config: dict, root: Path
                 update_kb_confidence(kb_id, "applied", root)
 
     elif dimension == "instinct":
-        from instinct_updater import add_pattern
-        from extract_semantics import _record_to_instinct
         # instinct 已在 extract_semantics 中记录
         print(f"✅ [Instinct] {target}: 已记录")
 

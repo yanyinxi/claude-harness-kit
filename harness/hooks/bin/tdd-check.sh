@@ -85,7 +85,6 @@ if [[ "$IMP_FILE" == *"/main/"* ]]; then
     CANDIDATES+=("$TEST_DIR/${NAME}Test.${BASENAME##*.}")
 fi
 
-PROJECT_REL="${IMP_FILE#./}"
 CANDIDATES+=("__tests__/${NAME}.test.${BASENAME##*.}")
 CANDIDATES+=("__tests__/${NAME}_test.${BASENAME##*.}")
 CANDIDATES+=("tests/${NAME}_test.${BASENAME##*.}")

@@ -15,9 +15,7 @@ generalize.py — LLM 泛化判断逻辑
 """
 import json
 import os
-from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from kb_shared import (
     load_active_kb,

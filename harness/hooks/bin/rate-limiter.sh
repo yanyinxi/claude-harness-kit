@@ -46,33 +46,26 @@ with open('${STATE_FILE}', 'w') as f:
 " <<< "$1" 2>/dev/null || true
 }
 
-# clean_old: 第一行 stdin=JSON, 后续行 stdin+argv 混用导致冲突
-# 统一改为全部从 stdin 读取：timestamp\nJSON
+# clean_old: 第一行 timestamp\n 第二行 JSON，统一 stdin 读取
 clean_old() {
     python3 << 'PYEOF'
 import json, sys
-try:
-    first = sys.stdin.readline().strip()
-    now_ms = int(first) if first else 0
-    d = json.loads(sys.stdin.read())
-    for key, window in [('minute', 60*1000), ('hour', 3600*1000), ('day', 86400*1000)]:
-        d[key] = [t for t in d.get(key, []) if now_ms - t < window]
-    print(json.dumps(d), end='')
-except Exception:
-    print('{"minute":[],"hour":[],"day":[]}', end='')
+first = sys.stdin.readline().strip()
+now_ms = int(first) if first else 0
+d = json.loads(sys.stdin.read())
+for key, window in [('minute', 60*1000), ('hour', 3600*1000), ('day', 86400*1000)]:
+    d[key] = [t for t in d.get(key, []) if now_ms - t < window]
+print(json.dumps(d), end='')
 PYEOF
 }
 
-# 统一计数函数：key 作为第一行写入 stdin，Python 读取后输出计数
+# 统一计数函数：key 作为第一行 stdin，JSON 作为第二行
 count_from_state() {
     python3 << 'PYEOF'
 import json, sys
-try:
-    key = sys.stdin.readline().strip()
-    d = json.loads(sys.stdin.read())
-    print(len(d.get(key, [])))
-except Exception:
-    print(0)
+key = sys.stdin.readline().strip()
+d = json.loads(sys.stdin.read())
+print(len(d.get(key, [])))
 PYEOF
 }
 
@@ -80,14 +73,11 @@ PYEOF
 build_new_state() {
     python3 << 'PYEOF'
 import json, sys, time as _t
-try:
-    d = json.loads(sys.stdin.read())
-    now = int(_t.time() * 1000)
-    for key in ['minute', 'hour', 'day']:
-        d.setdefault(key, []).append(now)
-    print(json.dumps(d), end='')
-except Exception:
-    print('{"minute":[],"hour":[],"day":[]}', end='')
+d = json.loads(sys.stdin.read())
+now = int(_t.time() * 1000)
+for key in ['minute', 'hour', 'day']:
+    d.setdefault(key, []).append(now)
+print(json.dumps(d), end='')
 PYEOF
 }
 
@@ -97,7 +87,10 @@ NOW_MS=$(python3 -c "import time; print(int(time.time()*1000))" 2>/dev/null) || 
 
 # 加载状态并清理过期记录（timestamp 作为首行传入 stdin）
 STATE=$(load_state)
-STATE=$(echo "$NOW_MS" | clean_old <<< "$STATE")
+# 加载状态并清理过期记录（timestamp+JSON 同一管道传入 stdin）
+STATE=$(load_state)
+STATE=$(printf '%s
+%s' "$NOW_MS" "$STATE" | clean_old)
 
 # 验证清理后的状态是否为有效 JSON，无效则使用默认空状态
 if ! is_valid_json "$STATE"; then
@@ -105,10 +98,13 @@ if ! is_valid_json "$STATE"; then
     STATE='{"minute":[],"hour":[],"day":[]}'
 fi
 
-# 提取三个窗口的计数（key 作为首行传入 stdin）
-CNT_MIN=$(echo "minute"  | count_from_state <<< "$STATE")
-CNT_HR=$(echo "hour"    | count_from_state <<< "$STATE")
-CNT_DAY=$(echo "day"    | count_from_state <<< "$STATE")
+# 提取三个窗口的计数（key + JSON 同一管道传入 stdin）
+CNT_MIN=$(printf '%s
+%s' "minute" "$STATE" | count_from_state)
+CNT_HR=$(printf '%s
+%s' "hour" "$STATE" | count_from_state)
+CNT_DAY=$(printf '%s
+%s' "day" "$STATE" | count_from_state)
 
 # 生成新状态（追加当前时间戳）
 NEW_STATE=$(echo "$STATE" | build_new_state)

@@ -30,8 +30,6 @@ fi
 CHECKPOINT_DIR="${PLUGIN_ROOT}/.claude/checkpoints"
 mkdir -p "$CHECKPOINT_DIR"
 
-TIMESTAMP=$(date -u +%Y%m%d-%H%M%S)
-
 SESSION_ID=$(echo "$HOOK_DATA" | python3 -c "
 import json, sys
 d = json.load(sys.stdin)

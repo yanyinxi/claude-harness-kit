@@ -5,7 +5,6 @@ CHK 进化模拟器 v5 - 详细对比版
 """
 import random
 from datetime import datetime
-from pathlib import Path
 
 class DetailedEvolutionTracker:
     """详细进化追踪器 - 记录每次变化"""
