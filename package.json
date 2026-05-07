@@ -4,7 +4,7 @@
   "description": "Claude Harness Kit — Human steers, Agents execute. 多 Agent 协作、通用 Skills、持续进化",
   "main": "index.js",
   "scripts": {
-    "test": "shellcheck harness/hooks/bin/*.sh && ruff check harness/ --select=F401,F841 --ignore=E402,*/tests/*,*/evolve-daemon/* && cd harness && python3 -m pytest tests/ --ignore=tests/evolve-daemon/ -q"
+    "test": "shellcheck harness/hooks/bin/*.sh && ruff check harness/ && cd harness && python3 -m pytest tests/ --ignore=tests/evolve-daemon/ -q"
   },
   "files": [
     ".claude-plugin/",
