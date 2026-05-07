@@ -58,15 +58,9 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 
 def git_clone(url: str, dest: Path, branch: str = "main", depth: int = 1) -> bool:
     """Clone with token if available, depth=1 for speed"""
-    token_url = url
-    if (
-        GITHUB_TOKEN
-        and "github.com" in url
-        and not url.startswith("https://")
-        or GITHUB_TOKEN
-        and "github.com" in url
-    ):
-        token_url = url.replace(
+    clone_url = url
+    if GITHUB_TOKEN and "github.com" in url:
+        clone_url = url.replace(
             "https://github.com/", f"https://{GITHUB_TOKEN}@github.com/"
         )
 
@@ -78,14 +72,14 @@ def git_clone(url: str, dest: Path, branch: str = "main", depth: int = 1) -> boo
         "--branch",
         branch,
         "--single-branch",
-        url,
+        clone_url,
         str(dest),
     ]
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
         if result.returncode != 0:
             # Try without branch
-            cmd2 = ["git", "clone", "--depth", str(depth), url, str(dest)]
+            cmd2 = ["git", "clone", "--depth", str(depth), clone_url, str(dest)]
             result = subprocess.run(cmd2, capture_output=True, text=True, timeout=120)
         return result.returncode == 0
     except Exception:
@@ -310,7 +304,6 @@ def main():
             if r["score"] >= 60
             else "⚠️ WARN" if r["score"] >= 40 else "❌ FAIL"
         )
-        tech = r.get("tech_stack", "")[:20]
         kdirs = str(r.get("key_dirs", 0))
         print(
             f"{r['name']:<30} {r['expected_lang']:<12} {r['score']:<6} {elapsed_str:<8} {kdirs:<10} {status}"

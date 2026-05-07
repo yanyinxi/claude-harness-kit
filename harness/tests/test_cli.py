@@ -192,7 +192,7 @@ def test_kit_mode_switch():
         if rc == 0:
             settings = tmp / ".claude" / "settings.local.json"
             if settings.exists():
-                content = settings.read_text()
+                settings.read_text()
                 # ralph 模式应包含 hook 相关配置
                 PASS += 1
                 print("  ✅ kit mode ralph: 切换成功")

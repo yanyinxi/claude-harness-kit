@@ -104,11 +104,50 @@ def create_llm_client() -> "Anthropic":
 
 # ── 路径常量 ────────────────────────────────────────────────
 def _find_root() -> Path:
-    return Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
+    """
+    向上查找项目根目录。
+
+    项目根 = 含 .claude/ 的目录。
+    特殊处理：从 harness/evolve-daemon/ 内运行时，向上找到真正的根。
+    """
+    env = os.environ.get("CLAUDE_PROJECT_DIR", "")
+    if env:
+        p = Path(env)
+        if p.name == "evolve-daemon":
+            p = p.parent
+        elif p.name == "harness":
+            p = p.parent
+        return p
+
+    # 从 kb_shared.py 文件位置向上遍历
+    current = Path(__file__).resolve().parent
+    for parent in [current] + list(current.parents):
+        if (parent / ".claude").exists():
+            return parent
+        # 如果到达了 evolve-daemon/ 但还没找到根，继续向上
+        if parent.name == "evolve-daemon":
+            continue
+        if (parent / "harness").exists():
+            return parent
+
+    return current
 
 
 def _evolve_dir() -> Path:
-    return _find_root() / "harness" / "evolve-daemon"
+    """
+    获取 harness/evolve-daemon/ 目录路径。
+
+    从 kb_shared.py 所在位置推导，确保无论从哪个 cwd 调用都正确。
+    """
+    current = Path(__file__).resolve().parent
+    # 如果当前就在 evolve-daemon/，直接返回
+    if current.name == "evolve-daemon":
+        return current
+    # 否则向上找到 evolve-daemon/
+    for parent in list(current.parents) + [current]:
+        if parent.name == "evolve-daemon":
+            return parent
+    return current
 
 
 def _knowledge_dir() -> Path:
@@ -118,7 +157,7 @@ def _knowledge_dir() -> Path:
 
 
 KB_PATH = _knowledge_dir() / "knowledge_base.jsonl"
-INSTINCT_PATH = _find_root() / "harness" / "memory" / "instinct-record.json"
+INSTINCT_PATH = _find_root() / "memory" / "instinct-record.json"
 EFFECT_PATH = _knowledge_dir() / "effect_tracking.jsonl"
 MERGE_COOLDOWN_PATH = _knowledge_dir() / "merge_cooldown.jsonl"
 NOTIFY_COOLDOWN_PATH = _knowledge_dir() / "notify_cooldown.jsonl"
@@ -293,6 +332,15 @@ def update_kb_confidence(
             # 降级状态：连续 3 次失败 → rollback_pending
             fc = entry.get("failure_count", 0)
             if fc >= 3:
+                entry["status"] = "rollback_pending"
+
+        elif outcome == "rollback":
+            # 回滚时同步降级知识库置信度（与 instinct 降级逻辑对称）
+            entry["failure_count"] = entry.get("failure_count", 0) + 1
+            entry["confidence"] = max(0.0, entry.get("confidence", 0.5) - 0.15)
+            _track_effect(kb_id, "rollback", root)
+
+            if entry.get("status") == "active":
                 entry["status"] = "rollback_pending"
 
         # 失效退级：成功率 < 50% 且 validation_count >= 3

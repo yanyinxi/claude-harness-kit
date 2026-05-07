@@ -39,6 +39,7 @@ except ImportError:
 
 
 from _daemon_config import load_config
+from _find_root import find_root as get_project_root
 
 
 def parse_interval(interval_str: str) -> int:
@@ -255,7 +256,7 @@ class SchedulerManager:
 
         # 心跳检测
         data_dir = self.get_data_dir()
-        heartbeat_config = daemon_config.get("heartbeat_check_minutes", 180)
+        daemon_config.get("heartbeat_check_minutes", 180)
         heartbeat_result = check_heartbeat(config, data_dir)
 
         # 如果心跳正常且非强制启动，检查是否需要先运行一次

@@ -37,7 +37,7 @@ class TestContextInjector:
         env["CLAUDE_PROJECT_DIR"] = str(temp_project)
         env["CLAUDE_MODE"] = "solo"
 
-        result = subprocess.run(
+        subprocess.run(
             [sys.executable, str(script_path)],
             capture_output=True, text=True, env=env
         )
@@ -55,7 +55,7 @@ class TestContextInjector:
         env["CLAUDE_PROJECT_DIR"] = str(temp_project)
         env["CLAUDE_MODE"] = "team"
 
-        result = subprocess.run(
+        subprocess.run(
             [sys.executable, str(script_path)],
             capture_output=True, text=True, env=env
         )

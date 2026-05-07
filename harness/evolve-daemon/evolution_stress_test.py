@@ -222,7 +222,7 @@ class EvolutionStressTest:
         """阶段1: 模拟 integrated_evolution 的泛化流程"""
         for i, scenario in enumerate(self.scenarios, 1):
             dim = scenario["dimension"]
-            kb_before = load_knowledge_base(self.root)
+            load_knowledge_base(self.root)
             kb_active = load_active_kb(self.root)
 
             error_msg = scenario["error_message"]
@@ -291,13 +291,13 @@ class EvolutionStressTest:
 
         for entry in kb:
             dim = entry.get("dimension", "unknown")
-            scenario_id = f"{dim}-{entry.get('id', '')[:8]}"
+            f"{dim}-{entry.get('id', '')[:8]}"
 
             # 模拟 3 次验证
             outcomes = self._simulate_outcomes(entry)
             for outcome in outcomes:
                 # 更新置信度
-                old_conf = entry.get("confidence", 0.5)
+                entry.get("confidence", 0.5)
                 update_kb_confidence(entry["id"], outcome, self.root)
 
                 if outcome == "success":
@@ -446,7 +446,7 @@ class EvolutionStressTest:
 
     def _simulate_outcomes(self, entry: dict) -> list[str]:
         """模拟验证结果"""
-        dim = entry.get("dimension", "unknown")
+        entry.get("dimension", "unknown")
         conf = entry.get("confidence", 0.5)
 
         # 高置信度 → 高成功率

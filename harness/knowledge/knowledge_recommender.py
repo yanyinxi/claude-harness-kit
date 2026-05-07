@@ -349,7 +349,6 @@ def recommend_by_skill(skill_name: str) -> list[dict]:
     entries = load_knowledge_base()
     keywords = extract_keywords(skill_name)
     target_types = SKILL_KNOWLEDGE_MAP.get(skill_name.lower(), ["guideline", "pitfall"])
-    usage_weight = 0.0
     instinct_usage = load_instinct_usage()
     usage_weight = math.log1p(instinct_usage.get(skill_name, 0)) * 0.5
     return recommend(entries, keywords, target_types=target_types, usage_weight=usage_weight, top_n=4)

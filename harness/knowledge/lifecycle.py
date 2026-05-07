@@ -196,7 +196,7 @@ def cmd_decay(knowledge_dir: Path):
         if target:
             entry["maturity"] = target
             entry["decayed_at"] = datetime.now().isoformat()
-            f.write_text(json.dumps(entry, ensure_asascii=False, indent=2), encoding="utf-8")
+            f.write_text(json.dumps(entry, ensure_ascii=False, indent=2), encoding="utf-8")
             decayed.append(str(f.relative_to(knowledge_dir)))
 
     print(json.dumps({"decayed": decayed, "count": len(decayed)}, indent=2))

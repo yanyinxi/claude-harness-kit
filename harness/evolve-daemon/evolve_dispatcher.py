@@ -230,7 +230,7 @@ def _performance_decision(target: str, pattern_key: str, examples: str, analysis
     - 慢工具优化建议
     """
     perf_data = analysis.get("performance", {})
-    tool_stats = perf_data.get("tool_stats", {})
+    perf_data.get("tool_stats", {})
     slow_tools = perf_data.get("slow_tools", [])
 
     perf_name = target.replace("perf:", "")
@@ -282,7 +282,7 @@ def _interaction_decision(target: str, pattern_key: str, examples: str, analysis
     # 满意度低于60或平均轮次过高都需要优化
     needs_intervention = satisfaction_score < 60 or avg_turns > 20
 
-    interaction_name = target.replace("interact:", "")
+    target.replace("interact:", "")
 
     if needs_intervention:
         suggestions = []
@@ -328,7 +328,7 @@ def _security_decision(target: str, pattern_key: str, examples: str, analysis: d
     permission_score = security_data.get("permission_score", 100)
     sensitive_exposures = security_data.get("sensitive_exposures", [])
 
-    sec_name = target.replace("sec:", "")
+    target.replace("sec:", "")
 
     # 安全问题风险等级较高
     if danger_ops or permission_score < 60 or len(sensitive_exposures) > 0:
@@ -377,7 +377,7 @@ def _context_decision(target: str, pattern_key: str, examples: str, analysis: di
     reuse_rate = context_data.get("knowledge_reuse_rate", 0)
     coherence_score = context_data.get("avg_coherence_score", 0)
 
-    ctx_name = target.replace("ctx:", "")
+    target.replace("ctx:", "")
 
     # 上下文切换过多或连贯性差需要优化
     needs_intervention = avg_switches > 5 or coherence_score < 0.3
@@ -510,7 +510,8 @@ def _dispatch_extended_dimensions(analysis: dict, instinct_ids: list) -> list[di
     avg_turns = interaction_data.get("avg_turns_per_session", 0)
     if satisfaction < 60 or avg_turns > 20:
         target = f"interact:session_quality"
-        if meets_threshold("interaction", 1):
+        trigger_count = (1 if satisfaction < 60 else 0) + (1 if avg_turns > 20 else 0)
+        if meets_threshold("interaction", trigger_count):
             decision = build_decision("interaction", target, analysis, {}, Path("."))
             decision["id"] = f"evo-{timestamp}-interaction"
             decision["linked_instinct_ids"] = instinct_ids
@@ -544,7 +545,8 @@ def _dispatch_extended_dimensions(analysis: dict, instinct_ids: list) -> list[di
     coherence = context_data.get("avg_coherence_score", 0)
     if avg_switches > 5 or coherence < 0.3:
         target = f"ctx:context_management"
-        if meets_threshold("context", 1):
+        trigger_count = (1 if avg_switches > 5 else 0) + (1 if coherence < 0.3 else 0)
+        if meets_threshold("context", trigger_count):
             decision = build_decision("context", target, analysis, {}, Path("."))
             decision["id"] = f"evo-{timestamp}-context"
             decision["linked_instinct_ids"] = instinct_ids

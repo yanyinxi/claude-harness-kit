@@ -1,0 +1,197 @@
+{
+  "knowledge_stats": {
+    "auto-3c38f67a": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-3cadaab2": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-f3a7b655": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "auto-62ba4cf3": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-5b0b7b48": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-e87e377c": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "auto-3f6dd09d": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-d127ddc9": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-4ab0581f": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "k001": {
+      "apply_count": 4,
+      "success_count": 3,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.75,
+      "status": "active"
+    },
+    "k002": {
+      "apply_count": 3,
+      "success_count": 3,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "k003": {
+      "apply_count": 3,
+      "success_count": 0,
+      "failure_count": 3,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "failed"
+    },
+    "auto-7274184d": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-af6b9753": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-4a3bd6bf": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "auto-2ba52ed1": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-c560eabd": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-2da0ba3e": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-7bc52568": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "auto-638eea94": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-61bbf188": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "auto-ca590ae6": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-2e4297b6": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-d4008be6": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    }
+  },
+  "updated": "2026-05-07T19:21:57.819419"
+}

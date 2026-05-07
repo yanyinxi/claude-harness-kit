@@ -62,6 +62,7 @@ tmp/
 harness/.claude/data/rate-limits/
 harness/harness/
 harness/.claude/
+harness/evolve-daemon/knowledge/
 
 # 知识库备份文件
 *.bak
@@ -74,3 +75,6 @@ harness/knowledge/evolved/evolution_history.jsonl
 harness/knowledge/evolved/knowledge_base.jsonl
 harness/knowledge/evolved/merge_cooldown.jsonl
 harness/knowledge/evolved/notify_cooldown.jsonl
+
+# 本地设置备份
+.claude/settings.local.json.backup

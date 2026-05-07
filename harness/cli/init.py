@@ -257,7 +257,7 @@ def create_skeleton(root: Path):
     dirs = [
         claude_dir,
         claude_dir / "rules",
-        harness_dir / "knowledge",
+        claude_dir / "knowledge",
         claude_dir / "data",
     ]
     for d in dirs:

@@ -399,7 +399,7 @@ def run_analysis(config: dict, root: Path, sessions: list[dict]):
 
     # 统计两个信号源
     original_corrections = sum(len(s.get("corrections", [])) for s in sessions)
-    original_tool_failures = sum(
+    sum(
         s.get("rich_context", {}).get("failure_stats", {}).get("total", 0)
         for s in sessions
     )
@@ -551,7 +551,7 @@ def _execute_auto_apply(decision: dict, analysis: dict, config: dict, root: Path
         should_auto_apply, update_kb_confidence
     )
 
-    kb = load_active_kb(root)
+    load_active_kb(root)
     matching_kb = find_kb_by_dimension(dimension, target, root)
     kb_id = matching_kb.get("id") if matching_kb else None
 
@@ -598,7 +598,7 @@ def _execute_propose(decision: dict, analysis: dict, config: dict, root: Path):
         # 关联 KB 条目（新增知识关联）
         try:
             from kb_shared import load_active_kb, find_kb_by_dimension, save_kb_entry, generate_kb_id, now_iso
-            kb = load_active_kb(root)
+            load_active_kb(root)
             # 查找或创建对应的 KB 条目
             matching_kb = find_kb_by_dimension(dimension, target, root)
             if not matching_kb:

@@ -55,7 +55,7 @@ elif isinstance(content, str):
 data = {
     'timestamp': ts,
     'session_id': session,
-    'checkpoint_name': 'auto-\${ts[:10]}',
+    'checkpoint_name': 'auto-' + ts[:10],
     'message_preview': text[:200],
     'auto_saved': True
 }

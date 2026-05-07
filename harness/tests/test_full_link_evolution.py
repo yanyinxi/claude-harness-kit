@@ -410,7 +410,7 @@ def test_cache_reuse_optimization():
     ok(f"Agent 文件数: {len(agent_files)}, 字母序排列 — 最大化缓存复用 (92%+)")
 
     # Check skills are alphabetically sorted
-    skill_dirs = sorted([p.name for p in SKILLS_DIR.iterdir() if p.is_dir()])
+    sorted([p.name for p in SKILLS_DIR.iterdir() if p.is_dir()])
     actual_dirs = [p.name for p in SKILLS_DIR.iterdir() if p.is_dir()]
     if sorted(actual_dirs) == actual_dirs:
         ok("Skill 目录字母序")

@@ -90,10 +90,6 @@ def test_claude_data_subdirs():
     if not data_dir.exists():
         ok(".claude/data/ 不存在")
         return
-    allowed_files = {
-        "sessions.jsonl", "error.jsonl", "agent_calls.jsonl", "skill_calls.jsonl",
-        "analysis_state.json", "proposal_history.json", "knowledge_recommendations.json",
-    }
     for f in data_dir.iterdir():
         if f.is_file() and f.suffix == ".jsonl":
             pass  # jsonl 允许

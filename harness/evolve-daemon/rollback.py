@@ -40,7 +40,7 @@ def save_proposal_history(history_file: Path, history: list):
     history_file.write_text(json.dumps(history, ensure_ascii=False, indent=2))
 
 
-def collect_metrics(root, proposal_id: str = "", observation_days: int = 7) -> dict:
+def collect_metrics(root, observation_days: int = 7) -> dict:
     if isinstance(root, str):
         root = Path(root)
     """
@@ -84,7 +84,7 @@ def collect_metrics(root, proposal_id: str = "", observation_days: int = 7) -> d
     total = len(sessions)
 
     # 计算指标
-    total_failures = sum(s.get("tool_failures", 0) for s in sessions)
+    sum(s.get("tool_failures", 0) for s in sessions)
     total_corrections = sum(len(s.get("corrections", [])) for s in sessions)
 
     # 成功率：无失败 = 成功
@@ -110,7 +110,7 @@ def evaluate_proposal(proposal: dict, metrics: dict, baseline: dict, config: dic
     # 从配置读取阈值
     obs_config = (config or {}).get("observation", {})
     min_success_rate = obs_config.get("metrics", {}).get("min_success_rate", 0.8)
-    max_correction_rate = obs_config.get("metrics", {}).get("max_correction_rate", 0.2)
+    obs_config.get("metrics", {}).get("max_correction_rate", 0.2)
     max_failure_delta = obs_config.get("metrics", {}).get("max_failure_rate_delta", 0.1)
 
     # 检查成功率
@@ -254,7 +254,7 @@ def run_rollback_check(root: Optional[Path] = None, config: Optional[dict] = Non
             continue  # 还在观察期内
 
         # 收集指标
-        metrics = collect_metrics(root, proposal.get("id", ""), observation_days)
+        metrics = collect_metrics(root, observation_days)
         baseline = proposal.get("baseline_metrics", {})
 
         # 评估
@@ -269,6 +269,7 @@ def run_rollback_check(root: Optional[Path] = None, config: Optional[dict] = Non
             if success:
                 stats["rolled_back"] += 1
                 proposal["rollback_triggers"] = proposal.get("rollback_triggers", [])
+                _demote_instinct_on_rollback(proposal, root)
 
         elif decision == "keep":
             # 固化
@@ -319,7 +320,7 @@ def get_proposal_health(proposal_id: str, root: Path, config: dict) -> dict:
         return {"status": "not_found"}
 
     observation_days = config.get("observation", {}).get("days", 7)
-    metrics = collect_metrics(root, proposal_id, observation_days)
+    metrics = collect_metrics(root, observation_days)
     baseline = proposal.get("baseline_metrics", {})
     decision = evaluate_proposal(proposal, metrics, baseline, config)
 
@@ -360,6 +361,31 @@ def _promote_instinct_on_observation(proposal: dict, root: Path):
             records = find_instinct_by_target(target_file, root)
             if records:
                 promote_confidence(records[0].get("id"), delta=0.1, root=root)
+    except Exception:
+        pass
+
+
+def _demote_instinct_on_rollback(proposal: dict, root: Path):
+    """
+    回滚成功后：降低 instinct 置信度 + 移除 target_file 关联。
+    与 _promote_instinct_on_observation 对称，防止"只提升不降级"的数据腐蚀。
+    """
+    try:
+        from instinct_updater import demote_confidence, find_instinct_by_target
+
+        target_file = proposal.get("target_file")
+        linked_id = proposal.get("linked_instinct_id")
+        linked_kb_id = proposal.get("linked_kb_id")
+
+        if linked_kb_id:
+            from kb_shared import update_kb_confidence
+            update_kb_confidence(linked_kb_id, "rollback", root)
+        elif linked_id:
+            demote_confidence(linked_id, delta=0.15, root=root)
+        elif target_file:
+            records = find_instinct_by_target(target_file, root)
+            if records:
+                demote_confidence(records[0].get("id"), delta=0.15, root=root)
     except Exception:
         pass
 

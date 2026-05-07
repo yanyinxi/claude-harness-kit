@@ -76,10 +76,10 @@ cmd_create() {
   entry=$(printf '{"path":"%s","branch":"%s","agent":"%s","created":"%s","status":"active"}' \
     "$wt_path" "$branch" "${agent_name:-system}" "$ts")
   local new_map
-  new_map=$(echo "$map" | python3 -c "
-import json,sys
+  new_map=$(NAME="$name" ENTRY="$entry" python3 -c "
+import json,sys,os
 d=json.load(sys.stdin)
-d['$name']=json.loads('$entry')
+d[os.environ['NAME']] = json.loads(os.environ['ENTRY'])
 print(json.dumps(d,indent=2))
 " 2>/dev/null || echo "$map")
   echo "$new_map" | write_map
@@ -119,10 +119,10 @@ cmd_enter() {
   init_map
 
   local wt_path
-  wt_path=$(read_map | python3 -c "
-import json,sys
+  wt_path=$(NAME="$name" python3 -c "
+import json,sys,os
 d=json.load(sys.stdin)
-name='$name'
+name=os.environ['NAME']
 if name not in d:
     print('')
     sys.exit(1)
@@ -174,10 +174,10 @@ cmd_delete() {
   init_map
 
   local wt_path
-  wt_path=$(read_map | python3 -c "
-import json,sys
+  wt_path=$(NAME="$name" python3 -c "
+import json,sys,os
 d=json.load(sys.stdin)
-name='$name'
+name=os.environ['NAME']
 if name not in d:
     sys.exit(1)
 print(d[name].get('path',''))
@@ -188,10 +188,10 @@ print(d[name].get('path',''))
     # Still clean up map entry
     local map
     map=$(read_map)
-    echo "$map" | python3 -c "
-import json,sys
+    NAME="$name" python3 -c "
+import json,sys,os
 d=json.load(sys.stdin)
-d.pop('$name', None)
+d.pop(os.environ['NAME'], None)
 print(json.dumps(d,indent=2))
 " | write_map
     return 1
@@ -204,10 +204,10 @@ print(json.dumps(d,indent=2))
   # Remove from map
   local map
   map=$(read_map)
-  echo "$map" | python3 -c "
-import json,sys
+  NAME="$name" python3 -c "
+import json,sys,os
 d=json.load(sys.stdin)
-d.pop('$name', None)
+d.pop(os.environ['NAME'], None)
 print(json.dumps(d,indent=2))
 " | write_map
 

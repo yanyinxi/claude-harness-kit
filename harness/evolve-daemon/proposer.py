@@ -267,8 +267,6 @@ def mark_proposal_accepted(proposal_path: Path, root: Path):
             target = matches[0]
         else:
             # 尝试从文件名提取：proposal_xxx.md -> xxx
-            import re
-
             name_match = re.search(r"proposal_(.+?)\.md", str(proposal_path.name))
             target = name_match.group(1) if name_match else "unknown"
         record_id = add_pattern(

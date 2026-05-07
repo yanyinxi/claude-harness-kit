@@ -180,7 +180,7 @@ def load_config(module: Optional[str] = None) -> dict:
         return {k: v for k, v in _DEFAULT_CONFIGS.items()}
 
     defaults = _DEFAULT_CONFIGS.get(module, {})
-    config_path = Path(__file__).parent / f"{module}" / "config.yaml"
+    config_path = Path(__file__).parent / "config.yaml"
 
     if not config_path.exists():
         return defaults

@@ -288,13 +288,6 @@ def rollback_proposal(proposal_id: str, root: Optional[Path] = None, reason: str
 
             history_file.write_text(json.dumps(history, ensure_ascii=False, indent=2))
 
-            # 更新 instinct
-            try:
-                pass
-                # 找到对应的 instinct 记录并降低置信度
-            except Exception:
-                pass
-
             print(f"Rolled back {proposal_id}: {reason}")
             return True
 

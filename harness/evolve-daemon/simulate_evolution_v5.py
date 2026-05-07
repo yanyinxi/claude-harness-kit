@@ -58,7 +58,7 @@ class DetailedEvolutionTracker:
         if "优化提示词" in action or "模板" in action:
             current = self.snapshots[dimension].get("prompt_templates", ["v1"])[-1]
             version = int(current[-1]) + 1 if current[-1].isdigit() else 2
-            new_template = current.replace("v1", f"v{version}").replace("v2", "v3").replace("v3", "v4")
+            current.replace("v1", f"v{version}").replace("v2", "v3").replace("v3", "v4")
             if "prompt_templates" in self.snapshots[dimension]:
                 self.snapshots[dimension]["prompt_templates"].append(f"优化模板 v{version}")
             else:
