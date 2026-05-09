@@ -372,7 +372,7 @@ def test_proposer_template_generates_file():
                     print("  ❌ proposer: 提案文件内容不完整")
             else:
                 FAIL += 1
-                print(f"  ❌ proposer: 未生成提案文件")
+                print("  ❌ proposer: 未生成提案文件")
         except Exception as e:
             FAIL += 1
             print(f"  ❌ proposer: 异常 → {e}")

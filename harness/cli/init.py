@@ -9,7 +9,11 @@ kit init — 自动分析项目，生成高质量 CLAUDE.md 和 .claude/ 配置�
   4. 生成 Map Not Manual 风格 CLAUDE.md（<100 行）
   5. 创建 .claude/ 目录骨架（rules/, knowledge/, settings.local.json, .claudeignore）
 """
-import os, re, sys, json, subprocess
+import os
+import re
+import sys
+import json
+import subprocess
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
@@ -100,7 +104,7 @@ def parse_go_mod(path: Path) -> dict:
             line = line.strip()
             if line and not line.startswith("//") and not line.startswith("module "):
                 parts = line.split()
-                if len(parts) >= 2 and not parts[0] in ("go", "require", "replace", "exclude", "retract", "require", "toolchain"):
+                if len(parts) >= 2 and parts[0] not in ("go", "require", "replace", "exclude", "retract", "require", "toolchain"):
                     deps[parts[0]] = parts[1] if len(parts) > 1 else "?"
     except Exception:
         pass
@@ -142,7 +146,7 @@ def discover_structure(root: Path) -> dict:
         candidates = list(root.glob(f"**/{pattern}"))
         for c in candidates[:3]:  # 最多取 3 个
             rel = str(c.relative_to(root))
-            if not any(d in rel for d in IGNORE_DIRS) and not "/." in rel:
+            if not any(d in rel for d in IGNORE_DIRS) and "/." not in rel:
                 entry_files.append(rel)
 
     return {
@@ -204,11 +208,11 @@ def generate_claude_md(root: Path, tech: dict, structure: dict) -> str:
     lines += [
         "",
         "## 构建命令",
-        f"```bash",
+        "```bash",
         f"{tech['build_cmd']} install   # 安装依赖",
         f"{tech['build_cmd']} test      # 运行测试",
         f"{tech['build_cmd']} build     # 构建",
-        f"```",
+        "```",
         "",
         "## 关键路径",
     ]
@@ -422,11 +426,11 @@ def main():
         print(f"  🔍 [dry-run] 会生成 CLAUDE.md: {claude_path}")
         content = generate_claude_md(root, tech, structure)
         print(f"  🔍 [dry-run] 内容预览 ({content.count(chr(10))+1} 行)")
-        print(f"  🔍 [dry-run] 会创建骨架: .claude/data/, .claude/proposals/")
+        print("  🔍 [dry-run] 会创建骨架: .claude/data/, .claude/proposals/")
         return
 
     if claude_path.exists() and not args.force:
-        print(f"  ⚠ CLAUDE.md 已存在，跳过生成（用 --force 覆盖）")
+        print("  ⚠ CLAUDE.md 已存在，跳过生成（用 --force 覆盖）")
     else:
         content = generate_claude_md(root, tech, structure)
         claude_path.write_text(content, encoding="utf-8")
@@ -436,7 +440,7 @@ def main():
 
     # 5. 骨架
     create_skeleton(root)
-    print(f"  ✅ .claude/ 骨架已生成")
+    print("  ✅ .claude/ 骨架已生成")
 
     # Next steps
     print(f"""

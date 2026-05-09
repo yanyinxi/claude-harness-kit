@@ -45,7 +45,7 @@ def generate_report(project_dir: Path, phases: list[dict], output_path: Path):
     for p in phases:
         report += f"| {p.get('name', '?')} | {p.get('status', '?')} | {p.get('files', 0)} | {p.get('tests', '?')} |\n"
 
-    report += f"""
+    report += """
 ## 下一步
 - 代码审查
 - 集成测试验证
@@ -72,7 +72,7 @@ def main():
 
     claude_md = project_dir / "CLAUDE.md"
     if not claude_md.exists():
-        print(f"❌ 项目缺少 CLAUDE.md，请先运行 kit init")
+        print("❌ 项目缺少 CLAUDE.md，请先运行 kit init")
         sys.exit(1)
 
     if args.playbook:

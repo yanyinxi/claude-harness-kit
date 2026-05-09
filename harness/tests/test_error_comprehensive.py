@@ -2,7 +2,14 @@
 """
 test_error_comprehensive.py — 错误收集系统全面测试 (40 场景)
 """
-import json, os, sys, tempfile, shutil, threading, time, traceback as tb_module
+import json
+import os
+import sys
+import tempfile
+import shutil
+import threading
+import time
+import traceback as tb_module
 from pathlib import Path
 from io import StringIO
 from datetime import datetime
@@ -24,11 +31,14 @@ class TempProject:
         os.environ.pop("CLAUDE_HOOK_EVENT", None)
         os.environ.pop("CLAUDE_PLUGIN_ROOT", None)
 
-    def set_env(self, k, v): os.environ[k] = v
+    def set_env(self, k, v):
+        os.environ[k] = v
     def cleanup(self):
         for k, v in self._orig.items():
-            if v: os.environ[k] = v
-            else: os.environ.pop(k, None)
+            if v:
+                os.environ[k] = v
+            else:
+                os.environ.pop(k, None)
         shutil.rmtree(self.tmp, ignore_errors=True)
 
 
@@ -114,7 +124,8 @@ def test_08_auto_create_dir():
     p = TempProject()
     try:
         nonexistent = "/tmp/chk_nonexistent_12345"
-        if Path(nonexistent).exists(): shutil.rmtree(nonexistent)
+        if Path(nonexistent).exists():
+            shutil.rmtree(nonexistent)
         r = build_error_record(error_type="tool_failure", error_message="e", source="test.py:1")
         assert write_error(r, nonexistent) is True
         shutil.rmtree(nonexistent, ignore_errors=True)
@@ -164,7 +175,8 @@ def test_12_hook_event():
         assert r["metadata"]["hook_event"] == "PostToolUseFailure"
         print("  ✓ 12: hook 事件记录")
     finally:
-        p.cleanup(); sys.stdin = sys.__stdin__
+        p.cleanup()
+        sys.stdin = sys.__stdin__
 
 def test_13_git_session_id():
     import subprocess
@@ -186,7 +198,8 @@ def test_13_git_session_id():
             sid2 = _get_session_id(p.root)
             assert "git-" in sid2, f"没有 git- 前缀: {sid2}"
         finally:
-            if orig: os.environ["CLAUDE_SESSION_ID"] = orig
+            if orig:
+                os.environ["CLAUDE_SESSION_ID"] = orig
         print("  ✓ 13: Git session_id")
     finally:
         p.cleanup()
@@ -232,7 +245,8 @@ def test_17_recent_tools():
         assert r["context"]["recent_tools"] == ["Read","Edit","Bash"]
         print("  ✓ 17: Recent tools")
     finally:
-        p.cleanup(); sys.stdin = sys.__stdin__
+        p.cleanup()
+        sys.stdin = sys.__stdin__
 
 def test_18_agents_skills():
     from collect_error import collect_tool_failure
@@ -247,7 +261,8 @@ def test_18_agents_skills():
         assert "security" in r["context"]["skills_used"]
         print("  ✓ 18: Agents/Skills 追踪")
     finally:
-        p.cleanup(); sys.stdin = sys.__stdin__
+        p.cleanup()
+        sys.stdin = sys.__stdin__
 
 def test_19_consecutive_writes():
     from error_writer import write_error, build_error_record
@@ -267,13 +282,16 @@ def test_20_main_success():
     try:
         p.set_env("CLAUDE_HOOK_EVENT", "PostToolUseFailure")
         sys.stdin = StringIO(json.dumps({"tool_name": "Bash", "error": "f"}))
-        old = sys.stdout; sys.stdout = StringIO()
+        old = sys.stdout
+        sys.stdout = StringIO()
         main()
-        out = sys.stdout.getvalue(); sys.stdout = old
+        out = sys.stdout.getvalue()
+        sys.stdout = old
         assert json.loads(out)["collected"] is True
         print("  ✓ 20: main() 成功")
     finally:
-        p.cleanup(); sys.stdin = sys.__stdin__
+        p.cleanup()
+        sys.stdin = sys.__stdin__
 
 # 场景 21-25: 异常测试
 def test_21_invalid_json():
@@ -286,7 +304,8 @@ def test_21_invalid_json():
         assert r["tool"] == "unknown"
         print("  ✓ 21: 无效 JSON")
     finally:
-        p.cleanup(); sys.stdin = sys.__stdin__
+        p.cleanup()
+        sys.stdin = sys.__stdin__
 
 def test_22_empty_stdin():
     from collect_error import collect_tool_failure
@@ -298,7 +317,8 @@ def test_22_empty_stdin():
         assert r["tool"] == "unknown"
         print("  ✓ 22: 空 stdin")
     finally:
-        p.cleanup(); sys.stdin = sys.__stdin__
+        p.cleanup()
+        sys.stdin = sys.__stdin__
 
 def test_23_readonly_dir():
     from error_writer import write_error, build_error_record
@@ -340,8 +360,10 @@ def test_25_concurrent_read_write():
                     counts.append(len((p.data_dir / "error.jsonl").read_text().splitlines()))
         threads = [threading.Thread(target=writer) for _ in range(5)]
         threads += [threading.Thread(target=reader) for _ in range(3)]
-        for t in threads: t.start()
-        for t in threads: t.join()
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
         with open(p.data_dir / "error.jsonl") as f:
             assert len(f.readlines()) == 100
         print("  ✓ 25: 并发读写")
@@ -458,8 +480,10 @@ def test_36_100_concurrent():
     p = TempProject()
     try:
         threads = [threading.Thread(target=lambda i=i: write_error(build_error_record("tool_failure", f"c{i}", "test.py:1"), p.tmp)) for i in range(100)]
-        for t in threads: t.start()
-        for t in threads: t.join()
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
         with open(p.data_dir / "error.jsonl") as f:
             assert len(f.readlines()) == 100
         print("  ✓ 36: 100 并发写入")
@@ -471,8 +495,10 @@ def test_37_lock_competition():
     p = TempProject()
     try:
         threads = [threading.Thread(target=lambda i=i: write_error(build_error_record("tool_failure", f"l{i}", "test.py:1"), p.tmp)) for i in range(50)]
-        for t in threads: t.start()
-        for t in threads: t.join()
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
         with open(p.data_dir / "error.jsonl") as f:
             assert len(f.readlines()) == 50
         print("  ✓ 37: 锁竞争")
@@ -485,8 +511,10 @@ def test_38_rapid_batches():
     try:
         for batch in range(5):
             threads = [threading.Thread(target=lambda: write_error(build_error_record("tool_failure", "batch", "test.py:1"), p.tmp)) for _ in range(20)]
-            for t in threads: t.start()
-            for t in threads: t.join()
+            for t in threads:
+                t.start()
+            for t in threads:
+                t.join()
         with open(p.data_dir / "error.jsonl") as f:
             assert len(f.readlines()) == 100
         print("  ✓ 38: 快速批次")
@@ -497,10 +525,14 @@ def test_39_session_isolation():
     from error_writer import write_error, build_error_record
     tmp1, tmp2 = tempfile.mkdtemp(prefix="s1-"), tempfile.mkdtemp(prefix="s2-")
     try:
-        for i in range(10): write_error(build_error_record("tool_failure", f"s1-{i}", "test.py:1"), tmp1)
-        for i in range(5): write_error(build_error_record("tool_failure", f"s2-{i}", "test.py:1"), tmp2)
-        with open(Path(tmp1)/".claude"/"data"/"error.jsonl") as f: n1 = len(f.readlines())
-        with open(Path(tmp2)/".claude"/"data"/"error.jsonl") as f: n2 = len(f.readlines())
+        for i in range(10):
+            write_error(build_error_record("tool_failure", f"s1-{i}", "test.py:1"), tmp1)
+        for i in range(5):
+            write_error(build_error_record("tool_failure", f"s2-{i}", "test.py:1"), tmp2)
+        with open(Path(tmp1)/".claude"/"data"/"error.jsonl") as f:
+            n1 = len(f.readlines())
+        with open(Path(tmp2)/".claude"/"data"/"error.jsonl") as f:
+            n2 = len(f.readlines())
         assert n1 == 10 and n2 == 5
         print("  ✓ 39: 会话隔离")
     finally:
@@ -516,9 +548,11 @@ def test_40_full_pipeline():
             "tool_name": "Bash", "error": "Permission denied",
             "tool_input": {"command": "rm /root/f.txt", "api_key": "sk-xxx"},
         }))
-        old = sys.stdout; sys.stdout = StringIO()
+        old = sys.stdout
+        sys.stdout = StringIO()
         main()
-        out = sys.stdout.getvalue(); sys.stdout = old
+        out = sys.stdout.getvalue()
+        sys.stdout = old
         result = json.loads(out)
         assert result["collected"] is True
         with open(p.data_dir / "error.jsonl") as f:
@@ -530,7 +564,8 @@ def test_40_full_pipeline():
         assert e["context"]["tool_input"]["command"] == "rm /root/f.txt"
         print("  ✓ 40: 完整流程端到端")
     finally:
-        p.cleanup(); sys.stdin = sys.__stdin__
+        p.cleanup()
+        sys.stdin = sys.__stdin__
 
 
 # 运行器
@@ -540,11 +575,15 @@ def run_all():
     print("\n" + "="*70 + "\n  错误收集系统全面测试 (40 场景)\n" + "="*70)
     for t in tests:
         try:
-            t(); passed += 1
+            t()
+            passed += 1
         except AssertionError as e:
-            print(f"  ✗ {t.__name__}: {e}"); failed += 1
+            print(f"  ✗ {t.__name__}: {e}")
+            failed += 1
         except Exception as e:
-            print(f"  ✗ {t.__name__}: {e}"); tb_module.print_exc(); failed += 1
+            print(f"  ✗ {t.__name__}: {e}")
+            tb_module.print_exc()
+            failed += 1
     print("-"*70 + f"\n  结果: {passed} 通过, {failed} 失败\n" + "="*70 + "\n")
     return failed == 0
 

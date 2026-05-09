@@ -103,7 +103,7 @@ def main():
         print("\n5️⃣  Proposals: 无待处理")
 
     print(f"\n{'='*50}")
-    print(f"运行 kit mode 查看/切换模式 | kit gc 运行知识回收")
+    print("运行 kit mode 查看/切换模式 | kit gc 运行知识回收")
 
 
 if __name__ == "__main__":

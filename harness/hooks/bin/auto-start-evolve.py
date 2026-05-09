@@ -61,7 +61,7 @@ def main():
             interval = result.get("interval")
             heartbeat = result.get("heartbeat_check", {})
 
-            print(f"[auto-start-evolve] Scheduler started successfully")
+            print("[auto-start-evolve] Scheduler started successfully")
             print(f"  Mode: {mode}")
             print(f"  Interval: {interval}")
 

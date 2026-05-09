@@ -418,13 +418,13 @@ class EffectTracker:
         for i, performer in enumerate(report.get("top_performers", [])[:5], 1):
             print(f"║     {i}. {performer['knowledge_id']:<8} 成功率: {performer['success_rate']:>5.1f}%  应用: {performer['apply_count']:>3}次   ║")
 
-        print(f"""║                                                                  ║
+        print("""║                                                                  ║
 ║  ⚠️  需要关注                                                    ║""")
 
         for item in report.get("needs_attention", [])[:5]:
             print(f"║     • {item['knowledge_id']:<8} 状态: {item['status']:<8} 成功率: {item['success_rate']:>5.1f}%  ║")
 
-        print(f"""║                                                                  ║
+        print("""║                                                                  ║
 ╚══════════════════════════════════════════════════════════════════╝
 """)
 

@@ -117,7 +117,7 @@ def run_session_evolution(max_errors: int = 10, max_age_hours: int = 24):
     每次会话结束时调用。
     """
     print(f"\n{'='*60}")
-    print(f"🔄 CHK 会话级进化 - 开始")
+    print("🔄 CHK 会话级进化 - 开始")
     print(f"  时间: {now_iso()}")
     print(f"{'='*60}")
 
@@ -166,7 +166,7 @@ def run_session_evolution(max_errors: int = 10, max_age_hours: int = 24):
     print(f"  [分析] 待分析新错误: {len(unknown_errors)} 条")
 
     # ── 步骤4：LLM 泛化分析 ──────────────────────────
-    print(f"\n  [LLM] 调用泛化分析...")
+    print("\n  [LLM] 调用泛化分析...")
 
     try:
         results = process_errors(unknown_errors, PROJECT_ROOT, config=_load_config())
@@ -185,7 +185,7 @@ def run_session_evolution(max_errors: int = 10, max_age_hours: int = 24):
     merge_count = sum(1 for r in results if r.get("action") == "merge")
     new_count = sum(1 for r in results if r.get("action") == "new")
 
-    print(f"\n  [结果]")
+    print("\n  [结果]")
     print(f"    reuse:  {reuse_count} 条")
     print(f"    merge:  {merge_count} 条")
     print(f"    new:    {new_count} 条")
@@ -202,7 +202,7 @@ def run_session_evolution(max_errors: int = 10, max_age_hours: int = 24):
     print_kb_stats(PROJECT_ROOT)
 
     print(f"\n{'='*60}")
-    print(f"✅ 会话级进化完成")
+    print("✅ 会话级进化完成")
     print(f"{'='*60}")
 
 

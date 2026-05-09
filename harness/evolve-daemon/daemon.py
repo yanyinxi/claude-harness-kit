@@ -467,7 +467,7 @@ def run_analysis(config: dict, root: Path, sessions: list[dict]):
         print("所有错误已被知识库覆盖，跳过 daemon 分析")
         return
     elif not filtered_sessions and has_any_failure_stats:
-        print(f"  [KB过滤] corrections 已全部覆盖，但仍有 failure_stats 需要分析")
+        print("  [KB过滤] corrections 已全部覆盖，但仍有 failure_stats 需要分析")
 
     if filtered_sessions:
         sessions = filtered_sessions
@@ -850,11 +850,11 @@ def main():
         from scheduler import _manager
         result = _manager.start()
         if result.get("success"):
-            print(f"调度器已启动")
+            print("调度器已启动")
             print(f"   模式: {result.get('mode')}")
             print(f"   间隔: {result.get('interval')} ({result.get('interval_seconds')}s)")
             if result.get("run_on_startup"):
-                print(f"   启动时立即运行: 是")
+                print("   启动时立即运行: 是")
             print("\n后台运行中，按 Ctrl+C 或发送 SIGTERM/SIGHUP 停止")
             try:
                 import time as time_module

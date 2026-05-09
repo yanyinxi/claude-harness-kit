@@ -230,15 +230,15 @@ def main():
     # 无参数时显示帮助信息
     if len(sys.argv) < 2:
         print(f"📦 Current version: {old_ver}")
-        print(f"\n📖 Usage:")
-        print(f"  python bump_version.py auto      # Auto-detect (smart)")
-        print(f"  python bump_version.py patch     # Bug fixes")
-        print(f"  python bump_version.py minor     # New features")
-        print(f"  python bump_version.py major    # Breaking changes")
+        print("\n📖 Usage:")
+        print("  python bump_version.py auto      # Auto-detect (smart)")
+        print("  python bump_version.py patch     # Bug fixes")
+        print("  python bump_version.py minor     # New features")
+        print("  python bump_version.py major    # Breaking changes")
 
         # 显示智能分析结果（不实际升级）
         analysis = analyze_commits()
-        print(f"\n🤖 Smart analysis:")
+        print("\n🤖 Smart analysis:")
         print(f"  Suggested: {analysis['type']} ({analysis['reason']})")
 
         # 显示 git 统计
@@ -271,17 +271,17 @@ def main():
 
     # 1. 保存到 version.json
     write_version(data)
-    print(f"\n📝 Updated version.json")
+    print("\n📝 Updated version.json")
 
     # 2. 同步到其他文件
-    print(f"\n📄 Updating files:")
+    print("\n📄 Updating files:")
     root = Path(__file__).parent.parent.parent
     for rel_path in UPDATE_FILES:
         update_file(root / rel_path, old_ver, new_ver)
 
     # 3. 生成 changelog
     changelog_entry = generate_changelog(old_ver, new_ver, version_type)
-    print(f"\n📒 Changelog entry:")
+    print("\n📒 Changelog entry:")
     print(changelog_entry)
 
     print(f"\n✅ Done: {new_ver}")

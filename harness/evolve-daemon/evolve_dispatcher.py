@@ -292,9 +292,9 @@ def _interaction_decision(target: str, pattern_key: str, examples: str, analysis
             suggestions.append(f"- 平均会话轮次 {avg_turns} 过高，可能存在沟通效率问题")
 
         suggested = (
-            f"## 交互质量优化建议\n" + "\n".join(suggestions) + f"\n"
-            f"- 考虑增加主动确认步骤\n"
-            f"- 优化输出格式，减少不必要的冗余"
+            "## 交互质量优化建议\n" + "\n".join(suggestions) + "\n"
+            "- 考虑增加主动确认步骤\n"
+            "- 优化输出格式，减少不必要的冗余"
         )
         confidence = 0.65
         risk_level = "medium"
@@ -341,9 +341,9 @@ def _security_decision(target: str, pattern_key: str, examples: str, analysis: d
             suggestions.append(f"- 检测到 {len(sensitive_exposures)} 处敏感信息暴露风险")
 
         suggested = (
-            f"## 安全风险处理建议\n" + "\n".join(suggestions) + f"\n"
-            f"- 建议添加安全检查 Hook\n"
-            f"- 考虑在 Agent 指令中增加安全提醒"
+            "## 安全风险处理建议\n" + "\n".join(suggestions) + "\n"
+            "- 建议添加安全检查 Hook\n"
+            "- 考虑在 Agent 指令中增加安全提醒"
         )
         confidence = 0.8
         risk_level = "high"
@@ -390,9 +390,9 @@ def _context_decision(target: str, pattern_key: str, examples: str, analysis: di
             suggestions.append(f"- 连贯性评分 {coherence_score:.2f} 较低，可能存在话题跳跃")
 
         suggested = (
-            f"## 上下文管理优化建议\n" + "\n".join(suggestions) + f"\n"
-            f"- 建议在 Agent 中增加上下文保持策略\n"
-            f"- 考虑增加知识复用机制"
+            "## 上下文管理优化建议\n" + "\n".join(suggestions) + "\n"
+            "- 建议在 Agent 中增加上下文保持策略\n"
+            "- 考虑增加知识复用机制"
         )
         confidence = 0.6
         risk_level = "medium"
@@ -493,7 +493,7 @@ def _dispatch_extended_dimensions(analysis: dict, instinct_ids: list) -> list[di
     slow_tools = perf_data.get("slow_tools", [])
     timeouts = perf_data.get("timeouts", {})
     if slow_tools or timeouts:
-        target = f"perf:tool_performance"
+        target = "perf:tool_performance"
         if meets_threshold("performance", len(slow_tools) + len(timeouts)):
             decision = build_decision("performance", target, analysis, {}, Path("."))
             decision["id"] = f"evo-{timestamp}-performance"
@@ -509,7 +509,7 @@ def _dispatch_extended_dimensions(analysis: dict, instinct_ids: list) -> list[di
     satisfaction = interaction_data.get("satisfaction_score", 70)
     avg_turns = interaction_data.get("avg_turns_per_session", 0)
     if satisfaction < 60 or avg_turns > 20:
-        target = f"interact:session_quality"
+        target = "interact:session_quality"
         trigger_count = (1 if satisfaction < 60 else 0) + (1 if avg_turns > 20 else 0)
         if meets_threshold("interaction", trigger_count):
             decision = build_decision("interaction", target, analysis, {}, Path("."))
@@ -527,7 +527,7 @@ def _dispatch_extended_dimensions(analysis: dict, instinct_ids: list) -> list[di
     permission_score = security_data.get("permission_score", 100)
     sensitive_exposures = security_data.get("sensitive_exposures", [])
     if danger_ops or permission_score < 60 or len(sensitive_exposures) > 0:
-        target = f"sec:security_risks"
+        target = "sec:security_risks"
         if meets_threshold("security", len(danger_ops) + len(sensitive_exposures) + (1 if permission_score < 60 else 0)):
             decision = build_decision("security", target, analysis, {}, Path("."))
             decision["id"] = f"evo-{timestamp}-security"
@@ -544,7 +544,7 @@ def _dispatch_extended_dimensions(analysis: dict, instinct_ids: list) -> list[di
     avg_switches = context_data.get("avg_context_switches", 0)
     coherence = context_data.get("avg_coherence_score", 0)
     if avg_switches > 5 or coherence < 0.3:
-        target = f"ctx:context_management"
+        target = "ctx:context_management"
         trigger_count = (1 if avg_switches > 5 else 0) + (1 if coherence < 0.3 else 0)
         if meets_threshold("context", trigger_count):
             decision = build_decision("context", target, analysis, {}, Path("."))

@@ -75,7 +75,7 @@ def switch_mode(mode_name: str, root: Path) -> bool:
     settings = load_settings(root)
 
     # 备份当前配置
-    backup_path = root / ".claude" / f"settings.local.json.backup"
+    backup_path = root / ".claude" / "settings.local.json.backup"
     current = root / ".claude" / "settings.local.json"
     if current.exists():
         shutil.copy(current, backup_path)
@@ -146,7 +146,7 @@ def main():
             print(f"   活跃 Hook: {hook_count} 个事件")
         print(f"   配置位置: {root / '.claude' / 'settings.local.json'}")
     else:
-        print(f"❌ 模式切换失败")
+        print("❌ 模式切换失败")
         sys.exit(1)
 
 

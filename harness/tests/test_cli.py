@@ -78,12 +78,14 @@ def test_kit_init_nodejs_project():
                     print("  ✅ kit init: Node.js 项目生成完整 CLAUDE.md + 依赖检测")
                 else:
                     FAIL += 1
-                    print(f"  ❌ kit init: CLAUDE.md 内容不完整 — 缺少技术栈/依赖")
+                    print("  ❌ kit init: CLAUDE.md 内容不完整 — 缺少技术栈/依赖")
             else:
                 FAIL += 1
                 missing = []
-                if not has_claude_md: missing.append("CLAUDE.md")
-                if not has_claudeignore: missing.append(".claudeignore")
+                if not has_claude_md:
+                    missing.append("CLAUDE.md")
+                if not has_claudeignore:
+                    missing.append(".claudeignore")
                 print(f"  ❌ kit init: 缺少 {missing}")
         else:
             FAIL += 1
@@ -268,7 +270,7 @@ def test_kit_status_output():
     if rc == 0:
         lines = out.strip().splitlines()
         # 至少输出 agent/skill/rule 数量
-        if any("agent" in l.lower() for l in lines):
+        if any("agent" in line.lower() for line in lines):
             PASS += 1
             print("  ✅ kit status: 输出包含 Agent 信息")
         else:
@@ -289,7 +291,7 @@ def test_kit_init_next_steps():
         rc, out, _ = run_init(tmp)
         if rc == 0:
             # 验证包含 4 条 numbered next steps
-            next_steps = [l for l in out.splitlines() if l.strip().startswith(("1.", "2.", "3.", "4."))]
+            next_steps = [line for line in out.splitlines() if line.strip().startswith(("1.", "2.", "3.", "4."))]
             if len(next_steps) >= 4:
                 PASS += 1
                 print(f"  ✅ kit init: 包含 {len(next_steps)} 条 Next steps 引导")
@@ -300,7 +302,7 @@ def test_kit_init_next_steps():
                     print("  ✅ kit init: 包含 Next steps 引导")
                 else:
                     FAIL += 1
-                    print(f"  ❌ kit init: 缺少 Next steps 引导")
+                    print("  ❌ kit init: 缺少 Next steps 引导")
         else:
             FAIL += 1
             print(f"  ❌ kit init: exit {rc}")

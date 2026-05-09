@@ -34,6 +34,12 @@ class ErrorType:
 def get_chk_version() -> str:
     try:
         root = Path(os.environ.get("CLAUDE_PLUGIN_ROOT", ""))
+        # 尝试插件根目录下的 harness/_core/version.json
+        version_file = root / "harness" / "_core" / "version.json"
+        if version_file.exists():
+            data = json.loads(version_file.read_text(encoding="utf-8"))
+            return data.get("version", "0.0.0")
+        # 兼容旧路径（插件根目录直接包含 _core/）
         version_file = root / "_core" / "version.json"
         if version_file.exists():
             data = json.loads(version_file.read_text(encoding="utf-8"))

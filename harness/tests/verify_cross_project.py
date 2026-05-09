@@ -174,7 +174,7 @@ def verify_project(
     print(f"{'='*60}")
 
     # 克隆
-    print(f"[1/5] 克隆项目...", end=" ", flush=True)
+    print("[1/5] 克隆项目...", end=" ", flush=True)
     if project_dir.exists():
         shutil.rmtree(project_dir)
     ok = git_clone(url, project_dir, branch)
@@ -192,7 +192,7 @@ def verify_project(
     print(f"✅ ({time.time()-start:.1f}s)")
 
     # kit init
-    print(f"[2/5] 运行 kit init...", end=" ", flush=True)
+    print("[2/5] 运行 kit init...", end=" ", flush=True)
     t0 = time.time()
     r = run_kit_init(project_dir)
     print(f"✅ ({time.time()-t0:.1f}s)")
@@ -203,7 +203,7 @@ def verify_project(
     score += 30 if r["success"] else 0
 
     # CLAUDE.md 检查
-    print(f"[3/5] CLAUDE.md 质量检查...", end=" ", flush=True)
+    print("[3/5] CLAUDE.md 质量检查...", end=" ", flush=True)
     claude_ok = r["claude_md"] is not None
     quality_ok = False
     if r["claude_md"]:
@@ -222,7 +222,7 @@ def verify_project(
         print("❌")
 
     # 骨架检查
-    print(f"[4/5] .claude/ 骨架检查...", end=" ", flush=True)
+    print("[4/5] .claude/ 骨架检查...", end=" ", flush=True)
     sk = r.get("skeleton", {})
     sk_ok = all(sk.values())
     for k, v in sk.items():
@@ -236,7 +236,7 @@ def verify_project(
         print(f"⚠️  有 {len(present)}/4，缺: {missing}")
 
     # Next steps
-    print(f"[5/5] Next Steps 引导...", end=" ", flush=True)
+    print("[5/5] Next Steps 引导...", end=" ", flush=True)
     ns_ok = r.get("next_steps", False)
     score += 5 if ns_ok else 0
     checks.append(("Next Steps", ns_ok))

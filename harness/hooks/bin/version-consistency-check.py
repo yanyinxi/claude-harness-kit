@@ -150,9 +150,9 @@ def check_versions() -> bool:
         print(f"❌ 版本不一致！以下 {len(mismatches)} 个文件需要同步：")
         for f in mismatches:
             print(f"   - {f}")
-        print(f"\n💡 运行以下命令修复：")
+        print("\n💡 运行以下命令修复：")
         print(f"   cd {ROOT}")
-        print(f"   python harness/_core/bump_version.py auto")
+        print("   python harness/_core/bump_version.py auto")
         return False
 
     print("✅ 所有文件版本一致")

@@ -469,7 +469,7 @@ class TestPaths:
         assert DIR_SKILLS == "skills", f"DIR_SKILLS 应为 skills，实际: {DIR_SKILLS}"
 
         assert isinstance(FILE_SESSIONS, str), "FILE_SESSIONS 应为字符串"
-        assert FILE_SESSIONS == "sessions.jsonl", f"FILE_SESSIONS 应为 sessions.jsonl"
+        assert FILE_SESSIONS == "sessions.jsonl", "FILE_SESSIONS 应为 sessions.jsonl"
 
         assert isinstance(ANTHROPIC_API_URL, str), "ANTHROPIC_API_URL 应为字符串"
         assert ANTHROPIC_API_URL.startswith("https://"), "应为 HTTPS URL"

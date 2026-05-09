@@ -13,6 +13,7 @@ import logging
 import os
 import signal
 import sys
+import subprocess
 import time
 from datetime import datetime
 from pathlib import Path
@@ -383,9 +384,9 @@ class SchedulerManager:
                 if f and not f.closed:
                     f.close()
             except OSError as e:
-                handle_exception(e, f"关闭文件失败", log_level="warning")
+                handle_exception(e, "关闭文件失败", log_level="warning")
             except Exception as e:
-                handle_exception(e, f"关闭文件未知错误", log_level="warning")
+                handle_exception(e, "关闭文件未知错误", log_level="warning")
         self._open_files.clear()
 
         # 保存运行统计
@@ -542,12 +543,12 @@ def main():
     if args.command == "start":
         result = _manager.start()
         if result.get("success"):
-            print(f"调度器已启动")
+            print("调度器已启动")
             print(f"   模式: {result.get('mode')}")
             print(f"   间隔: {result.get('interval')} ({result.get('interval_seconds')}s)")
             print(f"   下次运行: {result.get('next_run')}")
             if result.get("run_on_startup"):
-                print(f"   启动时立即运行: 是")
+                print("   启动时立即运行: 是")
 
             if args.daemon:
                 print("\n[后台运行中，按 Ctrl+C 或发送 SIGTERM/SIGHUP 停止]")

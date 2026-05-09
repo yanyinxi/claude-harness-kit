@@ -129,8 +129,8 @@ def main():
         existing_skills = []
 
     if not existing_skills:
-        print(f"CREATE — No existing skills to compare against.")
-        print(f"Total score: 0.000")
+        print("CREATE — No existing skills to compare against.")
+        print("Total score: 0.000")
         sys.exit(0)
 
     results = score_all(new_skill, existing_skills)

@@ -1,0 +1,5 @@
+[tool.ruff.lint.per-file-ignores]
+# evolve-daemon 在运行时通过 sys.path.insert() 动态导入同级模块，E402 是有意为之的设计模式
+"harness/evolve-daemon/**/*.py" = ["E402"]
+"harness/tests/evolve-daemon/**/*.py" = ["E402"]
+"harness/tests/test_evolution_triggers.py" = ["E402"]

@@ -138,7 +138,7 @@ def evaluate_proposal(proposal: dict, metrics: dict, baseline: dict, config: dic
     if current_satisfaction < 3.0:
         triggers.append(f"满意度 {current_satisfaction}/5 < 3.0 阈值")
     elif baseline_satisfaction > 0 and current_satisfaction < baseline_satisfaction * 0.7:
-        triggers.append(f"满意度下降超过 30%")
+        triggers.append("满意度下降超过 30%")
 
     # 检查样本量（需要足够的数据才有统计意义）
     if metrics.get("sample_size", 0) < 5:

@@ -42,14 +42,14 @@ def sync_from_local(source: Path, root: Path):
         snippet = team_claude.read_text(encoding="utf-8")
         snippet_path = root / ".claude" / "CLAUDE_TEAM.md"
         snippet_path.write_text(snippet, encoding="utf-8")
-        print(f"✅ 团队 CLAUDE.md 片段已更新 → .claude/CLAUDE_TEAM.md")
+        print("✅ 团队 CLAUDE.md 片段已更新 → .claude/CLAUDE_TEAM.md")
 
     # 更新 repo-index
     index_src = source / "repo-index.json"
     if index_src.exists():
         index_dst = root / ".claude" / "repo-index.json"
         index_dst.write_text(index_src.read_text(encoding="utf-8"))
-        print(f"✅ 仓库索引已更新")
+        print("✅ 仓库索引已更新")
 
 
 def sync_from_git(url: str, root: Path):

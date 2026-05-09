@@ -561,7 +561,7 @@ class MigrationGenerator:
         # If column should be NOT NULL, handle in separate phase
         if not column.nullable:
             # Add comment about needing follow-up step
-            add_sql += f"\n-- Follow-up needed: Add NOT NULL constraint after data population"
+            add_sql += "\n-- Follow-up needed: Add NOT NULL constraint after data population"
         
         drop_sql = f"ALTER TABLE {table} DROP COLUMN {column.name};"
         
@@ -863,7 +863,7 @@ class MigrationGenerator:
             drop_sql = f"ALTER TABLE {table} DROP CONSTRAINT {constraint_name};"
             columns = constraint_info['columns']
             add_sql = f"ALTER TABLE {table} ADD CONSTRAINT {constraint_name} PRIMARY KEY ({', '.join(columns)});"
-            description = f"Drop primary key constraint"
+            description = "Drop primary key constraint"
             
         elif constraint_type == 'UNIQUE':
             columns = constraint_info['columns']
@@ -1035,7 +1035,7 @@ class ValidationGenerator:
             check_type="COLUMN_MODIFIED",
             table=step.table,
             description=f"Verify column modification in {step.table}",
-            sql_query=step.validation_sql or f"SELECT 1;",  # Use provided validation or default
+            sql_query=step.validation_sql or "SELECT 1;",  # Use provided validation or default
             expected_result=1
         )
     

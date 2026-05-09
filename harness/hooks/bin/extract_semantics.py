@@ -144,6 +144,7 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        import sys, json
+        import sys
+        import json
         print(json.dumps({"collected": False, "warning": str(e)[:100]}), file=sys.stderr)
         sys.exit(0)

@@ -72,7 +72,7 @@ def confidence_label(confidence: float) -> str:
     for (low, high), (emoji, label) in CONFIDENCE_LABELS.items():
         if low <= confidence < high:
             return f"{emoji} {label}"
-    return f"🔴 OBSERVE"
+    return "🔴 OBSERVE"
 
 def confidence_bar(confidence: float, width: int = 10) -> str:
     filled = int(confidence * width)

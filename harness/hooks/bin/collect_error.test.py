@@ -94,7 +94,7 @@ def test_error_source_traceable():
         # source 应该指向 hooks/bin 目录
         assert "hooks/bin/" in record["source"], f"source 应包含 'hooks/bin/'，实际: {record['source']}"
         # 格式应为: hooks/bin/xxx.py:行号
-        assert ":" in record["source"], f"source 应包含 ':' 行号分隔符"
+        assert ":" in record["source"], "source 应包含 ':' 行号分隔符"
 
         print(f"  ✓ test_error_source_traceable (source={record['source']}) PASS")
     finally:

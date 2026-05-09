@@ -17,6 +17,7 @@ CHK 智能进化系统 - 全维度全场景测试
 使用新版 unified evolution 系统:
   - integrated_evolution + generalize + kb_shared
 """
+import os
 import random
 from pathlib import Path
 import sys

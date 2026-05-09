@@ -211,7 +211,7 @@ def test_dimension_correction_learning():
 
     # Check confidence level system
     levels = ["0.3", "0.5", "0.7", "0.9"]
-    found_levels = sum(1 for l in levels if l in learner_content)
+    found_levels = sum(1 for level in levels if level in learner_content)
     ok(f"置信度分级系统: {found_levels}/4 级 (0.3→0.5→0.7→0.9)")
 
     # Verify instinct record file

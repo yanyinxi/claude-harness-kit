@@ -94,7 +94,7 @@ def get_llm_config() -> dict:
         "api_key": os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN") or "PROXY_MANAGED",
     }
 
-def create_llm_client() -> "Anthropic":
+def create_llm_client() -> "Anthropic":  # noqa: F821
     """创建统一的 LLM 客户端"""
     from anthropic import Anthropic
     _ensure_env_loaded()
@@ -615,7 +615,7 @@ def notify_llm_failure(
         )
         with urllib.request.urlopen(req, timeout=10) as resp:
             if resp.status == 200:
-                print(f"  [通知] 飞书通知已发送")
+                print("  [通知] 飞书通知已发送")
     except Exception as e:
         print(f"  [通知] 飞书通知发送失败: {e}")
 

@@ -428,7 +428,7 @@ class IndexOptimizer:
             index_type="btree"
         )
         
-        reason = f"Covering index for WHERE + ORDER BY optimization"
+        reason = "Covering index for WHERE + ORDER BY optimization"
         
         # Calculate selectivity for main columns
         main_selectivity = 0.5  # Default for covering indexes
@@ -609,7 +609,7 @@ class IndexOptimizer:
                     affected_indexes=[existing_index.name, index.name],
                     table=table_name,
                     description=f"Indexes '{existing_index.name}' and '{index.name}' are identical",
-                    recommendation=f"Drop one of the duplicate indexes",
+                    recommendation="Drop one of the duplicate indexes",
                     sql_statements=[f"DROP INDEX {index.name};"]
                 ))
             else:

@@ -180,7 +180,7 @@ def main():
         return
 
     # 输出精简摘要到 stdout（Claude Code 会注入到 system prompt）
-    print(f"# Project Context (auto-injected)\n")
+    print("# Project Context (auto-injected)\n")
     print(f"## Project Overview\n{claude_md[:800]}\n")
     if structure_hint:
         print(f"## Structure\n```\n{structure_hint}\n```")

@@ -131,9 +131,9 @@ def run_detailed_evolution():
                 if (correction_count % threshold == 0):
                     # 触发进化
                     evolution_num += 1
-                    print(f"\n  ╭──────────────────────────────────────────────────────────────────╮")
+                    print("\n  ╭──────────────────────────────────────────────────────────────────╮")
                     print(f"  │ ⚡ 进化 #{evolution_num} | 纠正 #{correction_count} | 错误: {error:<15} │")
-                    print(f"  ╰──────────────────────────────────────────────────────────────────╯")
+                    print("  ╰──────────────────────────────────────────────────────────────────╯")
 
                     # 生成进化动作
                     actions_map = {
@@ -145,7 +145,7 @@ def run_detailed_evolution():
                     actions = actions_map[dim][:evolution_num]
 
                     # 应用进化并对比
-                    print(f"\n  【进化前状态】→ 【进化后状态】")
+                    print("\n  【进化前状态】→ 【进化后状态】")
                     print(f"  {'─'*70}")
 
                     for action in actions:
@@ -162,7 +162,7 @@ def run_detailed_evolution():
     # 最终详细对比报告
     # ================================================================
     print(f"\n{'='*75}")
-    print(f"📊 完整进化对比报告")
+    print("📊 完整进化对比报告")
     print(f"{'='*75}")
 
     for dim in ["agent", "skill", "rule", "instinct"]:
@@ -173,7 +173,7 @@ def run_detailed_evolution():
 
         # 显示最终状态
         final_state = tracker.snapshots[dim]
-        print(f"  最终状态:")
+        print("  最终状态:")
         for key, value in final_state.items():
             print(f"    • {key}: {value}")
 

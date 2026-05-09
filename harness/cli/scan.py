@@ -76,12 +76,12 @@ def main():
     print(f"  过期(>90天):   {len(stale_claude)}")
 
     if no_claude:
-        print(f"\n需要 kit init 的项目:")
+        print("\n需要 kit init 的项目:")
         for p in no_claude:
             print(f"  - {p['name']} ({', '.join(p['tech_files'])})")
 
     if stale_claude:
-        print(f"\nCLAUDE.md 过期的项目:")
+        print("\nCLAUDE.md 过期的项目:")
         for p in stale_claude:
             print(f"  - {p['name']}")
 

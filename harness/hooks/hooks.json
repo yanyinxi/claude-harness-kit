@@ -6,17 +6,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/context-injector.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/context-injector.py",
             "timeout": 5
           },
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/auto-start-evolve.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/auto-start-evolve.py",
             "timeout": 10
           },
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/checkpoint-verify.sh",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/checkpoint-verify.sh",
             "timeout": 3
           }
         ]
@@ -28,12 +28,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/safety-check.sh",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/safety-check.sh",
             "timeout": 5
           },
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/git-commit-check.sh",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/git-commit-check.sh",
             "timeout": 3
           }
         ]
@@ -43,7 +43,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/architecture-verify.sh",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/architecture-verify.sh",
             "timeout": 3
           }
         ]
@@ -52,7 +52,7 @@
         "matcher": "Write|Edit",
         "hooks": [{
           "type": "command",
-          "command": "bash ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/tdd-check.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/tdd-check.sh",
           "timeout": 3
         }]
       },
@@ -60,7 +60,7 @@
         "matcher": "*",
         "hooks": [{
           "type": "command",
-          "command": "bash ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/rate-limiter.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/rate-limiter.sh",
           "timeout": 3
         }]
       },
@@ -68,7 +68,7 @@
         "matcher": "Write|Edit",
         "hooks": [{
           "type": "command",
-          "command": "bash ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/checkpoint-auto-save.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/checkpoint-auto-save.sh",
           "timeout": 3
         }]
       }
@@ -78,7 +78,7 @@
         "matcher": "Write|Edit",
         "hooks": [{
           "type": "command",
-          "command": "bash ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/quality-gate.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/quality-gate.sh",
           "timeout": 10
         }]
       },
@@ -86,7 +86,7 @@
         "matcher": "Agent",
         "hooks": [{
           "type": "command",
-          "command": "python3 ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/collect_agent.py",
+          "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_agent.py",
           "timeout": 5
         }]
       },
@@ -94,7 +94,7 @@
         "matcher": "Skill",
         "hooks": [{
           "type": "command",
-          "command": "python3 ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/collect_skill.py",
+          "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_skill.py",
           "timeout": 5
         }]
       },
@@ -102,7 +102,7 @@
         "matcher": "*",
         "hooks": [{
           "type": "command",
-          "command": "bash ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/security-auto-trigger.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/security-auto-trigger.sh",
           "timeout": 3
         }]
       },
@@ -110,7 +110,7 @@
         "matcher": "*",
         "hooks": [{
           "type": "command",
-          "command": "python3 ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/output-secret-filter.py",
+          "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/output-secret-filter.py",
           "timeout": 3
         }]
       }
@@ -120,7 +120,7 @@
         "matcher": "*",
         "hooks": [{
           "type": "command",
-          "command": "python3 ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/collect_error.py",
+          "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_error.py",
           "timeout": 5
         }]
       }
@@ -130,7 +130,7 @@
         "matcher": "*",
         "hooks": [{
           "type": "command",
-          "command": "python3 ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/collect_success.py",
+          "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_success.py",
           "timeout": 3
         }]
       }
@@ -139,7 +139,7 @@
       {
         "hooks": [{
           "type": "command",
-          "command": "bash ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/observe.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/observe.sh",
           "timeout": 3
         }]
       }
@@ -148,7 +148,7 @@
       {
         "hooks": [{
           "type": "command",
-          "command": "python3 ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/collect_session.py",
+          "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_session.py",
           "timeout": 10
         }]
       }
@@ -157,7 +157,7 @@
       {
         "hooks": [{
           "type": "command",
-          "command": "bash ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/worktree-sync.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/worktree-sync.sh",
           "timeout": 10
         }]
       }
@@ -166,7 +166,7 @@
       {
         "hooks": [{
           "type": "command",
-          "command": "bash ${CLAUDE_PLUGIN_ROOT:-/Users/yanyinxi/工作/code/github/claude-harness-kit}/hooks/bin/worktree-cleanup.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/worktree-cleanup.sh",
           "timeout": 5
         }]
       }

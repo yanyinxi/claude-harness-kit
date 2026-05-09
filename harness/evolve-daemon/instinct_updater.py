@@ -30,7 +30,6 @@ def _parse_iso_safe(ts: Optional[str], default: str = "2000-01-01") -> datetime:
 
 
 from _daemon_config import load_config, _default_config
-import sys
 sys.path.insert(0, str(Path(__file__).parent))
 from kb_shared import _find_root, INSTINCT_PATH
 

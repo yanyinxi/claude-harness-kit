@@ -171,17 +171,17 @@ class TestShouldTriggerAnalysis:
     def test_no_trigger_low_failures(self):
         from collect_session import should_trigger_analysis
         session = {"tool_failures": 2, "agent_success_rate": 0.9}
-        assert should_trigger_analysis(session, {}) == False
+        assert not should_trigger_analysis(session, {})
 
     def test_trigger_high_failures(self):
         from collect_session import should_trigger_analysis
         session = {"tool_failures": 6, "agent_success_rate": 0.9}
-        assert should_trigger_analysis(session, {}) == True
+        assert should_trigger_analysis(session, {})
 
     def test_trigger_low_success_rate(self):
         from collect_session import should_trigger_analysis
         session = {"tool_failures": 2, "agent_success_rate": 0.3}
-        assert should_trigger_analysis(session, {}) == True
+        assert should_trigger_analysis(session, {})
 
     def test_trigger_repeated_error_type(self):
         from collect_session import should_trigger_analysis
@@ -190,7 +190,7 @@ class TestShouldTriggerAnalysis:
             "agent_success_rate": 0.9,
             "failure_types": {"permission_error": 5}
         }
-        assert should_trigger_analysis(session, {}) == True
+        assert should_trigger_analysis(session, {})
 
 
 if __name__ == "__main__":

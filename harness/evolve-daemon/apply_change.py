@@ -77,7 +77,7 @@ def apply_text_change(content: str, change: str) -> str:
     if change.startswith("delete:"):
         pattern = change[7:].strip()
         lines = content.split("\n")
-        lines = [l for l in lines if pattern not in l]
+        lines = [line for line in lines if pattern not in line]
         return "\n".join(lines)
 
     # 正则替换

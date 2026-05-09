@@ -175,7 +175,7 @@ class EvolutionStressTest:
     def run(self):
         """执行全部 32 个场景"""
         print(f"\n{'='*70}")
-        print(f"🚀 CHK 进化系统压力测试")
+        print("🚀 CHK 进化系统压力测试")
         print(f"   场景数: {len(self.scenarios)} (8 维度 × 4 循环)")
         print(f"{'='*70}\n")
 
@@ -186,28 +186,28 @@ class EvolutionStressTest:
 
         # 阶段 1: 会话级进化 (integrated_evolution 逻辑)
         print(f"\n{'='*70}")
-        print(f"[阶段1] 会话级进化 — 32 个场景 LLM 泛化分析")
+        print("[阶段1] 会话级进化 — 32 个场景 LLM 泛化分析")
         print(f"{'='*70}")
 
         self._run_session_level_evolve()
 
         # 阶段 2: Daemon 级决策与执行
         print(f"\n{'='*70}")
-        print(f"[阶段2] Daemon 级进化 — 自动应用 + 提案")
+        print("[阶段2] Daemon 级进化 — 自动应用 + 提案")
         print(f"{'='*70}")
 
         self._run_daemon_level_evolve()
 
         # 阶段 3: 效果跟踪与置信度更新
         print(f"\n{'='*70}")
-        print(f"[阶段3] 效果跟踪 — 置信度更新 + 状态机")
+        print("[阶段3] 效果跟踪 — 置信度更新 + 状态机")
         print(f"{'='*70}")
 
         self._run_effect_tracking()
 
         # 阶段 4: 退化检测
         print(f"\n{'='*70}")
-        print(f"[阶段4] 退化检测 — 知识衰减 + 废弃检查")
+        print("[阶段4] 退化检测 — 知识衰减 + 废弃检查")
         print(f"{'='*70}")
 
         self._run_decay_check()
@@ -549,7 +549,7 @@ class EvolutionStressTest:
 
 # ── 入口 ────────────────────────────────────────────────
 if __name__ == "__main__":
-    print(f"""
+    print("""
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                                                              ║
 ║              CHK 进化系统 — 全维度全场景压力测试                             ║

@@ -611,7 +611,7 @@ class SchemaAnalyzer:
                     table=table.name,
                     issue_type="MISSING_CHECK_CONSTRAINT",
                     severity="LOW",
-                    description=f"Email column lacks format validation",
+                    description="Email column lacks format validation",
                     suggestion="Add CHECK constraint for email format validation",
                     columns_affected=[column.name]
                 ))

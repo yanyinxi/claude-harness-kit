@@ -109,7 +109,7 @@ def test_collect_session_with_corrections_triggers_extraction():
                 print("  ✅ collect_session.py: corrections 触发路径正常")
             except (json.JSONDecodeError, AssertionError):
                 FAIL += 1
-                print(f"  ❌ collect_session.py: corrections 路径失败")
+                print("  ❌ collect_session.py: corrections 路径失败")
         else:
             FAIL += 1
             print(f"  ❌ collect_session.py: exit {rc}")

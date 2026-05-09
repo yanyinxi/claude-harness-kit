@@ -8,15 +8,19 @@
       "*"
     ]
   },
-  "enabledPlugins": {},
+  "enabledPlugins": {
+    "claude-harness-kit": {}
+  },
   "extraKnownMarketplaces": {
     "claude-harness-kit": {
       "source": {
         "source": "directory",
-        "path": "/Users/yanyinxi/工作/code/github/claude-harness-kit"
+        "path": "."
       }
     }
   },
+  "mode": "pipeline",
+  "mode_description": "Pipeline 模式 — 严格阶段顺序，上一步输出喂下一步",
   "hooks": {
     "PreToolUse": [
       {
@@ -53,7 +57,5 @@
         ]
       }
     ]
-  },
-  "mode": "pipeline",
-  "mode_description": "Pipeline 模式 — 严格阶段顺序，上一步输出喂下一步"
+  }
 }
