@@ -9,16 +9,9 @@
     ]
   },
   "enabledPlugins": {
-    "claude-harness-kit": {}
+    "claude-harness-kit": true
   },
-  "extraKnownMarketplaces": {
-    "claude-harness-kit": {
-      "source": {
-        "source": "directory",
-        "path": "."
-      }
-    }
-  },
+  "extraKnownMarketplaces": {},
   "mode": "pipeline",
   "mode_description": "Pipeline 模式 — 严格阶段顺序，上一步输出喂下一步",
   "hooks": {

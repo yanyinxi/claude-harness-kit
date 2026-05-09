@@ -1,5 +1,6 @@
 ---
 name: backend-dev
+id: claude-harness-kit:backend-dev
 description: 通用后端开发专家，负责 API 设计、业务逻辑、数据访问、服务治理。Use for backend development tasks, API implementation, database operations. 触发词：后端、API、数据库、后端开发、服务端
 model: sonnet
 permissionMode: acceptEdits

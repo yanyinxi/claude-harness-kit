@@ -192,8 +192,8 @@ HOOK_SCRIPTS = {
     "security-auto-trigger.sh": HOOKS_BIN_DIR / "security-auto-trigger.sh",  # 安全扫描触发
 
     # ── 数据收集 ──────────────────────────────────────────────────
-    "collect-failure.py": HOOKS_BIN_DIR / "collect-failure.py", # 失败收集
-    "collect-agent.py": HOOKS_BIN_DIR / "collect-agent.py",       # Agent 调用收集
+    "collect-failure.py": HOOKS_BIN_DIR / "collect-failure.py", # 失败收集 (已废弃，使用 collect_error.py)
+    "collect-agent.py": HOOKS_BIN_DIR / "collect_agent.py",       # Agent 调用收集
     "collect-skill.py": HOOKS_BIN_DIR / "collect-skill.py",     # Skill 调用收集
     "collect_session.py": HOOKS_BIN_DIR / "collect_session.py",  # 会话收集
     "collect_error.py": HOOKS_BIN_DIR / "collect_error.py",     # 错误收集

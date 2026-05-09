@@ -1,4 +1,5 @@
 ---
+name: quality-gates
 scope: global
 paths: ["**/*.test.*", "**/*.spec.*", "**/tests/**", "**/__tests__/**"]
 ---

@@ -4,10 +4,6 @@ description: >
   Sonnet agents在创建分支、commit或合并操作前调用。
   强制执行Conventional Commits、GitHub Flow、pre-commit hooks和CHANGELOG自动生成。
   激活条件：用户提及commit、rebase、squash、branch或git操作。
-disable-model-invocation: false
-user-invocable: true
-allowed-tools: Read, Bash
-context: fork
 ---
 
 # Git Master Skill

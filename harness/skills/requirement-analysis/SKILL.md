@@ -5,11 +5,6 @@ description: >
   生成结构化PRD，包含用户故事、验收标准、边界情况和技木约束。
   激活条件：用户描述新功能、变更请求、功能评审开始前。
   激活条件：用户描述新功能、变更或增强请求。
-disable-model-invocation: false
-user-invocable: true
-allowed-tools: Read, Write, Grep, Glob
-context: fork
-agent: product-manager
 ---
 
 # 需求分析技能

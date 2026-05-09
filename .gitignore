@@ -78,3 +78,8 @@ harness/knowledge/evolved/notify_cooldown.jsonl
 
 # 本地设置备份
 .claude/settings.local.json.backup
+
+
+
+.playwright-mcp/
+.ruff_cache/

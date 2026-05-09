@@ -1,5 +1,6 @@
 ---
 name: security-auditor
+id: claude-harness-kit:security-auditor
 description: >
   安全审计专家，负责代码安全审查、漏洞检测、OWASP Top 10 合规检查。
   只读模式不写代码，使用场景：安全敏感代码变更、认证逻辑、支付数据处理。

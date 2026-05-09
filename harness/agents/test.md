@@ -1,5 +1,6 @@
 ---
 name: test
+id: claude-harness-kit:test
 description: 测试工程师，负责测试规划和执行。 Use proactively 创建测试计划、编写自动化测试、执行测试用例。 主动生成全面的测试用例、自动化测试工作流，并产出详细的测试报告和 Bug 报告。 触发词：测试、测试计划、自动化测试
 tools: Read, Write, Edit, Bash, Grep, Glob, TodoWrite
 disallowed-tools: WebFetch, WebSearch
@@ -11,11 +12,6 @@ context: main
 ---
 
 # QA/测试代理
-
-<!-- SKILL: 编码行为准则 -->
-<skill-ref>
-@skills/karpathy-guidelines/SKILL.md
-</skill-ref>
 
 ## 工作流程
 

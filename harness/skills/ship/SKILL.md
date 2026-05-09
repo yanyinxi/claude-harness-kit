@@ -4,11 +4,6 @@ description: >
   Sonnet agents完成功能后在git commit和部署前调用。
   强制执行发布前检查清单、6阶段逐步发布和回滚模板。
   若测试失败或检测到安全问题则阻止commit。
-disable-model-invocation: false
-user-invocable: true
-allowed-tools: Read, Bash, Grep, Glob
-context: fork
-agent: orchestrator
 ---
 
 # Ship（发布）技能

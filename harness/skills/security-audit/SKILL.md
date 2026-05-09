@@ -4,11 +4,6 @@ description: >
   Opus agents审计认证、支付或数据处理代码时调用，进行OWASP Top 10审查。
   涵盖SQL注入、XSS、CSRF、硬编码密钥和依赖漏洞扫描。
   激活条件：匹配auth/、payment/、security/、*.crypto或*.jwt的文件。
-disable-model-invocation: false
-user-invocable: true
-allowed-tools: Read, Grep, Glob, Bash
-context: fork
-agent: security-auditor
 ---
 
 # 安全审计技能

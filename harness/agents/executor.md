@@ -1,5 +1,6 @@
 ---
 name: executor
+id: claude-harness-kit:executor
 description: >
   通用代码执行器，负责日常编码任务的实现，包括 bug 修复、功能开发和代码优化。
   使用场景：通用编程任务、bug 修复、功能实现。触发词：实现、写代码、修复

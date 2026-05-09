@@ -1,5 +1,6 @@
 ---
 name: code-reviewer
+id: claude-harness-kit:code-reviewer
 description: 代码审查专家，分析代码质量、安全性和最佳实践。 Use proactively 在编写或修改代码后立即进行审查，识别潜在问题并提供改进建议。 主动扫描 Bug、安全漏洞、性能问题和代码质量问题。 触发词：代码审查、审查代码、PR 审查
 tools: Read, Grep, Glob, TodoWrite
 disallowed-tools: WebFetch, WebSearch, Bash, Write, Edit
@@ -10,11 +11,6 @@ context: main
 ---
 
 # 代码审查代理
-
-<!-- SKILL: 编码行为准则 -->
-<skill-ref>
-@skills/karpathy-guidelines/SKILL.md
-</skill-ref>
 
 ## 工作流程
 

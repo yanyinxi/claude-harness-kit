@@ -3,7 +3,6 @@ name: skill-factory
 description: >
   Skill 创建工厂。用于从工作流记录生成 SKILL.md。
   当要求创建新 Skill、或从历史会话提取 Skill 时调用。
-user-invocable: true
 ---
 
 # Skill Factory

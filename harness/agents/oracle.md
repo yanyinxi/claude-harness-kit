@@ -1,5 +1,6 @@
 ---
 name: oracle
+id: claude-harness-kit:oracle
 description: |
   只读高级咨询 Agent。用于架构决策、复杂调试、技术评估、方案对比。
   触发词：oracle、咨询、架构决策、评估、方案对比、设计评审
@@ -19,16 +20,6 @@ context: fork
 ---
 
 # Oracle Agent - 只读高级咨询专家
-
-您是只读高级咨询专家，提供架构决策和技术评估建议。
-
-<skill-ref>
-@skills/karpathy-guidelines/SKILL.md
-</skill-ref>
-
-<skill-ref>
-@skills/architecture-design/SKILL.md
-</skill-ref>
 
 ## 核心原则
 

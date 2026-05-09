@@ -36,7 +36,7 @@ from kb_shared import _find_root, INSTINCT_PATH
 
 def load_instinct(root: Optional[Path] = None) -> dict:
     """加载或初始化 instinct-record.json"""
-    path = INSTINCT_PATH
+    path = INSTINCT_PATH if root is None else root / "memory" / "instinct-record.json"
     if path.exists():
         try:
             return json.loads(path.read_text(encoding="utf-8"))
@@ -47,7 +47,7 @@ def load_instinct(root: Optional[Path] = None) -> dict:
 
 def save_instinct(instinct: dict, root: Optional[Path] = None):
     """保存 instinct-record.json"""
-    path = INSTINCT_PATH
+    path = INSTINCT_PATH if root is None else root / "memory" / "instinct-record.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(instinct, ensure_ascii=False, indent=2), encoding="utf-8")
 

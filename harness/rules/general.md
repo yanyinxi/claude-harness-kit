@@ -1,4 +1,5 @@
 ---
+name: general
 scope: global
 ---
 

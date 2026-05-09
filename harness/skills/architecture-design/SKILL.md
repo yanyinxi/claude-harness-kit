@@ -4,11 +4,6 @@ description: >
   Opus agents在新项目或重大重构写代码前调用。
   输出架构决策记录（ADR）、架构图和技术栈决策及风险评估。
   激活条件：架构设计、技术选型、ADR评审、重大重构开始前。
-disable-model-invocation: false
-user-invocable: true
-allowed-tools: Read, Write, Grep, Glob
-context: fork
-agent: tech-lead
 ---
 
 # 架构设计技能

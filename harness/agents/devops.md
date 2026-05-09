@@ -1,5 +1,6 @@
 ---
 name: devops
+id: claude-harness-kit:devops
 description: >
   DevOps 工程师，负责 CI/CD 配置、Docker 容器化、K8s 部署、环境变量管理。
   使用场景：CI/CD 流水线变更、Dockerfile 创建、部署配置修改、环境管理。

@@ -1,4 +1,5 @@
 ---
+name: system-design
 scope: global
 paths: ["**/schema/**", "**/migrations/**", "**/architecture/**", "**/*.prisma", "**/*.sql"]
 ---

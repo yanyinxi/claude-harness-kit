@@ -1,5 +1,6 @@
 ---
 name: database-dev
+id: claude-harness-kit:database-dev
 description: >
   数据库开发专家，负责表结构设计、迁移脚本编写、索引优化、查询性能调优。
   使用场景：schema变更、迁移脚本编写、数据库性能优化、连接池配置。

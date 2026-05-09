@@ -1,5 +1,6 @@
 ---
 name: learner
+id: claude-harness-kit:learner
 description: 从对话中提取可复用知识，生成 instinct 记录和 CLAUDE.md 补充建议。Use after sessions with user corrections, new problem-solution patterns, or agent failures followed by manual fixes.
 model: sonnet
 permissionMode: default

@@ -1,5 +1,6 @@
 ---
 name: tech-lead
+id: claude-harness-kit:tech-lead
 description: 技术负责人，只读设计角色（实际代码执行通过 spawn 的 executor）。职责：接收 architect 的设计，拆解 task-batch，执行开发。触发词：技术架构、API 设计、技术选型、Tech Lead
 tools: Read, Write, Bash, Grep, Glob, TodoWrite
 disallowed-tools: WebFetch, WebSearch
@@ -11,11 +12,6 @@ context: main
 ---
 
 # 技术负责人代理
-
-<!-- SKILL: 编码行为准则 -->
-<skill-ref>
-@skills/karpathy-guidelines/SKILL.md
-</skill-ref>
 
 ## 角色边界
 

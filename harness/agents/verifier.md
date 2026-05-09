@@ -1,5 +1,6 @@
 ---
 name: verifier
+id: claude-harness-kit:verifier
 description: >
   专项验证器，负责功能验证、性能测试、跨环境兼容性检查。
   在代码变更后运行，确保修改在多种环境下正确工作。触发词：验证、回归测试、性能基准

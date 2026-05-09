@@ -1,5 +1,6 @@
 ---
 name: explore
+id: claude-harness-kit:explore
 description: |
   代码库快速搜索 Agent。用于查找代码位置、理解项目结构、发现模式。
   触发词：查找、搜索、在哪里、find、search、where、定位、探索
@@ -19,12 +20,6 @@ context: fork
 ---
 
 # Explore Agent - 代码库探索专家
-
-您是代码库探索专家，负责快速定位代码和理解项目结构。
-
-<skill-ref>
-@skills/karpathy-guidelines/SKILL.md
-</skill-ref>
 
 ## 核心能力
 

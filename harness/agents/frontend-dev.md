@@ -1,5 +1,6 @@
 ---
 name: frontend-dev
+id: claude-harness-kit:frontend-dev
 description: >
   通用前端开发专家，负责 UI 组件开发、状态管理、路由配置和用户体验优化。
   使用场景：前端任务、UI 组件创建、页面实现、样式调整、性能优化。

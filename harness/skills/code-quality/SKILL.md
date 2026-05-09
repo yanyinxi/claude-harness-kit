@@ -5,11 +5,6 @@ description: >
   涵盖6个维度：正确性、可读性、架构、安全、性能、可维护性。
   激活条件：代码审查、PR评审、Write/Edit操作后自动触发。
   输出带严重等级的结构化审查报告。
-disable-model-invocation: false
-user-invocable: true
-allowed-tools: Read, Grep, Glob, Bash
-context: fork
-agent: code-reviewer
 ---
 
 # 代码质量技能

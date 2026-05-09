@@ -1,5 +1,6 @@
 ---
 name: architect
+id: claude-harness-kit:architect
 description: 系统架构设计专家，只读角色，负责从0到1的设计和架构评审。Use proactively 当需要设计新系统、评估架构 tradeoffs、或进行技术决策。专注：架构设计、技术选型、方案对比、风险识别。
 model: opus
 permissionMode: default

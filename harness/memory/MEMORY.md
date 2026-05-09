@@ -1,10 +1,29 @@
-# Memory Index
+# Memory Index — CHK 项目核心记忆
 
-- [所有需求必须先走 Agent，Agent 无法处理才用直接能力](feedback_use_agents_not_self.md) — 任何需求优先派发专业 Agent；仅单行 fix / 纯问答 / Agent 明确失败时才主 session 直接处理
-- [声明完成前必须验证](feedback_verify_before_claiming_done.md) — 任何"已完成"声明必须有证据支持；创建文件需验证存在，发现问题需记录位置
-- [代码分析必须一次穷尽](feedback_deep_analysis_first_pass.md) — 激活专家模式多轮深度思考，第一轮就穷举所有问题，不逐层发现
-- [文件写入前必须确保父目录存在](feedback_file_write_parent_mkdir.md) — 任何写文件操作前加 path.parent.mkdir(parents=True, exist_ok=True)
-- [Claude Code 平台特性与陷阱](reference_claude_code_lib_import.md) — lib/ 无 __init__.py 也可用 from lib.xxx；Python 三元表达式 else 不能返回 None
-- [写代码必须加中文注释](code-comment-standards.md) — 函数注释说明作用、原因；复杂逻辑注释为什么；不写废话注释
-- [settings.json 编辑偏好](feedback_settings_replace_all.md) — Edit 工具使用 replace_all 参数避免重复确认
-- [CHK 插件隐蔽问题记录](chk-hidden-issues.md) — plugin/slashCommands、Agent 前缀、路径规范等
+## 一、开发行为准则（6条）
+
+| 文件 | 核心要点 |
+|------|----------|
+| `feedback_use_agents_not_self.md` | 需求必须走Agent，除非单行fix/纯问答 |
+| `feedback_verify_before_claiming_done.md` | 声明完成前必须用ls/git diff验证 |
+| `feedback_deep_analysis_first_pass.md` | 分析必须一次穷尽，不逐层发现 |
+| `feedback_file_write_parent_mkdir.md` | write前加 `path.parent.mkdir(parents=True)` |
+| `feedback_settings_replace_all.md` | Edit工具用 `replace_all: true` |
+| `feedback_memory_location_rules.md` | 项目记忆→harness/memory/，跨项目→.claude/ |
+
+## 二、项目知识（4条）
+
+| 文件 | 核心要点 |
+|------|----------|
+| `chk-plugin-specification-fixes.md` | 插件规范：hooks扁平化、Agent有id、Rule有name |
+| `feedback_claude_code_official_first.md` | 官方能力优先，14个Hook事件、context/fork |
+| `reference_claude_code_lib_import.md` | .claude/自动加入sys.path；三元else不能返回None |
+| `code-comment-standards.md` | 代码必须中文注释：作用、原因、目的 |
+
+## 记忆文件路径规则
+
+```
+这个记忆只跟CHK项目有关吗？
+  → 是 → harness/memory/<name>.md
+  → 否 → .claude/projects/<hash>/memory/<name>.md
+```

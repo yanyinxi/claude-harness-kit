@@ -4,11 +4,6 @@ description: >
   Sonnet agents实现功能后在创建源文件时调用。
   强制执行测试金字塔（单元/集成/E2E）、AAA结构和命名约定。
   激活条件：src/ 或 test/ 目录文件变更。
-disable-model-invocation: false
-user-invocable: true
-allowed-tools: Read, Write, Grep, Glob, Bash
-context: fork
-agent: test
 ---
 
 # 测试技能

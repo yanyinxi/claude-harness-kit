@@ -1,5 +1,6 @@
 ---
 name: orchestrator
+id: claude-harness-kit:orchestrator
 description: 多 Agent 任务编排与调度中心，负责任务分析、并行分派、状态同步、结果汇聚。Use proactively for complex multi-step workflows requiring multiple agents. 触发词：分析、思考、编排、协调、多Agent、并行开发、全流程
 model: sonnet
 permissionMode: default

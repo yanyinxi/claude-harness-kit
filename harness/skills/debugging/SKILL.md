@@ -4,11 +4,6 @@ description: >
   Sonnet agents修复bug时在修改代码前调用，系统性识别根因。
   遵循6步检查清单：复现、定位、最小化、修复、验证、预防。
   包含git bisect定位回归bug和生产事故的"停线规则"。
-disable-model-invocation: false
-user-invocable: true
-allowed-tools: Read, Bash, Grep, Glob
-context: fork
-agent: backend-dev
 ---
 
 # Debugging（调试）技能

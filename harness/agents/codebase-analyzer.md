@@ -1,5 +1,6 @@
 ---
 name: codebase-analyzer
+id: claude-harness-kit:codebase-analyzer
 description: >
   快速分析项目结构，自动识别技术栈、目录结构、关键配置文件，生成 CLAUDE.md。
   适合 kit init 初始化或切换到新项目时使用，帮助快速理解代码库全貌。
