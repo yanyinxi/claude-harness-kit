@@ -1,0 +1,179 @@
+<!-- CHK 通用交互组件库 -->
+<!-- 复用此文件中的组件以保持风格一致性 -->
+
+<!-- 滑块组件 -->
+<div class="control-group">
+  <label class="control-label" for="{{id}}">
+    <span class="control-title">{{label}}</span>
+    <span class="control-value" id="{{id}}-value">{{default_value}}</span>
+  </label>
+  <input type="range"
+         id="{{id}}"
+         min="{{min}}"
+         max="{{max}}"
+         value="{{default}}"
+         step="{{step}}"
+         class="range-slider"
+         oninput="updateValue('{{id}}', '{{format}}')">
+</div>
+
+<!-- 复制按钮 -->
+<button class="copy-btn" onclick="copyToClipboard('{{content}}')">
+  <span class="icon">📋</span> {{label}}
+</button>
+
+<!-- 拖拽卡片 -->
+<div class="draggable-card" draggable="true" data-id="{{id}}">
+  <div class="card-drag-handle">⋮⋮</div>
+  <div class="card-title">{{title}}</div>
+  <div class="card-meta">{{meta}}</div>
+</div>
+
+<!-- 颜色编码徽章 -->
+<span class="severity-badge {{level}}">{{text}}</span>
+
+<!-- 导出按钮 -->
+<button class="export-btn" onclick="exportAs('{{format}}')">
+  📋 复制为 {{format_name}}
+</button>
+
+<!-- Toast 提示 -->
+<div class="toast" id="{{id}}">{{message}}</div>
+
+<style>
+/* 通用组件样式 */
+.control-group { margin-bottom: 1.5rem; }
+.control-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.control-title { font-weight: 500; }
+.control-value {
+  background: var(--bg-primary);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+.range-slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--bg-primary);
+  outline: none;
+  -webkit-appearance: none;
+}
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg-card);
+}
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.copy-btn:hover {
+  background: #3db8e8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 195, 247, 0.3);
+}
+.draggable-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: grab;
+  transition: all 0.2s;
+}
+.draggable-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.draggable-card.dragging {
+  opacity: 0.5;
+  transform: rotate(3deg);
+}
+.card-title { font-weight: 500; margin-bottom: 0.5rem; }
+.card-meta { font-size: 0.8rem; color: var(--text-secondary); }
+.severity-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.severity-badge.critical { background: var(--accent-danger); color: white; }
+.severity-badge.high { background: #ff7043; color: white; }
+.severity-badge.medium { background: var(--accent-warning); color: var(--bg-primary); }
+.severity-badge.low { background: var(--accent-success); color: var(--bg-primary); }
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--accent-success);
+  color: var(--bg-primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+</style>
+
+<script>
+// 通用交互函数
+function updateValue(id, format) {
+  const input = document.getElementById(id);
+  const display = document.getElementById(id + '-value');
+  if (format === 'ms') {
+    display.textContent = input.value + 'ms';
+  } else if (format === 'px') {
+    display.textContent = input.value + 'px';
+  } else if (format === 'deg') {
+    display.textContent = input.value + '°';
+  } else {
+    display.textContent = input.value;
+  }
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('已复制到剪贴板');
+  });
+}
+
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.className = 'toast show';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 2000);
+}
+
+function exportAs(format) {
+  // 导出为不同格式
+  console.log('Export as:', format);
+}
+</script>

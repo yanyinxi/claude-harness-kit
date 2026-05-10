@@ -76,3 +76,26 @@ context: main
 ## 风险与缓解
 ## 实施步骤
 ```
+
+## 文档产出要求 ⭐
+
+完成工作后，**必须**生成并保存文档：
+
+1. 文档类型：`architecture`
+2. 输出路径：`docs/artifacts/<session-id>_architect_architecture.md`
+3. **必须调用** doc-generator 转换为 HTML：
+   ```bash
+   python3 harness/knowledge/doc_generator.py convert \
+     docs/artifacts/<name>.md --type architecture --output docs/artifacts/
+   ```
+
+### SVG 架构图建议
+
+架构设计文档可包含 SVG 格式的架构图，便于直观展示组件关系和数据流向。
+
+### 输出流程
+
+1. **生成文档内容** — 使用架构设计模板
+2. **保存 Markdown** — Write 到 docs/artifacts/
+3. **调用文档生成器** — Bash 命令转换 HTML
+4. **验证输出** — 确认 HTML 文件已生成

@@ -183,10 +183,13 @@ def load_knowledge_base() -> list[dict]:
                     continue
                 try:
                     data = json.loads(f.read_text(encoding="utf-8"))
-                    data["_source_file"] = str(f.relative_to(KNOWLEDGE_DIR))
-                    data["_type"] = ktype
-                    data["_source_type"] = "manual"
-                    entries.append(data)
+                    # 支持单条 dict 或 dict 列表
+                    items = data if isinstance(data, list) else [data]
+                    for item in items:
+                        item["_source_file"] = str(f.relative_to(KNOWLEDGE_DIR))
+                        item["_type"] = ktype
+                        item["_source_type"] = "manual"
+                        entries.append(item)
                 except (json.JSONDecodeError, OSError):
                     continue
 

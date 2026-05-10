@@ -1,19 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "*"
+      "*",
+      "Bash(git add *)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
       "*"
     ]
   },
-  "enabledPlugins": {
-    "claude-harness-kit": true
-  },
-  "extraKnownMarketplaces": {},
-  "mode": "pipeline",
-  "mode_description": "Pipeline 模式 — 严格阶段顺序，上一步输出喂下一步",
   "hooks": {
     "PreToolUse": [
       {
@@ -50,5 +45,11 @@
         ]
       }
     ]
-  }
+  },
+  "enabledPlugins": {
+    "claude-harness-kit": true
+  },
+  "extraKnownMarketplaces": {},
+  "mode": "pipeline",
+  "mode_description": "Pipeline 模式 — 严格阶段顺序，上一步输出喂下一步"
 }

@@ -105,3 +105,28 @@ context: main
 ## 进度跟踪
 
 审查完成后将报告输出到 output/ 目录。
+## 文档产出要求 ⭐
+
+完成工作后，**必须**生成并保存文档：
+
+1. 文档类型：`review`
+2. 输出路径：`docs/artifacts/<session-id>_code-reviewer_review.md`
+3. **必须调用** doc-generator 转换为 HTML：
+   ```bash
+   python3 harness/knowledge/doc_generator.py convert \
+     docs/artifacts/<name>.md --type review --output docs/artifacts/
+   ```
+
+### Diff 渲染与颜色编码
+
+审查报告模板支持：
+- 代码差异高亮显示（绿色添加/红色删除）
+- 按严重程度颜色编码（Critical/High/Medium/Low）
+- 清晰的修复建议和示例代码
+
+### 输出流程
+
+1. **生成审查报告内容** — 使用审查报告模板
+2. **保存 Markdown** — Write 到 docs/artifacts/
+3. **调用文档生成器** — Bash 命令转换 HTML
+4. **验证输出** — 确认 HTML 文件已生成

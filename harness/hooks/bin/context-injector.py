@@ -141,8 +141,8 @@ def inject_knowledge_recommendations(root: Path):
                         "model": "📐"
                     }.get(rec.get("type", ""), "📄")
                     context_parts.append(
-                        f"- [{type_icon} **{rec['name']}**] "
-                        f"_{rec['description'][:90]}_"
+                        f"- [{type_icon} **{rec.get('name', 'Unknown')}**] "
+                        f"_{rec.get('description', '')[:90]}_"
                     )
                     if rec.get("content_preview"):
                         preview = rec["content_preview"][:100]

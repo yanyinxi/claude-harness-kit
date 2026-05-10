@@ -51,3 +51,29 @@ FAIL: 验收标准 2/3 未满足
 - 只输出 PASS 或 FAIL，不允许 "基本通过但有..."
 - 不能调整验收标准来让结果通过
 - 发现的问题标注到具体文件和行号
+
+## 文档产出要求 ⭐
+
+完成工作后，**必须**生成并保存文档：
+
+1. 文档类型：`verification`
+2. 输出路径：`docs/artifacts/<session-id>_verifier_verification.md`
+3. **必须调用** doc-generator 转换为 HTML：
+   ```bash
+   python3 harness/knowledge/doc_generator.py convert \
+     docs/artifacts/<name>.md --type verification --output docs/artifacts/
+   ```
+
+### 状态指示器
+
+验证报告模板支持：
+- 通过/失败状态指示
+- 进度条展示
+- 检查清单样式
+
+### 输出流程
+
+1. **生成验证报告内容** — 使用验证报告模板
+2. **保存 Markdown** — Write 到 docs/artifacts/
+3. **调用文档生成器** — Bash 命令转换 HTML
+4. **验证输出** — 确认 HTML 文件已生成

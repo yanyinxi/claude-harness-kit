@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <style>
+        :root {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a2332;
+            --bg-card: #1e2a3a;
+            --border: #2d3f5a;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --accent: #4fc3f7;
+            --accent-success: #81c784;
+            --accent-warning: #ffb74d;
+            --accent-danger: #ef5350;
+            --code-bg: #1a1f29;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            padding: 2rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            background: var(--bg-card);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 { color: var(--accent); margin: 0; font-size: 1.5rem; }
+        .meta { display: flex; gap: 1rem; align-items: center; }
+        .tag {
+            background: var(--accent);
+            color: var(--bg-primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .agent-badge {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        .date { color: var(--text-secondary); font-size: 0.85rem; }
+        main {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        main h1, main h2, main h3 { color: var(--accent); margin-top: 1.5rem; }
+        main h1:first-child, main h2:first-child { margin-top: 0; }
+        main h2 { border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+        main table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        main th, main td { border: 1px solid var(--border); padding: 0.75rem; text-align: left; }
+        main th { background: var(--bg-secondary); font-weight: 600; }
+        main tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+        main pre {
+            background: var(--code-bg);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border);
+        }
+        main code {
+            background: var(--code-bg);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        main pre code { background: none; padding: 0; }
+        main blockquote {
+            border-left: 4px solid var(--accent);
+            margin: 1rem 0;
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary);
+            border-radius: 0 8px 8px 0;
+        }
+        main ul, main ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+        main li { margin: 0.4rem 0; }
+        main a { color: var(--accent); text-decoration: none; }
+        main a:hover { text-decoration: underline; }
+        main img { max-width: 100%; border-radius: 8px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 1rem 0; }
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .card h3 { margin-top: 0; }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            header { flex-direction: column; gap: 1rem; text-align: center; }
+            .meta { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>{{title}}</h1>
+            <div class="meta">
+                <span class="tag">{{doc_type}}</span>
+                <span class="agent-badge">{{agent}}</span>
+                <span class="date">{{created_at}}</span>
+            </div>
+        </header>
+        <main>
+            {{content}}
+        </main>
+        <footer>
+            CHK Document | Generated by Claude Code
+        </footer>
+    </div>
+</body>
+</html>

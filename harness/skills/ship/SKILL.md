@@ -137,6 +137,52 @@ description: >
 - [ ] 关键用户流程可用
 - [ ] 日志正常输出
 
+## CI 门禁集成
+
+每次 ship 前必须通过以下自动化检查：
+
+### 1. Secret 扫描 (阿里 Harness 核心)
+```bash
+# Hook: quality-gate.sh 自动触发
+# 检测以下模式则阻断提交：
+# - api_key, secret_key, password=, token=
+# - bearer [A-Za-z0-9]{20,}
+# - sk-[A-Za-z0-9]{20,}
+# - ghp_[A-Za-z0-9]{20,}
+```
+
+### 2. 测试覆盖率
+```bash
+# Hook: coverage-check.sh 自动触发
+# 阈值: 80% (可配置 COVERAGE_THRESHOLD)
+# 支持: pytest-cov XML, Jest JSON, Go cover.out
+```
+
+### 3. 代码质量检查
+```bash
+# Hook: quality-gate.sh 自动触发
+# - JSON 格式验证
+# - Python 语法检查
+# - Agent/Skill 文件格式检查
+```
+
+### 4. 安全扫描
+```bash
+# Hook: security-auto-trigger.sh 自动触发
+# - 依赖漏洞扫描
+# - 硬编码凭证检测
+# - XSS/SQL 注入模式检测
+```
+
+### CI 门禁失败处理
+
+| 检查类型 | 失败行为 | 修复方式 |
+|----------|----------|----------|
+| Secret 扫描 | **阻断提交** | 移除硬编码，使用环境变量 |
+| 覆盖率不足 | **阻断提交** | 增加测试用例 |
+| 语法错误 | **阻断提交** | 修复代码错误 |
+| 安全漏洞 | **阻断提交** | 修复安全风险 |
+
 ---
 
 ## 📈 进化记录（手动维护）
@@ -144,3 +190,5 @@ description: >
 _此章节由维护者按需更新，记录从实际任务执行中学到的经验和最佳实践。_
 
 **来源**：萃取自 [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) shipping-and-launch，结合本项目实际情况本地化。
+
+**2026-05-10 更新**：集成 CI 门禁（Secret 扫描、覆盖率检查），遵循阿里 Harness 最佳实践

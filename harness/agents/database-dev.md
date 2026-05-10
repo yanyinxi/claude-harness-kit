@@ -46,3 +46,29 @@ skills: database-designer
 - 数据安全第一：生产变更前必须备份验证
 - 索引克制：加索引有代价，只为实际查询加
 - 命名一致：遵循项目已有命名约定
+
+## 文档产出要求 ⭐
+
+完成工作后，**必须**生成并保存文档：
+
+1. 文档类型：`implementation`
+2. 输出路径：`docs/artifacts/<session-id>_database-dev_implementation.md`
+3. **必须调用** doc-generator 转换为 HTML：
+   ```bash
+   python3 harness/knowledge/doc_generator.py convert \
+     docs/artifacts/<name>.md --type implementation --output docs/artifacts/
+   ```
+
+### 流程图建议
+
+数据库实现报告可包含：
+- 数据流向图
+- 表结构关系图
+- 迁移步骤流程图
+
+### 输出流程
+
+1. **生成实现报告内容** — 使用实现报告模板
+2. **保存 Markdown** — Write 到 docs/artifacts/
+3. **调用文档生成器** — Bash 命令转换 HTML
+4. **验证输出** — 确认 HTML 文件已生成

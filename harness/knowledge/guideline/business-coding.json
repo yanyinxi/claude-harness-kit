@@ -1,0 +1,29 @@
+{
+  "id": "guideline-002",
+  "type": "guideline",
+  "name": "金融业务编码规范（阿里 Harness 核心）",
+  "description": "价格/金额字段必须用整数（分），禁止用浮点数 double/float",
+  "maturity": "validated",
+  "content": {
+    "price_fields": {
+      "rule": "金额字段使用 long/int，单位为分",
+      "reason": "浮点数精度问题导致价格计算错误",
+      "wrong": ["double price", "float amount", "Decimal price"],
+      "correct": ["long priceFen", "int amountFen", "Integer cents"]
+    },
+    "external_calls": {
+      "rule": "外部 API 调用必须设置超时和降级",
+      "reason": "无超时设置导致线程阻塞",
+      "required": ["timeout", "retry", "fallback"]
+    },
+    "internationalization": {
+      "rule": "UI 文本必须国际化，不得硬编码中文",
+      "reason": "忽视国际化链路导致显示乱码",
+      "patterns": ["i18n", "getMessage", "t()"]
+    }
+  },
+  "created_at": "2026-05-10",
+  "last_used_at": "2026-05-10",
+  "usage_count": 0,
+  "project_count": 0
+}

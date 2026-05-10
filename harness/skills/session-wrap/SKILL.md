@@ -150,14 +150,41 @@ description: >
 或输入编号选择执行项。
 ```
 
-## Phase 4：执行选中项
+## Phase 4：执行选中项 + 文档生成
 
 ```
 按以下顺序执行用户确认的操作：
 1. 文档更新（立即执行）
 2. 自动化建议（创建 TODO 文件供后续处理）
 3. 经验记录（写入 instinct-record.json）
+4. 生成会话总结 HTML ⭐
 ```
+
+### 生成会话总结 HTML
+
+执行：
+```bash
+python3 harness/knowledge/doc_generator.py session-wrap \
+  --session-id <session-id> \
+  --agents <agents-used> \
+  --output docs/artifacts/
+```
+
+这会自动：
+- 收集所有 Agent 的文档输出
+- 合并为会话总结 Markdown
+- 转换为 HTML 并应用样式
+- 归档到 docs/archives/（按月组织）
+
+### 交互式 HTML 建议
+
+根据场景需要，session-wrap 也可生成带交互能力的 HTML：
+
+| 场景 | 推荐类型 | 交互能力 |
+|------|---------|---------|
+| 多方案回顾 | `interactive` | 选择器、网格布局 |
+| 任务排序 | `editor` | 拖拽卡片、导出按钮 |
+| 方案演进 | `explorer` | 导航索引、文档跳转 |
 
 ## Phase 5：报告写入
 
@@ -172,6 +199,11 @@ description: >
 - 提取的经验
 - 后续行动清单
 - Instinct 提案（如有）
+
+同时输出 HTML 到 docs/artifacts/session_<session-id>.html
+- 人类可读的会话总结
+- 美观的暗色主题样式
+- 归档到 docs/archives/<year>-<month>/
 ```
 
 ## 与 Stop Hook 的关系

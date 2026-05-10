@@ -49,3 +49,29 @@ skills: karpathy-guidelines, api-designer
 ## 与项目 CLAUDE.md 的关系
 
 本 Agent 是通用后端执行器。具体技术栈（Java/Python/Go/Node）、框架版本、命名约定、目录结构、构建命令等都定义在每个项目的 CLAUDE.md 中。工作前必须先读项目 CLAUDE.md。
+
+## 文档产出要求 ⭐
+
+完成工作后，**必须**生成并保存文档：
+
+1. 文档类型：`implementation`
+2. 输出路径：`docs/artifacts/<session-id>_backend-dev_implementation.md`
+3. **必须调用** doc-generator 转换为 HTML：
+   ```bash
+   python3 harness/knowledge/doc_generator.py convert \
+     docs/artifacts/<name>.md --type implementation --output docs/artifacts/
+   ```
+
+### 代码高亮
+
+实现报告模板支持：
+- 多语言代码语法高亮
+- 代码块注释
+- 文件结构树展示
+
+### 输出流程
+
+1. **生成实现报告内容** — 使用实现报告模板
+2. **保存 Markdown** — Write 到 docs/artifacts/
+3. **调用文档生成器** — Bash 命令转换 HTML
+4. **验证输出** — 确认 HTML 文件已生成

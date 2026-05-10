@@ -60,3 +60,29 @@ skills: security-audit
 - 误报比漏报好：不确定时标记出来
 - 给出具体修复方案，不只说"有问题"
 - 关注可利用性，不只理论风险
+
+## 文档产出要求 ⭐
+
+完成工作后，**必须**生成并保存文档：
+
+1. 文档类型：`review`
+2. 输出路径：`docs/artifacts/<session-id>_security-auditor_review.md`
+3. **必须调用** doc-generator 转换为 HTML：
+   ```bash
+   python3 harness/knowledge/doc_generator.py convert \
+     docs/artifacts/<name>.md --type review --output docs/artifacts/
+   ```
+
+### 严重程度颜色编码
+
+安全审查报告模板支持：
+- Critical/High/Medium/Low 四级颜色编码
+- OWASP Top 10 漏洞分类
+- 修复优先级和建议
+
+### 输出流程
+
+1. **生成安全审查报告内容** — 使用审查报告模板
+2. **保存 Markdown** — Write 到 docs/artifacts/
+3. **调用文档生成器** — Bash 命令转换 HTML
+4. **验证输出** — 确认 HTML 文件已生成

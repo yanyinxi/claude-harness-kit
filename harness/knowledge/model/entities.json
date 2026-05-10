@@ -1,0 +1,94 @@
+{
+  "models": {
+    "change_record": {
+      "name": "变更记录",
+      "description": "追踪需求变更的数据结构",
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "format": "YYYY-MM-DD-[short-desc]"
+        },
+        "level": {
+          "type": "enum",
+          "values": ["L0", "L1", "L2", "L3"],
+          "required": true
+        },
+        "scope": {
+          "type": "array",
+          "items": "string",
+          "description": "受影响模块列表"
+        },
+        "files": {
+          "type": "array",
+          "items": "string",
+          "description": "涉及文件列表"
+        },
+        "rollback": {
+          "type": "string",
+          "description": "回滚方案"
+        },
+        "verification": {
+          "type": "object",
+          "description": "验证清单",
+          "fields": {
+            "unit_test": "boolean",
+            "integration_test": "boolean",
+            "manual_verification": "boolean"
+          }
+        }
+      }
+    },
+    "guideline": {
+      "name": "编码规范",
+      "description": "项目编码规范定义",
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "format": "guideline-XXX"
+        },
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "maturity": {
+          "type": "enum",
+          "values": ["draft", "validated", "deprecated"],
+          "default": "draft"
+        },
+        "rules": {
+          "type": "object",
+          "description": "规范规则"
+        }
+      }
+    },
+    "pitfall": {
+      "name": "已知陷阱",
+      "description": "记录常见错误和解决方案",
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "format": "pitfall-XXX"
+        },
+        "problem": {
+          "type": "string",
+          "required": true
+        },
+        "symptom": {
+          "type": "string",
+          "description": "问题表现"
+        },
+        "solution": {
+          "type": "string",
+          "required": true
+        },
+        "impact": {
+          "type": "enum",
+          "values": ["low", "medium", "high", "critical"]
+        }
+      }
+    }
+  }
+}

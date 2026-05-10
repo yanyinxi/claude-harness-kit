@@ -2,133 +2,181 @@
   "hooks": {
     "SessionStart": [
       {
-        "type": "command",
-        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/context-injector.py",
-        "timeout": 5
-      },
-      {
-        "type": "command",
-        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/auto-start-evolve.py",
-        "timeout": 10
-      },
-      {
-        "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/checkpoint-verify.sh",
-        "timeout": 3
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/context-injector.py",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/auto-start-evolve.py",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/checkpoint-verify.sh",
+            "timeout": 3
+          }
+        ]
       }
     ],
     "PreToolUse": [
       {
         "matcher": "Bash",
-        "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/safety-check.sh",
-        "timeout": 5
-      },
-      {
-        "matcher": "Bash",
-        "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/git-commit-check.sh",
-        "timeout": 3
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/safety-check.sh",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/git-commit-check.sh",
+            "timeout": 3
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/coverage-check.sh",
+            "timeout": 10
+          }
+        ]
       },
       {
         "matcher": "Write|Edit|Read",
-        "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/architecture-verify.sh",
-        "timeout": 3
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/architecture-verify.sh",
+            "timeout": 3
+          }
+        ]
       },
       {
         "matcher": "Write|Edit",
-        "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/tdd-check.sh",
-        "timeout": 3
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/tdd-check.sh",
+            "timeout": 3
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/checkpoint-auto-save.sh",
+            "timeout": 3
+          }
+        ]
       },
       {
         "matcher": "*",
-        "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/rate-limiter.sh",
-        "timeout": 3
-      },
-      {
-        "matcher": "Write|Edit",
-        "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/checkpoint-auto-save.sh",
-        "timeout": 3
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/rate-limiter.sh",
+            "timeout": 3
+          }
+        ]
       }
     ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
-        "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/quality-gate.sh",
-        "timeout": 10
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/quality-gate.sh",
+            "timeout": 10
+          }
+        ]
       },
       {
         "matcher": "Agent",
-        "type": "command",
-        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_agent.py",
-        "timeout": 5
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/collect_agent.py",
+            "timeout": 5
+          }
+        ]
       },
       {
         "matcher": "Skill",
-        "type": "command",
-        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_skill.py",
-        "timeout": 5
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/collect_skill.py",
+            "timeout": 5
+          }
+        ]
       },
       {
         "matcher": "*",
-        "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/security-auto-trigger.sh",
-        "timeout": 3
-      },
-      {
-        "matcher": "*",
-        "type": "command",
-        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/output-secret-filter.py",
-        "timeout": 3
-      }
-    ],
-    "PostToolUseFailure": [
-      {
-        "matcher": "*",
-        "type": "command",
-        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_error.py",
-        "timeout": 5
-      }
-    ],
-    "PostToolUseSuccess": [
-      {
-        "matcher": "*",
-        "type": "command",
-        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_success.py",
-        "timeout": 3
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/security-auto-trigger.sh",
+            "timeout": 3
+          },
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/output-secret-filter.py",
+            "timeout": 3
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
       {
-        "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/observe.sh",
-        "timeout": 3
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/observe.sh",
+            "timeout": 3
+          }
+        ]
       }
     ],
     "Stop": [
       {
-        "type": "command",
-        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_session.py",
-        "timeout": 10
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/stop-hook-wrapper.py",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/doc-verify.sh",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "WorktreeCreate": [
       {
-        "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/worktree-sync.sh",
-        "timeout": 10
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/worktree-sync.sh",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "WorktreeRemove": [
       {
-        "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/worktree-cleanup.sh",
-        "timeout": 5
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/worktree-cleanup.sh",
+            "timeout": 5
+          }
+        ]
       }
     ]
   }

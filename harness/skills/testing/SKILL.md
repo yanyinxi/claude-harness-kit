@@ -97,8 +97,66 @@ main/tests/
 - 参考 @.claude/project_standards.md 的测试规范
 - 参考 @main/tests/ 查看历史测试用例
 
+## 测试场景分类模板
+
+### 1. 正向测试（Happy Path）
+- 核心功能正常工作
+- 标准数据处理
+- 正常业务流程
+
+### 2. 逆向测试（Negative Path）
+- 错误输入处理
+- 异常数据检测
+- 边界情况处理
+
+### 3. 边界测试（Edge Case）
+- 最小值/最大值
+- 空值/null 处理
+- 临界状态
+
+### 4. 异常测试（Exception Handling）
+- 文件缺失降级
+- 网络异常恢复
+- 超时处理
+
+## AI 代码率优化测试场景（2026-05-10）
+
+### 正向测试
+| 用例 ID | 描述 | 预期结果 |
+|---------|------|----------|
+| TC-001 | rules/changes.md 存在性 | 文件存在且格式正确 |
+| TC-002 | change-tracking Skill 完整性 | 包含触发场景、级别评估、回滚流程 |
+| TC-003 | 知识库规范数量 | guideline >= 10, pitfall >= 10 |
+| TC-004 | Secret 扫描功能 | quality-gate.sh 包含扫描逻辑 |
+| TC-005 | 覆盖率门禁 | coverage-check.sh 可执行 |
+| TC-006 | CHANGES 目录结构 | 按日期组织的变更记录 |
+| TC-007 | Ship Skill CI 集成 | 包含 Secret/覆盖率/CI 门禁 |
+| TC-008 | Application Owner 机制 | orchestrator 包含定义 |
+
+### 逆向测试
+| 用例 ID | 描述 | 预期结果 |
+|---------|------|----------|
+| TC-101 | JSON 格式有效性 | 所有 JSON 文件可解析 |
+| TC-102 | 无真实 Secret | 知识库中无 sk-/ghp_ 等模式 |
+
+### 边界测试
+| 用例 ID | 描述 | 预期结果 |
+|---------|------|----------|
+| TC-201 | CHANGES 空目录 | 正常处理，不报错 |
+| TC-202 | maturity 字段有效性 | 必须在 draft/validated/deprecated |
+| TC-203 | impact 字段有效性 | 必须在 low/medium/high/critical |
+| TC-204 | hooks.json 格式 | 基本结构完整 |
+
+### 异常测试
+| 用例 ID | 描述 | 预期结果 |
+|---------|------|----------|
+| TC-301 | 文件缺失降级 | quality-gate.sh exit 0 |
+| TC-302 | 无覆盖率报告 | coverage-check.sh exit 0 |
+
 ---
 
 ## 📈 进化记录（手动维护）
 
 _此章节由维护者按需更新，记录从实际任务执行中学到的经验和最佳实践。_
+
+**2026-05-10 更新**：增加 AI 代码率优化测试场景（21 个测试用例，全场景覆盖）

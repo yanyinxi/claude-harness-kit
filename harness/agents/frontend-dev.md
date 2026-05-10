@@ -48,3 +48,29 @@ skills: karpathy-guidelines
 ## 与项目 CLAUDE.md 的关系
 
 具体的前端框架（React/Vue/Angular）、组件库（Ant Design/Element/Vuetify）、状态管理方案、路由方案、构建工具都定义在项目 CLAUDE.md 中。本 Agent 只负责通用开发指导。
+
+## 文档产出要求 ⭐
+
+完成工作后，**必须**生成并保存文档：
+
+1. 文档类型：`interactive`
+2. 输出路径：`docs/artifacts/<session-id>_frontend-dev_interactive.md`
+3. **必须调用** doc-generator 转换为 HTML：
+   ```bash
+   python3 harness/knowledge/doc_generator.py convert \
+     docs/artifacts/<name>.md --type interactive --output docs/artifacts/
+   ```
+
+### 交互式文档建议
+
+前端开发可生成带交互能力的 HTML：
+- **滑块调参**：动画速度、颜色、间距等参数可视化调整
+- **方案对比**：多设计方案并排展示
+- **组件预览**：实时预览不同参数下的组件效果
+
+### 输出流程
+
+1. **生成实现报告内容** — 使用交互式模板
+2. **保存 Markdown** — Write 到 docs/artifacts/
+3. **调用文档生成器** — Bash 命令转换 HTML
+4. **验证输出** — 确认 HTML 文件已生成

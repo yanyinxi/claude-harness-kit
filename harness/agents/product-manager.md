@@ -186,3 +186,26 @@ else:
 ## 进度跟踪
 
 PRD 完成后将文档输出到 output/ 目录。
+
+## 文档产出要求 ⭐
+
+完成工作后，**必须**生成并保存文档：
+
+1. 文档类型：`prd`
+2. 输出路径：`docs/artifacts/<session-id>_product-manager_prd.md`
+3. **必须调用** doc-generator 转换为 HTML：
+   ```bash
+   python3 harness/knowledge/doc_generator.py convert \
+     docs/artifacts/<name>.md --type prd --output docs/artifacts/
+   ```
+
+### 移动端自适应
+
+PRD 文档模板已内置移动端自适应设计，确保在各种设备上可读。
+
+### 输出流程
+
+1. **生成 PRD 内容** — 使用产品需求模板
+2. **保存 Markdown** — Write 到 docs/artifacts/
+3. **调用文档生成器** — Bash 命令转换 HTML
+4. **验证输出** — 确认 HTML 文件已生成

@@ -104,3 +104,28 @@ Bug 报告到来
 ## 进度跟踪
 
 测试完成后将报告输出到 output/ 目录。
+## 文档产出要求 ⭐
+
+完成工作后，**必须**生成并保存文档：
+
+1. 文档类型：`test`
+2. 输出路径：`docs/artifacts/<session-id>_test_test.md`
+3. **必须调用** doc-generator 转换为 HTML：
+   ```bash
+   python3 harness/knowledge/doc_generator.py convert \
+     docs/artifacts/<name>.md --type test --output docs/artifacts/
+   ```
+
+### 图表统计
+
+测试报告模板支持：
+- 测试覆盖率图表
+- 通过/失败趋势图
+- 性能基准对比
+
+### 输出流程
+
+1. **生成测试报告内容** — 使用测试报告模板
+2. **保存 Markdown** — Write 到 docs/artifacts/
+3. **调用文档生成器** — Bash 命令转换 HTML
+4. **验证输出** — 确认 HTML 文件已生成

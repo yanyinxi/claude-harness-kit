@@ -22,38 +22,6 @@ block_post() {
     exit 2
 }
 
-# ── JSON 文件格式验证 ──
-if [[ "$FILE_PATH" =~ \.json$ ]]; then
-    if ! python3 -m json.tool "$FILE_PATH" > /dev/null 2>&1; then
-        block_post "❌ JSON 格式错误：$FILE_PATH\n请检查是否有语法错误（多余逗号、非法注释等）"
-    fi
-fi
-
-# ── project_standards.md 验证 ──
-if [[ "$FILE_PATH" == *"project_standards.md"* ]]; then
-    VERIFY_SCRIPT="$PROJECT_DIR/.claude/tests/test_parallelism_protocol.py"
-    [[ -f "$VERIFY_SCRIPT" ]] && echo "ℹ️ project_standards.md 已变更，建议运行验证测试"
-fi
-
-# ── Agent 文件格式验证（警告不阻断）──
-if [[ "$FILE_PATH" == *"agents/"* ]] && [[ "$FILE_PATH" =~ \.md$ ]]; then
-    grep -q "^description:" "$FILE_PATH" 2>/dev/null || echo "⚠️ Agent 文件缺少 description 字段：$FILE_PATH"
-    grep -q "^tools:" "$FILE_PATH" 2>/dev/null || echo "⚠️ Agent 文件缺少 tools 字段：$FILE_PATH"
-fi
-
-# ── Skill 文件格式验证（警告不阻断）──
-if [[ "$FILE_PATH" == *"skills/"* ]] && [[ "$FILE_PATH" =~ \.md$ ]]; then
-    grep -q "^---" "$FILE_PATH" 2>/dev/null || echo "⚠️ Skill 文件缺少 frontmatter：$FILE_PATH"
-fi
-
-# ── Python 语法检查 ──
-if [[ "$FILE_PATH" =~ \.py$ ]] && [[ -f "$FILE_PATH" ]]; then
-    if ! python3 -m py_compile "$FILE_PATH" 2>/dev/null; then
-        block_post "❌ Python 语法错误：$FILE_PATH"
-    fi
-fi
-
-# ── 测试先行检测（建议，不阻断）──
 # bash 3.2 (macOS) uses first char of RHS as regex delimiter.
 # [[ $f =~ /test/ ]] → delimiter "/", regex "test/" (not "/test/")
 # [[ $f =~ /\. ]]   → delimiter "/", regex "\." (ok, matches literal dot)
@@ -78,16 +46,80 @@ _is_impl_file() {
     return 0
 }
 
-if _is_impl_file "$FILE_PATH" && git -C "$PROJECT_DIR" rev-parse --git-dir >/dev/null 2>&1; then
-    STAGED_FILES=$(git -C "$PROJECT_DIR" diff --cached --name-only 2>/dev/null) || STAGED_FILES=""
-    TEST_IN_STAGED=0
-    for f in $STAGED_FILES; do
+# ── Secret 扫描 (阿里 Harness 核心规则) ──
+_scan_secrets() {
+    # 扫描常见 secret 模式
+    local patterns=(
+        "api[_-]?key"
+        "secret[_-]?key"
+        "password\s*="
+        "token\s*="
+        "bearer\s+[A-Za-z0-9]{20,}"
+        "sk-[A-Za-z0-9]{20,}"
+        "ghp_[A-Za-z0-9]{20,}"
+    )
+
+    for pattern in "${patterns[@]}"; do
+        if grep -Ei "$pattern" "$FILE_PATH" 2>/dev/null | grep -v "^#" | grep -v "//" | grep -v "^\s*#" | grep -v "example" | grep -v "test" | grep -v "mock" | grep -v "placeholder" >/dev/null; then
+            echo "⚠️ 检测到疑似 Secret 模式 ($pattern) 在: $FILE_PATH"
+            echo "   请使用环境变量或 .env 文件管理敏感信息"
+        fi
+    done
+}
+
+# ── 测试先行检测（建议，不阻断）──
+_check_test_missing() {
+    local staged_files
+    staged_files=$(git -C "$PROJECT_DIR" diff --cached --name-only 2>/dev/null) || staged_files=""
+    local test_in_staged=0
+    for f in $staged_files; do
         # Use glob patterns for test file detection (avoid bash 3.2 delimiter bugs)
         case "$f" in
-            *.test.*|*.spec.*|*/test/*|*/__tests__/*) TEST_IN_STAGED=1; break ;;
+            *.test.*|*.spec.*|*/test/*|*/__tests__/*) test_in_staged=1; break ;;
         esac
     done
-    [[ "$TEST_IN_STAGED" -eq 0 ]] && echo "💡 建议: 实现文件 $FILE_PATH 已变更，但未检测到对应测试文件变更。请确认是否需要添加测试。"
+    [[ "$test_in_staged" -eq 0 ]] && echo "💡 建议: 实现文件 $FILE_PATH 已变更，但未检测到对应测试文件变更。请确认是否需要添加测试。"
+}
+
+# ── JSON 文件格式验证 ──
+if [[ "$FILE_PATH" =~ \.json$ ]]; then
+    if ! python3 -m json.tool "$FILE_PATH" > /dev/null 2>&1; then
+        block_post "❌ JSON 格式错误：$FILE_PATH\n请检查是否有语法错误（多余逗号、非法注释等）"
+    fi
+fi
+
+# ── project_standards.md 验证 ──
+if [[ "$FILE_PATH" == *"project_standards.md"* ]]; then
+    VERIFY_SCRIPT="$PROJECT_DIR/.claude/tests/test_parallelism_protocol.py"
+    [[ -f "$VERIFY_SCRIPT" ]] && echo "ℹ️ project_standards.md 已变更，建议运行验证测试"
+fi
+
+# ── Agent 文件格式验证（警告不阻断）──
+if [[ "$FILE_PATH" == *"agents/"* ]] && [[ "$FILE_PATH" =~ \.md$ ]]; then
+    grep -q "^description:" "$FILE_PATH" 2>/dev/null || echo "⚠️ Agent 文件缺少 description 字段：$FILE_PATH"
+    grep -q "^tools:" "$FILE_PATH" 2>/dev/null || echo "⚠️ Agent 文件缺少 tools 字段：$FILE_PATH"
+fi
+
+# ── Skill 文件格式验证（警告不阻断）──
+if [[ "$FILE_PATH" == *"skills/"* ]] && [[ "$FILE_PATH" =~ \.md$ ]]; then
+    grep -q "^---" "$FILE_PATH" 2>/dev/null || echo "⚠️ Skill 文件缺少 frontmatter：$FILE_PATH"
+fi
+
+# ── Secret 扫描 ──
+if _is_impl_file "$FILE_PATH"; then
+    _scan_secrets
+fi
+
+# ── Python 语法检查 ──
+if [[ "$FILE_PATH" =~ \.py$ ]] && [[ -f "$FILE_PATH" ]]; then
+    if ! python3 -m py_compile "$FILE_PATH" 2>/dev/null; then
+        block_post "❌ Python 语法错误：$FILE_PATH"
+    fi
+fi
+
+# ── 测试先行检测 ──
+if _is_impl_file "$FILE_PATH" && git -C "$PROJECT_DIR" rev-parse --git-dir >/dev/null 2>&1; then
+    _check_test_missing
 fi
 
 exit 0

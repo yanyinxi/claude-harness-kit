@@ -189,7 +189,9 @@ def promote_confidence(record_id: str, delta: float = 0.1, root: Optional[Path] 
 
     instinct = load_instinct(root)
     config = load_config()
-    max_conf = config.get("decay", {}).get("max_confidence", 0.95)
+    # load_config() 返回所有模块配置，decay 在 instinct_updater 模块下
+    instinct_config = config.get("instinct_updater", config)  # 兼容两种调用方式
+    max_conf = instinct_config.get("decay", {}).get("max_confidence", 0.95)
 
     for rec in instinct.get("records", []):
         if rec.get("id") == record_id:

@@ -157,7 +157,7 @@ def _knowledge_dir() -> Path:
 
 
 KB_PATH = _knowledge_dir() / "knowledge_base.jsonl"
-INSTINCT_PATH = _find_root() / "memory" / "instinct-record.json"
+INSTINCT_PATH = _find_root() / "harness" / "memory" / "instinct-record.json"
 EFFECT_PATH = _knowledge_dir() / "effect_tracking.jsonl"
 MERGE_COOLDOWN_PATH = _knowledge_dir() / "merge_cooldown.jsonl"
 NOTIFY_COOLDOWN_PATH = _knowledge_dir() / "notify_cooldown.jsonl"

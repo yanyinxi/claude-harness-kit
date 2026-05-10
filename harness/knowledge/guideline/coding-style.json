@@ -1,23 +1,294 @@
-{
-  "id": "guideline-001",
-  "type": "guideline",
-  "name": "Python 代码风格规范",
-  "description": "项目中 Python 代码的统一风格要求",
-  "maturity": "draft",
-  "content": {
-    "recommend": [
-      "使用 type hints 标注函数参数和返回值",
-      "优先使用 Pathlib 而非字符串操作路径",
-      "使用 f-string 进行字符串格式化"
-    ],
-    "avoid": [
-      "裸 except 语句",
-      "在循环中使用 + 拼接字符串",
-      "深度嵌套 (超过 4 层)"
-    ]
+[
+  {
+    "id": "guideline-001",
+    "type": "guideline",
+    "name": "Python 代码风格规范",
+    "description": "项目中 Python 代码的统一风格要求",
+    "maturity": "validated",
+    "content": {
+      "recommend": [
+        "使用 type hints 标注函数参数和返回值",
+        "优先使用 Pathlib 而非字符串操作路径",
+        "使用 f-string 进行字符串格式化"
+      ],
+      "avoid": [
+        "裸 except 语句",
+        "在循环中使用 + 拼接字符串",
+        "深度嵌套 (超过 4 层)"
+      ]
+    },
+    "created_at": "2026-05-01T00:00:00",
+    "last_used_at": "2026-05-01T19:00:00",
+    "usage_count": 1,
+    "project_count": 1
   },
-  "created_at": "2026-05-01T00:00:00",
-  "last_used_at": "2026-05-01T19:00:00",
-  "usage_count": 1,
-  "project_count": 1
-}
+  {
+    "id": "guideline-002",
+    "type": "guideline",
+    "name": "金融业务编码规范（阿里 Harness 核心）",
+    "description": "价格/金额字段必须用整数（分），禁止用浮点数 double/float",
+    "maturity": "validated",
+    "content": {
+      "price_fields": {
+        "rule": "金额字段使用 long/int，单位为分",
+        "reason": "浮点数精度问题导致价格计算错误",
+        "wrong": ["double price", "float amount", "Decimal price"],
+        "correct": ["long priceFen", "int amountFen", "Integer cents"]
+      },
+      "external_calls": {
+        "rule": "外部 API 调用必须设置超时和降级",
+        "reason": "无超时设置导致线程阻塞",
+        "required": ["timeout", "retry", "fallback"]
+      },
+      "internationalization": {
+        "rule": "UI 文本必须国际化，不得硬编码中文",
+        "reason": "忽视国际化链路导致显示乱码",
+        "patterns": ["i18n", "getMessage", "t()"]
+      }
+    },
+    "created_at": "2026-05-10",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "guideline-003",
+    "type": "guideline",
+    "name": "Git 提交规范",
+    "description": "提交信息必须遵循 Conventional Commits 格式",
+    "maturity": "validated",
+    "content": {
+      "format": "<type>(<scope>): <description>",
+      "types": {
+        "feat": "新功能",
+        "fix": "Bug 修复",
+        "docs": "文档变更",
+        "style": "格式调整（不影响代码）",
+        "refactor": "重构（不影响功能）",
+        "perf": "性能优化",
+        "test": "测试相关",
+        "chore": "构建/工具变更"
+      },
+      "rules": [
+        "description 使用动词现在式",
+        "不超过 50 字符",
+        "不要在 description 加句号",
+        "body 用于详细说明（72 字折行）"
+      ]
+    },
+    "created_at": "2026-05-10",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "guideline-004",
+    "type": "guideline",
+    "name": "错误处理规范",
+    "description": "所有错误必须正确处理，不能裸抛异常",
+    "maturity": "validated",
+    "content": {
+      "principles": [
+        "错误响应不泄露内部实现细节",
+        "所有异常必须被捕获或声明",
+        "错误日志必须包含上下文信息"
+      ],
+      "anti_patterns": [
+        "裸 raise",
+        "except: pass",
+        "print(traceback)",
+        "暴露堆栈到用户"
+      ],
+      "correct_patterns": [
+        "logging.error('操作失败', exc_info=True)",
+        "return Result.error('USER_NOT_FOUND')",
+        "raise BusinessException('INVALID_STATE')"
+      ]
+    },
+    "created_at": "2026-05-10",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "guideline-005",
+    "type": "guideline",
+    "name": "输入验证规范",
+    "description": "所有外部输入必须经过验证和清理",
+    "maturity": "validated",
+    "content": {
+      "rule": "永远不信任外部输入",
+      "validations": [
+        "类型检查（str/int/float）",
+        "范围检查（min/max）",
+        "格式检查（正则表达式）",
+        "长度检查（min/max length）"
+      ],
+      "patterns": {
+        "email": "^[^@]+@[^@]+\\.[^@]+$",
+        "phone": "^1[3-9]\\d{9}$",
+        "url": "^https?://[^\\s]+$"
+      }
+    },
+    "created_at": "2026-05-10",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "guideline-006",
+    "type": "guideline",
+    "name": "日志规范",
+    "description": "日志输出必须包含足够上下文且不泄露敏感信息",
+    "maturity": "validated",
+    "content": {
+      "must_include": [
+        "请求 ID（trace_id）",
+        "用户 ID（user_id）",
+        "操作类型（action）",
+        "耗时（duration_ms）"
+      ],
+      "must_mask": [
+        "password",
+        "token",
+        "secret",
+        "credit_card",
+        "phone",
+        "email",
+        "id_card"
+      ],
+      "levels": {
+        "ERROR": "业务异常，需要关注",
+        "WARN": "潜在问题，可能影响",
+        "INFO": "正常流程关键节点",
+        "DEBUG": "调试信息，生产禁用"
+      }
+    },
+    "created_at": "2026-05-10",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "guideline-007",
+    "type": "guideline",
+    "name": "API 设计规范",
+    "description": "RESTful API 设计和响应格式规范",
+    "maturity": "validated",
+    "content": {
+      "url_design": [
+        "使用名词而非动词",
+        "使用 kebab-case",
+        "嵌套资源不超过 2 层",
+        "版本号放 URL 前缀"
+      ],
+      "response_format": {
+        "success": {
+          "code": 0,
+          "data": {},
+          "message": "success"
+        },
+        "error": {
+          "code": 40001,
+          "message": "错误描述",
+          "trace_id": "xxx"
+        }
+      },
+      "status_codes": {
+        "200": "成功",
+        "201": "创建成功",
+        "400": "请求参数错误",
+        "401": "未认证",
+        "403": "无权限",
+        "404": "资源不存在",
+        "500": "服务器错误"
+      }
+    },
+    "created_at": "2026-05-10",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "guideline-008",
+    "type": "guideline",
+    "name": "数据库规范",
+    "description": "数据库设计和查询规范",
+    "maturity": "draft",
+    "content": {
+      "naming": [
+        "表名使用 snake_case，复数形式",
+        "字段名使用 snake_case",
+        "主键命名: id",
+        "外键命名: {table}_id"
+      ],
+      "queries": [
+        "禁止字符串拼接 SQL，必须参数化",
+        "禁止 select *，明确列出字段",
+        "查询必须有索引支持",
+        "大批量操作需要分批"
+      ],
+      "migrations": [
+        "每个 migration 独立可逆",
+        "先在测试环境验证",
+        "记录回滚方案"
+      ]
+    },
+    "created_at": "2026-05-10",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "guideline-009",
+    "type": "guideline",
+    "name": "安全编码规范",
+    "description": "OWASP Top 10 防护措施",
+    "maturity": "validated",
+    "content": {
+      "injection": {
+        "rule": "所有数据库/系统命令必须参数化",
+        "patterns": ["' OR '1'='1", "$(whoami)", "`<script>`"]
+      },
+      "xss": {
+        "rule": "用户输入必须转义输出",
+        "patterns": ["<script>", "javascript:", "onerror="]
+      },
+      "csrf": {
+        "rule": "状态变更请求必须验证 CSRF token"
+      },
+      "sensitive": {
+        "rule": "敏感数据不得硬编码或日志输出",
+        "patterns": ["password", "token", "secret", "api_key"]
+      }
+    },
+    "created_at": "2026-05-10",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "guideline-010",
+    "type": "guideline",
+    "name": "并发安全规范",
+    "description": "多线程/异步场景下的安全编码",
+    "maturity": "validated",
+    "content": {
+      "principles": [
+        "共享状态必须加锁保护",
+        "避免死锁（按固定顺序获取锁）",
+        "线程池使用有界队列",
+        "超时设置防止永久阻塞"
+      ],
+      "python_specific": [
+        "asyncio 不使用 blocking IO",
+        "多进程共享数据用 multiprocessing.Queue",
+        "线程安全用 threading.Lock 或 asyncio.Lock"
+      ]
+    },
+    "created_at": "2026-05-10",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  }
+]

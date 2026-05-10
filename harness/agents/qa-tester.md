@@ -48,3 +48,29 @@ skills: testing
 - 测试即文档：好的测试描述预期行为
 - 独立可重复：测试不依赖执行顺序
 - 不写不测试的代码：每个 return 路径至少一个断言
+
+## 文档产出要求 ⭐
+
+完成工作后，**必须**生成并保存文档：
+
+1. 文档类型：`test`
+2. 输出路径：`docs/artifacts/<session-id>_qa-tester_test.md`
+3. **必须调用** doc-generator 转换为 HTML：
+   ```bash
+   python3 harness/knowledge/doc_generator.py convert \
+     docs/artifacts/<name>.md --type test --output docs/artifacts/
+   ```
+
+### 图表统计
+
+测试报告模板支持：
+- 测试用例覆盖率图表
+- 边界条件覆盖情况
+- Bug 趋势分析
+
+### 输出流程
+
+1. **生成测试报告内容** — 使用测试报告模板
+2. **保存 Markdown** — Write 到 docs/artifacts/
+3. **调用文档生成器** — Bash 命令转换 HTML
+4. **验证输出** — 确认 HTML 文件已生成

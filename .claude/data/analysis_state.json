@@ -3,5 +3,7 @@
   "last_analyze_time": "2026-05-03T21:40:20.538324",
   "total_sessions_analyzed": 31,
   "decisions_applied": 1,
-  "decisions_proposed": 0
+  "decisions_proposed": 0,
+  "last_shutdown_time": "2026-05-10T10:10:10.238712",
+  "signal": "SIGTERM"
 }

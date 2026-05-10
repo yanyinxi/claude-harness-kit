@@ -32,6 +32,7 @@
 """
 import json
 import logging
+import os
 import signal
 import sys
 try:
@@ -80,7 +81,8 @@ def _save_state(signame: str, key: str):
     try:
         root = find_root()
         config = load_config()
-        data_dir = root / config["paths"]["data_dir"]
+        paths = config.get("paths", {})
+        data_dir = root / paths.get("data_dir", ".claude/data")
         state_file = data_dir / "analysis_state.json"
         if state_file.exists():
             try:
@@ -171,7 +173,8 @@ def _health_check() -> dict:
         is_healthy = False
 
     # 检查 2: 数据目录存在性
-    data_dir = root / config["paths"]["data_dir"]
+    paths = config.get("paths", {})
+    data_dir = root / paths.get("data_dir", ".claude/data")
     if data_dir.exists():
         checks.append({"name": "data_dir_exists", "status": "ok", "message": f"数据目录存在: {data_dir}"})
     else:
@@ -322,11 +325,39 @@ def load_config():
         with open(config_path) as f:
             return yaml.safe_load(f)
     # Fallback: inline default config when PyYAML is not installed
+    # 注意: 这是极端情况的降级，完整配置应参考 config.yaml
     return {
-        "daemon": {"schedule": "*/30 * * * *", "idle_trigger_minutes": 120, "extract_timeout_seconds": 5},
-        "thresholds": {"min_new_sessions": 1, "min_same_pattern_corrections": 2, "max_hours_since_last_analyze": 6},
-        "safety": {"max_proposals_per_day": 3, "auto_close_days": 7, "breaker": {"max_consecutive_rejects": 3, "pause_days": 30}},
-        "paths": {"data_dir": ".claude/data", "proposals_dir": ".claude/proposals", "skills_dir": "skills", "agents_dir": "agents", "rules_dir": "rules", "instinct_dir": "memory"},
+        "daemon": {
+            "schedule": "*/30 * * * *",
+            "idle_trigger_minutes": 120,
+            "extract_timeout_seconds": 5,
+        },
+        "thresholds": {
+            "min_new_sessions": 1,
+            "min_same_pattern_corrections": 2,
+            "max_hours_since_last_analyze": 6,
+        },
+        "safety": {
+            "max_proposals_per_day": 3,
+            "auto_close_days": 7,
+            "breaker": {"max_consecutive_rejects": 3, "pause_days": 30},
+        },
+        "paths": {
+            "data_dir": ".claude/data",
+            "proposals_dir": ".claude/proposals",
+            "skills_dir": "skills",
+            "agents_dir": "agents",
+            "rules_dir": "rules",
+            "instinct_dir": "memory",
+        },
+        # 扩展配置 (部分降级)
+        "claude_api": {"decide_model": os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6-20250514")},
+        "decay": {"half_life_days": 90, "decay_floor": 0.1},
+        "decision": {"enabled": True, "auto_apply_threshold": 0.8},
+        "validation": {"enabled": True},
+        "rollback": {"observation": {"days": 7}},
+        "notification": {"enabled": False},
+        "observation": {"days": 7},
     }
 
 
@@ -347,7 +378,7 @@ def load_new_sessions(data_dir: Path, last_analyzed_id: str | None = None) -> li
 
 def check_thresholds(sessions: list[dict], config: dict, last_analyze_time: datetime | None = None) -> list[str]:
     """检查是否满足触发条件"""
-    thresholds = config["thresholds"]
+    thresholds = config.get("thresholds", {})
     triggers = []
 
     # 条件1: 新会话数达标
@@ -521,7 +552,8 @@ def run_analysis(config: dict, root: Path, sessions: list[dict]):
     if not sessions:
         print("⚠️ 无会话数据可分析")
         return
-    state_file = root / config["paths"]["data_dir"] / "analysis_state.json"
+    paths = config.get("paths", {})
+    state_file = root / paths.get("data_dir", ".claude/data") / "analysis_state.json"
     state_file.parent.mkdir(parents=True, exist_ok=True)
     state = {
         "last_analyzed_session_id": sessions[-1]["session_id"],
@@ -710,7 +742,8 @@ def run_rollback_check(config: dict, root: Path) -> dict:
 
         # 如果有回滚发生，同步记录到 instinct
         if result.get("rolled_back", 0) > 0:
-            history_file = root / config["paths"]["data_dir"] / "proposal_history.json"
+            paths = config.get("paths", {})
+            history_file = root / paths.get("data_dir", ".claude/data") / "proposal_history.json"
             if history_file.exists():
                 try:
                     history = json.loads(history_file.read_text())
@@ -765,7 +798,8 @@ def install_launchd(root: Path):
 def main():
     config = load_config()
     root = find_root()
-    data_dir = root / config["paths"]["data_dir"]
+    paths = config.get("paths", {})
+    data_dir = root / paths.get("data_dir", ".claude/data")
 
     cmd = sys.argv[1] if len(sys.argv) > 1 else "check"
 
@@ -830,7 +864,7 @@ def main():
 
     elif cmd == "status":
         triggers = check_thresholds(sessions, config, last_analyze_time)
-        proposals_dir = root / config["paths"]["proposals_dir"]
+        proposals_dir = root / paths.get("proposals_dir", ".claude/proposals")
         proposals = list(proposals_dir.glob("*.md")) if proposals_dir.exists() else []
         print(json.dumps({
             "total_sessions_file": str(data_dir / "sessions.jsonl"),

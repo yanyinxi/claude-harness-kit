@@ -1,18 +1,186 @@
-{
-  "id": "pitfall-001",
-  "type": "pitfall",
-  "name": "JSON 文件写入陷阱",
-  "description": "写入 JSON 时容易出现的编码和格式化问题",
-  "maturity": "draft",
-  "content": {
-    "problem": "使用 open() 写入 JSON 时忘记指定 encoding='utf-8'",
-    "symptom": "中文内容出现乱码",
-    "solution": "始终使用 Path.write_text(json.dumps(...), encoding='utf-8')",
-    "example_bad": "open('file.json', 'w').write(json.dumps(data))",
-    "example_good": "Path('file.json').write_text(json.dumps(data, ensure_ascii=False), encoding='utf-8')"
+[
+  {
+    "id": "pitfall-001",
+    "type": "pitfall",
+    "name": "JSON 文件写入陷阱",
+    "description": "写入 JSON 时容易出现的编码和格式化问题",
+    "maturity": "validated",
+    "content": {
+      "problem": "使用 open() 写入 JSON 时忘记指定 encoding='utf-8'",
+      "symptom": "中文内容出现乱码",
+      "solution": "始终使用 Path.write_text(json.dumps(...), encoding='utf-8')",
+      "example_bad": "open('file.json', 'w').write(json.dumps(data))",
+      "example_good": "Path('file.json').write_text(json.dumps(data, ensure_ascii=False), encoding='utf-8')"
+    },
+    "created_at": "2026-05-01T00:00:00",
+    "last_used_at": "2026-05-01T19:00:00",
+    "usage_count": 1,
+    "project_count": 1
   },
-  "created_at": "2026-05-01T00:00:00",
-  "last_used_at": "2026-05-01T19:00:00",
-  "usage_count": 1,
-  "project_count": 1
-}
+  {
+    "id": "pitfall-002",
+    "type": "pitfall",
+    "name": "价格字段浮点数陷阱（阿里 Harness 高频错误）",
+    "description": "金额字段使用 double/float 导致精度问题",
+    "maturity": "validated",
+    "content": {
+      "problem": "价格/金额字段使用 double/float 类型",
+      "symptom": "0.1 + 0.2 = 0.30000000000000004，实际扣款可能多一分或少一分",
+      "solution": "金额统一使用整数类型（单位：分），如 long priceFen = 1999 表示 19.99 元",
+      "example_bad": "double price = 19.99; // 精度问题",
+      "example_good": "long priceFen = 1999; // 精确到分",
+      "impact": "critical"
+    },
+    "created_at": "2026-05-10T00:00:00",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "pitfall-003",
+    "type": "pitfall",
+    "name": "外部 API 调用无超时陷阱",
+    "description": "HTTP 请求未设置超时导致线程阻塞",
+    "maturity": "validated",
+    "content": {
+      "problem": "调用外部 API（如支付、短信）未设置 timeout",
+      "symptom": "网络卡顿时线程无限等待，导致服务雪崩",
+      "solution": "所有外部调用必须设置 timeout，并实现降级逻辑",
+      "example_bad": "requests.get(url)  # 无超时",
+      "example_good": "requests.get(url, timeout=5, connect_timeout=3)",
+      "required_patterns": ["timeout=", "connect_timeout=", "fallback"]
+    },
+    "created_at": "2026-05-10T00:00:00",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "pitfall-004",
+    "type": "pitfall",
+    "name": "国际化链路缺失陷阱",
+    "description": "硬编码中文导致国际化显示乱码",
+    "maturity": "validated",
+    "content": {
+      "problem": "UI 文本硬编码中文，未使用国际化机制",
+      "symptom": "切换语言时显示乱码或原文",
+      "solution": "所有 UI 文本使用 i18n 函数，如 i18n('error.network')",
+      "example_bad": "alert('网络错误')",
+      "example_good": "alert(i18n('error.network'))",
+      "impact": "medium"
+    },
+    "created_at": "2026-05-10T00:00:00",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "pitfall-005",
+    "type": "pitfall",
+    "name": "Git 分支命名混乱陷阱",
+    "description": "分支命名不规范导致追踪困难",
+    "maturity": "validated",
+    "content": {
+      "problem": "分支命名随意，如 fix-bug、update、test",
+      "symptom": "无法通过分支名理解意图，难以追踪变更历史",
+      "solution": "使用语义化分支命名：[type]/[date]-[ticket-id]-[short-desc]",
+      "example_bad": "fix-bug, update, test, temp",
+      "example_good": "feature/2026-05-10-CHK-123-add-change-tracking, fix/2026-05-10-security-patch",
+      "types": ["feature", "fix", "chore", "refactor", "docs"]
+    },
+    "created_at": "2026-05-10T00:00:00",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "pitfall-006",
+    "type": "pitfall",
+    "name": "裸 except 异常吞噬陷阱",
+    "description": "捕获异常但不做任何处理",
+    "maturity": "validated",
+    "content": {
+      "problem": "使用 except: pass 或裸 except 捕获所有异常",
+      "symptom": "错误静默消失，问题难以排查",
+      "solution": "始终记录异常并转换为业务错误",
+      "example_bad": "except: pass  # 错误丢失",
+      "example_good": "except Exception as e:\n    logging.error('操作失败', exc_info=True)\n    raise BusinessException('INTERNAL_ERROR')"
+    },
+    "created_at": "2026-05-10T00:00:00",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "pitfall-007",
+    "type": "pitfall",
+    "name": "SQL 注入陷阱",
+    "description": "字符串拼接 SQL 导致注入攻击",
+    "maturity": "validated",
+    "content": {
+      "problem": "使用字符串拼接构建 SQL 查询",
+      "symptom": "用户输入可注入恶意 SQL，如 ' OR '1'='1",
+      "solution": "始终使用参数化查询",
+      "example_bad": "sql = f\"SELECT * FROM users WHERE name = '{name}'\"",
+      "example_good": "cursor.execute('SELECT * FROM users WHERE name = ?', (name,))"
+    },
+    "created_at": "2026-05-10T00:00:00",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "pitfall-008",
+    "type": "pitfall",
+    "name": "时区处理陷阱",
+    "description": "未统一时区导致时间比较错误",
+    "maturity": "validated",
+    "content": {
+      "problem": "混用本地时间和 UTC 时间",
+      "symptom": "跨时区操作时时间差 8 小时，调度任务错乱",
+      "solution": "统一使用 UTC 存储和传输，时间显示时转换",
+      "example_bad": "datetime.now()  # 本地时间",
+      "example_good": "datetime.now(timezone.utc)  # UTC 时间"
+    },
+    "created_at": "2026-05-10T00:00:00",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "pitfall-009",
+    "type": "pitfall",
+    "name": "空指针/None 访问陷阱",
+    "description": "未检查空值导致运行时崩溃",
+    "maturity": "validated",
+    "content": {
+      "problem": "访问可能为 None 的对象属性或方法",
+      "symptom": "AttributeError: 'NoneType' object has no attribute 'xxx'",
+      "solution": "使用 Optional 类型声明，并进行空值检查",
+      "example_bad": "user.getProfile().getName()",
+      "example_good": "profile = user.getProfile()\nif profile:\n    name = profile.getName()"
+    },
+    "created_at": "2026-05-10T00:00:00",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  },
+  {
+    "id": "pitfall-010",
+    "type": "pitfall",
+    "name": "循环引用内存泄漏陷阱",
+    "description": "对象循环引用导致内存无法释放",
+    "maturity": "validated",
+    "content": {
+      "problem": "对象之间相互引用形成循环，无法被 GC 回收",
+      "symptom": "长时间运行后内存持续增长",
+      "solution": "使用弱引用(weakref)或及时断开引用",
+      "example_bad": "class A: self.b = None\nclass B: self.a = None",
+      "example_good": "使用 weakref 或在对象销毁时断开引用"
+    },
+    "created_at": "2026-05-10T00:00:00",
+    "last_used_at": null,
+    "usage_count": 0,
+    "project_count": 0
+  }
+]

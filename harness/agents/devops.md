@@ -43,3 +43,29 @@ context: fork
 - 不可变基础设施：配置即代码，不手动改服务器
 - 最小权限：容器以非 root 运行，Secret 不入镜像
 - 可重复构建：Docker 镜像在任何机器上构建结果一致
+
+## 文档产出要求 ⭐
+
+完成工作后，**必须**生成并保存文档：
+
+1. 文档类型：`implementation`
+2. 输出路径：`docs/artifacts/<session-id>_devops_implementation.md`
+3. **必须调用** doc-generator 转换为 HTML：
+   ```bash
+   python3 harness/knowledge/doc_generator.py convert \
+     docs/artifacts/<name>.md --type implementation --output docs/artifacts/
+   ```
+
+### 状态指示器
+
+部署报告模板支持：
+- 服务状态指示器
+- 部署进度展示
+- 环境配置信息
+
+### 输出流程
+
+1. **生成部署报告内容** — 使用实现报告模板
+2. **保存 Markdown** — Write 到 docs/artifacts/
+3. **调用文档生成器** — Bash 命令转换 HTML
+4. **验证输出** — 确认 HTML 文件已生成

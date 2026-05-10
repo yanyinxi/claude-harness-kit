@@ -1,0 +1,198 @@
+[
+  {
+    "id": "process-001",
+    "type": "process",
+    "name": "Bug 修复流程",
+    "description": "从发现到修复的完整 Bug 处理流程",
+    "maturity": "validated",
+    "steps": [
+      {
+        "order": 1,
+        "name": "复现",
+        "description": "在隔离环境中复现 Bug",
+        "output": "复现步骤文档"
+      },
+      {
+        "order": 2,
+        "name": "定位",
+        "description": "使用日志、断点、日志追踪定位根因",
+        "output": "根因分析报告"
+      },
+      {
+        "order": 3,
+        "name": "最小化",
+        "description": "创建最小复现用例",
+        "output": "最小复现代码"
+      },
+      {
+        "order": 4,
+        "name": "修复",
+        "description": "实施修复并验证",
+        "output": "修复代码"
+      },
+      {
+        "order": 5,
+        "name": "验证",
+        "description": "确保修复有效且无副作用",
+        "output": "验证报告"
+      },
+      {
+        "order": 6,
+        "name": "预防",
+        "description": "添加测试防止回归",
+        "output": "回归测试"
+      }
+    ]
+  },
+  {
+    "id": "process-002",
+    "type": "process",
+    "name": "代码评审流程",
+    "description": "确保代码质量和安全性的评审流程",
+    "maturity": "validated",
+    "steps": [
+      {
+        "order": 1,
+        "name": "自检",
+        "description": "提交前自己 review 代码"
+      },
+      {
+        "order": 2,
+        "name": "lint 检查",
+        "description": "运行 lint 和格式检查"
+      },
+      {
+        "order": 3,
+        "name": "测试覆盖",
+        "description": "确保测试覆盖新增代码"
+      },
+      {
+        "order": 4,
+        "name": "PR 评审",
+        "description": "提交 PR 进行团队评审"
+      },
+      {
+        "order": 5,
+        "name": "修复反馈",
+        "description": "处理评审反馈"
+      },
+      {
+        "order": 6,
+        "name": "合并",
+        "description": "评审通过后合并"
+      }
+    ]
+  },
+  {
+    "id": "process-003",
+    "type": "process",
+    "name": "发布流程",
+    "description": "从开发到生产发布的完整流程",
+    "maturity": "validated",
+    "steps": [
+      {
+        "order": 1,
+        "name": "功能开发",
+        "description": "开发并测试功能"
+      },
+      {
+        "order": 2,
+        "name": "Staging 部署",
+        "description": "部署到 staging 环境"
+      },
+      {
+        "order": 3,
+        "name": "集成测试",
+        "description": "在 staging 运行完整测试"
+      },
+      {
+        "order": 4,
+        "name": "灰度发布",
+        "description": "5% → 25% → 50% → 100%"
+      },
+      {
+        "order": 5,
+        "name": "监控",
+        "description": "发布后 24-48h 监控"
+      },
+      {
+        "order": 6,
+        "name": "回滚准备",
+        "description": "保持回滚能力"
+      }
+    ]
+  },
+  {
+    "id": "process-004",
+    "type": "process",
+    "name": "变更管理流程",
+    "description": "需求变更的完整追踪流程",
+    "maturity": "validated",
+    "steps": [
+      {
+        "order": 1,
+        "name": "评估级别",
+        "description": "L0-L3 变更分类"
+      },
+      {
+        "order": 2,
+        "name": "创建 CHANGES",
+        "description": "建立变更记录目录"
+      },
+      {
+        "order": 3,
+        "name": "评审",
+        "description": "根据级别进行评审"
+      },
+      {
+        "order": 4,
+        "name": "实施",
+        "description": "执行代码变更"
+      },
+      {
+        "order": 5,
+        "name": "验证",
+        "description": "验证变更正确性"
+      },
+      {
+        "order": 6,
+        "name": "合并",
+        "description": "合并并清理记录"
+      }
+    ]
+  },
+  {
+    "id": "process-005",
+    "type": "process",
+    "name": "事故响应流程",
+    "description": "生产环境事故的响应和处理流程",
+    "maturity": "draft",
+    "steps": [
+      {
+        "order": 1,
+        "name": "发现",
+        "description": "通过监控或用户反馈发现"
+      },
+      {
+        "order": 2,
+        "name": "评估",
+        "description": "评估影响范围和严重程度"
+      },
+      {
+        "order": 3,
+        "name": "止血",
+        "description": "立即止血（回滚/降级）"
+      },
+      {
+        "order": 4,
+        "name": "修复",
+        "description": "修复根本原因"
+      },
+      {
+        "order": 5,
+        "name": "复盘",
+        "description": "记录根因和改进措施"
+      }
+    ]
+  }
+]
