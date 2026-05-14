@@ -1,7 +1,6 @@
 ---
 name: security
 scope: global
-paths: ["**/auth/**", "**/middleware/**", "**/security/**", "**/*auth*", "**/*token*", "**/*crypto*"]
 ---
 
 # Security Baseline — 安全底线

@@ -1,25 +1,15 @@
----
-description: Skill 索引 — 由 chk-init 自动生成
----
+# sre
 
-# Skill Name
+## 一句话描述
+站点可靠性工程 Skill，提供事故响应和 SLO/SLI 定义模板
 
-## 概述
+## 适用场景
+- 生产环境事故响应
+- SLO/SLI 定义
+- 故障复盘和改进
 
-<!-- 描述此 Skill 的用途 -->
+## 触发词
+sre、站点可靠性、事故、SEV、incident、SLO、SLI、postmortem、runbook
 
-## 触发场景
-
-- <!-- 场景 1 -->
-- <!-- 场景 2 -->
-
-## 使用方法
-
-```
-/skill-name
-```
-
-## 相关资源
-
-- SKILL.md — 完整定义
-- scripts/ — 辅助脚本（若有）
+## 依赖
+无

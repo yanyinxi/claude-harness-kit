@@ -19,27 +19,27 @@ Knowledge Recommender Engine — 知识推荐引擎
   python3 knowledge_recommender.py recommend --failure "json encoding"
   python3 knowledge_recommender.py inject  # 仅输出推荐上下文 (供 hook 调用)
 """
-
 import json
 import math
-import os
 import re
 import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+# ── 路径配置（需在 imports 之后但在模块级常量之前）──────────────────────────
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from paths import MEMORY_DIR, KNOWLEDGE_DIR, DATA_DIR
+
 _KEYWORD_PATTERN = re.compile(r"[a-zA-Z0-9\+\#]+")
 
-# ── 路径配置 ──────────────────────────────────────────────────────────────────
-
-PROJECT_ROOT = Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
-# 知识库 1: 手工维护的知识 (harness/knowledge/)
-KNOWLEDGE_DIR = PROJECT_ROOT / "harness" / "knowledge"
-# 知识库 2: 进化生成的知识 (harness/knowledge/evolved/)
-EVOLVE_KNOWLEDGE_DIR = PROJECT_ROOT / "harness" / "knowledge" / "evolved"
-INSTINCT_DIR = PROJECT_ROOT / "harness" / "memory"
-DATA_DIR = PROJECT_ROOT / ".claude" / "data"
+# 知识库 1: 手工维护的知识
+KNOWLEDGE_BASE_DIR = KNOWLEDGE_DIR
+# 知识库 2: 进化生成的知识
+EVOLVE_KNOWLEDGE_DIR = KNOWLEDGE_DIR / "evolved"
+# 本能记录目录
+INSTINCT_DIR = MEMORY_DIR
+# 运行时数据目录
 RECOMMENDATIONS_FILE = DATA_DIR / "knowledge_recommendations.json"
 
 # 知识目录 → 类型映射

@@ -95,9 +95,10 @@ def test_coverage_check_script():
 
 
 def test_changes_directory_structure():
-    """正向: 检查 CHANGES 目录结构"""
-    changes_dir = HARNESS_DIR / "changes"
-    assert changes_dir.exists(), "CHANGES 目录不存在"
+    """正向: 检查 changes 目录结构（迁移到 knowledge/decision/changes/）"""
+    # changes 目录已迁移到 harness/knowledge/decision/changes/
+    changes_dir = HARNESS_DIR / "knowledge" / "decision" / "changes"
+    assert changes_dir.exists(), "changes 目录不存在"
 
     subdirs = [d for d in changes_dir.iterdir() if d.is_dir()]
     assert len(subdirs) > 0, "无变更记录"

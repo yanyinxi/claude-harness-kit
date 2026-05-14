@@ -41,7 +41,7 @@ harness/
 │   │   ├── collect_session.py   # 会话收集
 │   │   ├── collect_agent.py     # Agent 调用收集
 │   │   ├── collect_skill.py     # Skill 调用收集
-│   │   ├── context-injector.py  # 上下文注入
+│   │   ├── context_injector.py  # 上下文注入
 │   │   └── ...
 │   └── hooks.json
 ├── knowledge/      # 知识推荐引擎
@@ -80,7 +80,7 @@ daemon.py (调度 + 执行)
                       knowledge_recommender.py
                      (双知识库合并: 手工 + 进化)
                                     ↓
-                      context-injector.py (注入上下文)
+                      context_injector.py (注入上下文)
                                     ↓
                          ← 推荐给用户
 

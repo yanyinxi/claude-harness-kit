@@ -29,14 +29,19 @@ def _parse_iso_safe(ts: Optional[str], default: str = "2000-01-01") -> datetime:
         return datetime.fromisoformat(default)
 
 
+# ── 统一路径导入 ─────────────────────────────────────────────
+# 从 paths.py 获取统一路径常量，避免硬编码
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from paths import INSTINCT_FILE, find_root
 from _daemon_config import load_config, _default_config
-sys.path.insert(0, str(Path(__file__).parent))
-from kb_shared import _find_root, INSTINCT_PATH
 
 
 def load_instinct(root: Optional[Path] = None) -> dict:
     """加载或初始化 instinct-record.json"""
-    path = INSTINCT_PATH if root is None else root / "memory" / "instinct-record.json"
+    if root is None:
+        path = INSTINCT_FILE
+    else:
+        path = root / "harness" / "memory" / "instinct-record.json"
     if path.exists():
         try:
             return json.loads(path.read_text(encoding="utf-8"))
@@ -47,7 +52,10 @@ def load_instinct(root: Optional[Path] = None) -> dict:
 
 def save_instinct(instinct: dict, root: Optional[Path] = None):
     """保存 instinct-record.json"""
-    path = INSTINCT_PATH if root is None else root / "memory" / "instinct-record.json"
+    if root is None:
+        path = INSTINCT_FILE
+    else:
+        path = root / "harness" / "memory" / "instinct-record.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(instinct, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -151,7 +159,7 @@ def add_pattern(
     向 instinct-record.json 添加一条记录，返回记录 ID。
     """
     if root is None:
-        root = _find_root()
+        root = find_root()
 
     instinct = load_instinct(root)
 
@@ -185,7 +193,7 @@ def promote_confidence(record_id: str, delta: float = 0.1, root: Optional[Path] 
     同时增加 reinforcement_count 和 last_reinforced_at。
     """
     if root is None:
-        root = _find_root()
+        root = find_root()
 
     instinct = load_instinct(root)
     config = load_config()
@@ -211,7 +219,7 @@ def demote_confidence(record_id: str, delta: float = 0.1, root: Optional[Path] =
     降低已有记录的置信度（用于回滚场景）。
     """
     if root is None:
-        root = _find_root()
+        root = find_root()
 
     instinct = load_instinct(root)
     config = load_config()
@@ -238,7 +246,7 @@ def reinforce_pattern(pattern_id: str, delta: float = 0.1, root: Optional[Path] 
 def get_patterns_by_source(source: str, root: Optional[Path] = None) -> list:
     """获取指定来源的所有 pattern"""
     if root is None:
-        root = _find_root()
+        root = find_root()
 
     instinct = load_instinct(root)
     return [r for r in instinct.get("records", []) if r.get("source") == source]
@@ -247,7 +255,7 @@ def get_patterns_by_source(source: str, root: Optional[Path] = None) -> list:
 def get_high_confidence_patterns(threshold: float = 0.7, root: Optional[Path] = None) -> list:
     """获取高置信度的 pattern（用于指导决策）"""
     if root is None:
-        root = _find_root()
+        root = find_root()
 
     instinct = load_instinct(root)
     return [
@@ -259,7 +267,7 @@ def get_high_confidence_patterns(threshold: float = 0.7, root: Optional[Path] = 
 def increment_applied_count(record_id: str, root: Optional[Path] = None):
     """增加 applied_count 计数"""
     if root is None:
-        root = _find_root()
+        root = find_root()
 
     instinct = load_instinct(root)
     for rec in instinct.get("records", []):
@@ -327,7 +335,7 @@ if __name__ == "__main__":
 def link_instinct_to_target(record_id: str, target_file: str, root=None):
     """将 instinct 记录与目标文件关联"""
     if root is None:
-        root = _find_root()
+        root = find_root()
     instinct = load_instinct(root)
     for rec in instinct.get("records", []):
         if rec.get("id") == record_id:
@@ -341,6 +349,6 @@ def link_instinct_to_target(record_id: str, target_file: str, root=None):
 def find_instinct_by_target(target_file: str, root=None) -> list:
     """根据 target_file 查找 instinct 记录"""
     if root is None:
-        root = _find_root()
+        root = find_root()
     instinct = load_instinct(root)
     return [rec for rec in instinct.get("records", []) if rec.get("target_file") == target_file]

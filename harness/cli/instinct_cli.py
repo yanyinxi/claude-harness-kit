@@ -20,7 +20,7 @@ from collections import defaultdict
 
 # ── Data Path (canonical: harness/memory/) ────────────────────────
 
-INSTINCT_ROOT = Path(__file__).parent.parent / "memory"
+INSTINCT_ROOT = Path(__file__).parent.parent.parent / "harness" / "memory"
 INSTINCT_FILE = INSTINCT_ROOT / "instinct-record.json"
 INSTINCT_FILE.parent.mkdir(parents=True, exist_ok=True)
 

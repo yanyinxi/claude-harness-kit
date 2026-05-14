@@ -57,7 +57,7 @@ def test_scenario_new_project_init():
     ok("kit.sh 包含 init 子命令")
 
     # Verify context-injector hook
-    injector = HOOKS_DIR / "context-injector.py"
+    injector = HOOKS_DIR / "context_injector.py"
     assert injector.exists()
     ok("context-injector.py 存在 — SessionStart 上下文注入")
 

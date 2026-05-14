@@ -163,6 +163,30 @@ MERGE_COOLDOWN_PATH = _knowledge_dir() / "merge_cooldown.jsonl"
 NOTIFY_COOLDOWN_PATH = _knowledge_dir() / "notify_cooldown.jsonl"
 
 
+# ── 统一路径导入（从 paths.py 获取）────────────────────────────────
+# 为避免循环导入，在需要时使用 paths 模块的常量
+# 以下别名保持向后兼容：
+#   KB_PATH         → paths.KNOWLEDGE_DIR / "knowledge_base.jsonl"
+#   INSTINCT_PATH   → paths.INSTINCT_FILE
+#   EFFECT_PATH     → paths.EFFECT_TRACKING_FILE
+#   MERGE_COOLDOWN_PATH → paths.MERGE_COOLDOWN_FILE
+#   NOTIFY_COOLDOWN_PATH → paths.NOTIFY_COOLDOWN_FILE
+
+def _get_paths():
+    """延迟导入 paths 模块，避免循环导入"""
+    from paths import (
+        INSTINCT_FILE, EFFECT_TRACKING_FILE,
+        MERGE_COOLDOWN_FILE, NOTIFY_COOLDOWN_FILE,
+    )
+    return {
+        "INSTINCT_PATH": INSTINCT_PATH or INSTINCT_FILE,
+        "EFFECT_PATH": EFFECT_PATH or EFFECT_TRACKING_FILE,
+        "MERGE_COOLDOWN_PATH": MERGE_COOLDOWN_PATH or MERGE_COOLDOWN_FILE,
+        "NOTIFY_COOLDOWN_PATH": NOTIFY_COOLDOWN_PATH or NOTIFY_COOLDOWN_FILE,
+        "KB_PATH": _knowledge_dir() / "knowledge_base.jsonl",
+    }
+
+
 # ── 时间工具 ────────────────────────────────────────────────
 def now_iso() -> str:
     return datetime.now().isoformat()
@@ -233,10 +257,14 @@ def write_json(path: Path, data):
 # ── 知识库读写 ─────────────────────────────────────────────
 def load_knowledge_base(root: Optional[Path] = None) -> list[dict]:
     """加载所有知识库条目"""
+    from paths import EVOLVED_KB_DIR, KNOWLEDGE_DIR  # 延迟导入避免循环
     if root:
         kb_file = root / "harness" / "evolve-daemon" / "knowledge" / "knowledge_base.jsonl"
     else:
-        kb_file = KB_PATH
+        # 使用统一的进化知识库路径
+        kb_file = EVOLVED_KB_DIR / "knowledge_base.jsonl"
+        if not kb_file.exists():
+            kb_file = KNOWLEDGE_DIR / "knowledge_base.jsonl"
     return read_jsonl(kb_file)
 
 
@@ -248,19 +276,25 @@ def load_active_kb(root: Optional[Path] = None) -> list[dict]:
 
 def save_kb_entry(entry: dict, root: Optional[Path] = None):
     """追加一条知识到知识库"""
+    from paths import EVOLVED_KB_DIR, KNOWLEDGE_DIR  # 延迟导入避免循环
     if root:
         kb_file = root / "harness" / "evolve-daemon" / "knowledge" / "knowledge_base.jsonl"
     else:
-        kb_file = KB_PATH
+        kb_file = EVOLVED_KB_DIR / "knowledge_base.jsonl"
+        if not kb_file.exists():
+            kb_file = KNOWLEDGE_DIR / "knowledge_base.jsonl"
     append_jsonl(kb_file, entry)
 
 
 def update_kb_all(entries: list[dict], root: Optional[Path] = None):
     """重写整个知识库"""
+    from paths import EVOLVED_KB_DIR, KNOWLEDGE_DIR  # 延迟导入避免循环
     if root:
         kb_file = root / "harness" / "evolve-daemon" / "knowledge" / "knowledge_base.jsonl"
     else:
-        kb_file = KB_PATH
+        kb_file = EVOLVED_KB_DIR / "knowledge_base.jsonl"
+        if not kb_file.exists():
+            kb_file = KNOWLEDGE_DIR / "knowledge_base.jsonl"
     write_jsonl(kb_file, entries)
 
 

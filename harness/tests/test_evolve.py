@@ -255,8 +255,8 @@ def test_instinct_add_and_read():
     instinct_updater = get_module("instinct_updater")
     with tempfile.TemporaryDirectory() as tmpdir:
         test_record = Path(tmpdir) / "instinct-record.json"
-        # Patch INSTINCT_PATH to point to temp file
-        with patch.object(instinct_updater, "INSTINCT_PATH", test_record):
+        # Patch INSTINCT_FILE to point to temp file
+        with patch.object(instinct_updater, "INSTINCT_FILE", test_record):
             try:
                 record_id = instinct_updater.add_pattern(
                     pattern="测试模式",
@@ -273,8 +273,8 @@ def test_instinct_add_and_read():
 def test_instinct_load_init():
     global PASS, FAIL
     instinct_updater = get_module("instinct_updater")
-    # Patch INSTINCT_PATH to point to PROJECT_ROOT version (which may not exist, returning default)
-    with patch.object(instinct_updater, "INSTINCT_PATH", PROJECT_ROOT / "harness" / "memory" / "instinct-record.json"):
+    # Patch INSTINCT_FILE to point to PROJECT_ROOT version (which may not exist, returning default)
+    with patch.object(instinct_updater, "INSTINCT_FILE", PROJECT_ROOT / "harness" / "memory" / "instinct-record.json"):
         data = instinct_updater.load_instinct()
     assert "records" in data
     assert isinstance(data["records"], list)

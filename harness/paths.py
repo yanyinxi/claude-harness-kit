@@ -154,10 +154,39 @@ EVOLVE_TEMPLATES_DIR = EVOLVE_DIR / "templates"        # 进化提案模板
 EVOLVE_CONFIG_FILE = EVOLVE_DIR / "config.yaml"        # 进化配置
 
 # ============================================================================
+# 进化系统数据路径（.claude/data/ 下）
+# ============================================================================
+# 注：这些路径指向 .claude/data/ 子目录，用于进化系统的运行时数据
+
+ANALYSIS_STATE_FILE = DATA_DIR / FILE_ANALYSIS_STATE  # 分析状态快照
+PROPOSAL_HISTORY_FILE = DATA_DIR / FILE_PROPOSAL_HISTORY  # 提案历史
+
+# ============================================================================
+# 记忆系统路径（harness/memory/）
+# ============================================================================
+# 注意：MEMORY_DIR 已在上面 CHK 插件资产路径中定义
+# 此处仅定义具体文件路径
+
+INSTINCT_FILE = MEMORY_DIR / "instinct-record.json"  # 本能记录文件
+
+# ============================================================================
+# 知识推荐引擎路径（harness/knowledge/）
+# ============================================================================
+# 知识库包含两部分：
+#   - 手工维护：harness/knowledge/decision/, guideline/, pitfall/, process/, model/
+#   - 进化生成：harness/knowledge/evolved/ (符号链接到 evolve-daemon/knowledge/)
+
+KNOWLEDGE_DIR = PLUGIN_ROOT / DIR_KNOWLEDGE # harness/knowledge/ — 知识推荐引擎
+EVOLVED_KB_DIR = EVOLVE_DIR / "knowledge"   # 进化知识库目录（符号链接源）
+EFFECT_TRACKING_FILE = KNOWLEDGE_DIR / "effect_tracking.jsonl"  # 效果跟踪
+MERGE_COOLDOWN_FILE = KNOWLEDGE_DIR / "merge_cooldown.jsonl"  # merge 冷却期
+NOTIFY_COOLDOWN_FILE = KNOWLEDGE_DIR / "notify_cooldown.jsonl"  # 通知冷却期
+LIFECYCLE_YAML = KNOWLEDGE_DIR / FILE_LIFECYCLE_YAML  # 知识生命周期配置
+
+# ============================================================================
 # 其他插件路径
 # ============================================================================
 
-LIFECYCLE_YAML = KNOWLEDGE_DIR / FILE_LIFECYCLE_YAML  # 知识生命周期配置
 SETTINGS_LOCAL = CLAUDE_DIR / FILE_SETTINGS_LOCAL      # 本地配置覆盖
 MCP_JSON = PLUGIN_ROOT / ".mcp.json"                  # MCP 服务器配置
 MARKETPLACE_JSON = PLUGIN_ROOT / "marketplace.json"    # 市场配置
@@ -193,20 +222,20 @@ HOOK_SCRIPTS = {
 
     # ── 数据收集 ──────────────────────────────────────────────────
     "collect-failure.py": HOOKS_BIN_DIR / "collect-failure.py", # 失败收集 (已废弃，使用 collect_error.py)
-    "collect-agent.py": HOOKS_BIN_DIR / "collect_agent.py",       # Agent 调用收集
-    "collect-skill.py": HOOKS_BIN_DIR / "collect-skill.py",     # Skill 调用收集
+    "collect_agent.py": HOOKS_BIN_DIR / "collect_agent.py",       # Agent 调用收集
+    "collect-skill.py": HOOKS_BIN_DIR / "collect_skill.py",     # Skill 调用收集
     "collect_session.py": HOOKS_BIN_DIR / "collect_session.py",  # 会话收集
     "collect_error.py": HOOKS_BIN_DIR / "collect_error.py",     # 错误收集
 
     # ── 安全过滤 ──────────────────────────────────────────────────
-    "output-secret-filter.py": HOOKS_BIN_DIR / "output-secret-filter.py",  # 敏感信息过滤
+    "output_secret_filter.py": HOOKS_BIN_DIR / "output_secret_filter.py",  # 敏感信息过滤
 
     # ── 上下文注入 ────────────────────────────────────────────────
-    "context-injector.py": HOOKS_BIN_DIR / "context-injector.py",  # 知识注入
+    "context_injector.py": HOOKS_BIN_DIR / "context_injector.py",  # 知识注入
     "extract_semantics.py": HOOKS_BIN_DIR / "extract_semantics.py",  # 语义提取
 
     # ── 进化自动触发 ──────────────────────────────────────────────
-    "auto-start-evolve.py": HOOKS_BIN_DIR / "auto-start-evolve.py",  # 进化守护进程触发
+    "auto_start_evolve.py": HOOKS_BIN_DIR / "auto_start_evolve.py",  # 进化守护进程触发
 
     # ── 错误处理 ──────────────────────────────────────────────────
     "error_writer.py": HOOKS_BIN_DIR / "error_writer.py",       # 错误写入
@@ -322,6 +351,55 @@ def warn_missing_paths(project_root: Path | None = None) -> list[str]:
     validation = validate_paths(project_root)
     return validation.get("warnings", [])
 
+
+# ============================================================================
+# 统一路径查找函数（find_root）
+# ============================================================================
+# 所有模块的 find_root() / get_project_root() 都应使用此实现，
+# 避免多个实现导致的行为不一致。
+
+def find_root(start: Path | str | None = None) -> Path:
+    """
+    向上查找包含 .claude 目录的项目根目录。
+
+    优先级:
+      1. 环境变量 CLAUDE_PROJECT_DIR
+      2. start 目录向上遍历
+      3. 当前工作目录向上遍历
+
+    参数:
+        start: 起始查找路径，默认从 _project_root() 开始
+
+    返回:
+        Path: 项目根目录（包含 .claude/ 或 harness/ 的目录）
+    """
+    if start is None:
+        start = _project_root()
+    elif isinstance(start, str):
+        start = Path(start)
+
+    # 优先使用环境变量
+    project_dir = os.environ.get("CLAUDE_PROJECT_DIR", "")
+    if project_dir:
+        p = Path(project_dir)
+        if (p / ".claude").exists() or (p / "harness").exists():
+            return p
+
+    # 向上遍历查找项目根
+    current = start.resolve()
+    for parent in [current] + list(current.parents):
+        if (parent / ".claude").exists() or (parent / "harness").exists():
+            return parent
+
+    # 最后回退到 _project_root()（脚本所在目录的父目录）
+    return _project_root()
+
+
+# 向后兼容别名
+get_project_root = find_root
+get_project_dir = find_root
+
+
 __all__ = [
     # ── 目录名常量（字符串，语义标识）─────────────────────────────────
     "DIR_CLAUDE", "DIR_DATA", "DIR_PROPOSALS", "DIR_HOOKS", "DIR_HOOKS_BIN",
@@ -338,13 +416,19 @@ __all__ = [
     "ROOT", "PLUGIN_ROOT",
     # ── .claude/ 下路径（Path 对象）──────────────────────────────────
     "CLAUDE_DIR", "DATA_DIR", "PROPOSALS_DIR", "RATE_LIMITS_DIR", "WORKTREES_DIR",
-    "HOMUNCULUS_DIR",
+    "HOMUNCULUS_DIR", "ANALYSIS_STATE_FILE", "PROPOSAL_HISTORY_FILE",
     # ── harness/ 下路径（Path 对象）──────────────────────────────────
     "SKILLS_DIR", "AGENTS_DIR", "RULES_DIR", "HOOKS_DIR", "HOOKS_BIN_DIR",
     "MEMORY_DIR", "KNOWLEDGE_DIR", "TESTS_DIR", "DOCS_DIR",
     "CLI_DIR", "CLI_MODES_DIR", "EVOLVE_DIR", "EVOLVE_TEMPLATES_DIR",
-    "EVOLVE_CONFIG_FILE", "LIFECYCLE_YAML", "SETTINGS_LOCAL",
-    "MCP_JSON", "MARKETPLACE_JSON",
+    "EVOLVE_CONFIG_FILE",
+    # ── 记忆系统路径（Path 对象）──────────────────────────────────────
+    "INSTINCT_FILE",
+    # ── 知识推荐引擎路径（Path 对象）─────────────────────────────────
+    "EVOLVED_KB_DIR", "EFFECT_TRACKING_FILE", "MERGE_COOLDOWN_FILE",
+    "NOTIFY_COOLDOWN_FILE", "LIFECYCLE_YAML",
+    # ── 其他插件路径（Path 对象）─────────────────────────────────────
+    "SETTINGS_LOCAL", "MCP_JSON", "MARKETPLACE_JSON",
     # ── 动态文件路径工厂函数（返回新 Path 对象）────────────────────
     "sessions_file", "errors_file", "errors_lock_file", "failures_file",
     "agent_calls_file", "skill_calls_file", "analysis_state_file",
@@ -353,4 +437,6 @@ __all__ = [
     "HOOK_SCRIPTS",
     # ── 工具函数 ────────────────────────────────────────────────────
     "validate_paths", "warn_missing_paths",
+    # ── 统一路径查找函数 ──────────────────────────────────────────
+    "find_root", "get_project_root", "get_project_dir",
 ]

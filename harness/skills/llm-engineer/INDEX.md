@@ -1,25 +1,15 @@
----
-description: Skill 索引 — 由 chk-init 自动生成
----
+# llm-engineer
 
-# Skill Name
+## 一句话描述
+大模型工程 Skill，提供 Prompt 工程、RAG 实现和 LoRA 微调模板
 
-## 概述
+## 适用场景
+- Prompt 工程优化
+- RAG 应用开发
+- LLM 应用部署
 
-<!-- 描述此 Skill 的用途 -->
+## 触发词
+prompt、few-shot、CoT、RAG、retrieval、embedding、LangChain、LoRA、微调
 
-## 触发场景
-
-- <!-- 场景 1 -->
-- <!-- 场景 2 -->
-
-## 使用方法
-
-```
-/skill-name
-```
-
-## 相关资源
-
-- SKILL.md — 完整定义
-- scripts/ — 辅助脚本（若有）
+## 依赖
+无

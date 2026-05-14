@@ -1,25 +1,15 @@
----
-description: Skill 索引 — 由 chk-init 自动生成
----
+# ml-engineer
 
-# Skill Name
+## 一句话描述
+机器学习工程 Skill，提供 ML 训练流程、特征工程和 FastAPI 部署
 
-## 概述
+## 适用场景
+- ML 模型训练
+- 特征工程处理
+- 模型部署和监控
 
-<!-- 描述此 Skill 的用途 -->
+## 触发词
+机器学习、ML、PyTorch、TensorFlow、特征工程、模型训练、FastAPI、MLOps
 
-## 触发场景
-
-- <!-- 场景 1 -->
-- <!-- 场景 2 -->
-
-## 使用方法
-
-```
-/skill-name
-```
-
-## 相关资源
-
-- SKILL.md — 完整定义
-- scripts/ — 辅助脚本（若有）
+## 依赖
+无

@@ -1,12 +1,12 @@
 {
-  "version": "0.7.0",
+  "version": "0.8.0",
   "version_info": [
     0,
-    7,
+    8,
     0
   ],
   "name": "claude-harness-kit",
   "description": "Claude Harness Kit — Human steers, Agents execute",
-  "last_bump": "2026-05-03T15:42:17.334569",
+  "last_bump": "2026-05-15T07:37:34.181944",
   "last_type": "minor"
 }

@@ -1,25 +1,15 @@
----
-description: Skill 索引 — 由 chk-init 自动生成
----
+# team-orchestrator
 
-# Skill Name
+## 一句话描述
+多 Agent 编排 Skill，基于 Wave 模式和 self-claim 任务认领机制
 
-## 概述
+## 适用场景
+- 大规模代码重构
+- 跨模块功能开发
+- 并行任务分解
 
-<!-- 描述此 Skill 的用途 -->
+## 触发词
+team-orchestrator、多 agent、编排、team orchestrator、wave、并行、teammate
 
-## 触发场景
-
-- <!-- 场景 1 -->
-- <!-- 场景 2 -->
-
-## 使用方法
-
-```
-/skill-name
-```
-
-## 相关资源
-
-- SKILL.md — 完整定义
-- scripts/ — 辅助脚本（若有）
+## 依赖
+无

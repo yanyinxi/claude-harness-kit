@@ -11,8 +11,14 @@ kit status — 查看 Claude Harness Kit 当前状态。
 """
 import json
 import os
+import sys
 from pathlib import Path
 from collections import Counter
+
+# ── 统一路径导入 ─────────────────────────────────────────────
+# 从 paths.py 获取统一路径常量，避免硬编码
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from paths import INSTINCT_FILE, PROPOSALS_DIR, DATA_DIR
 
 
 def load_settings(root: Path) -> dict:
@@ -31,8 +37,6 @@ def count_files(pattern: Path) -> int:
 
 def main():
     root = Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())).resolve()
-    claude_dir = root / ".claude"
-    data_dir = claude_dir / "data"
 
     print(f"Claude Harness Kit — 项目: {root.name}")
     print("=" * 50)
@@ -52,7 +56,7 @@ def main():
         print("\n2️⃣  Hooks: 未配置（运行 kit mode 启用）")
 
     # 3. sessions.jsonl 摘要
-    sessions_file = data_dir / "sessions.jsonl"
+    sessions_file = DATA_DIR / "sessions.jsonl"
     if sessions_file.exists():
         lines = sessions_file.read_text().strip().splitlines()
         total = len(lines)
@@ -71,7 +75,7 @@ def main():
         print("\n3️⃣  Sessions: 无记录（首次使用中）")
 
     # 4. instinct 分布
-    instinct_file = root / "memory" / "instinct-record.json"
+    instinct_file = INSTINCT_FILE
     if instinct_file.exists():
         try:
             data = json.loads(instinct_file.read_text(encoding="utf-8"))
@@ -93,7 +97,7 @@ def main():
         print("\n4️⃣  Instinct: 无记录")
 
     # 5. 待处理 proposals
-    proposals_dir = root / ".claude" / "proposals"
+    proposals_dir = PROPOSALS_DIR
     if proposals_dir.exists():
         pending = list(proposals_dir.glob("*.md"))
         print(f"\n5️⃣  待处理 Proposals: {len(pending)} 个")

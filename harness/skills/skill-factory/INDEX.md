@@ -1,25 +1,15 @@
----
-description: Skill 索引 — 由 chk-init 自动生成
----
+# skill-factory
 
-# Skill Name
+## 一句话描述
+Skill 创建工厂，从工作流记录生成标准 SKILL.md
 
-## 概述
+## 适用场景
+- 创建新 Skill
+- 从历史会话提取 Skill
+- 标准化 Skill 定义
 
-<!-- 描述此 Skill 的用途 -->
+## 触发词
+skill-factory、创建 skill、新建 skill、skill factory
 
-## 触发场景
-
-- <!-- 场景 1 -->
-- <!-- 场景 2 -->
-
-## 使用方法
-
-```
-/skill-name
-```
-
-## 相关资源
-
-- SKILL.md — 完整定义
-- scripts/ — 辅助脚本（若有）
+## 依赖
+无

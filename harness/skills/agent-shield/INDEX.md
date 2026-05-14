@@ -1,25 +1,15 @@
----
-description: Skill 索引 — 由 chk-init 自动生成
----
+# agent-shield
 
-# Skill Name
+## 一句话描述
+Claude Code 安全扫描器，自动化检测配置错误、权限漏洞和安全风险
 
-## 概述
+## 适用场景
+- 插件安全合规检查
+- 配置基线验证
+- Hook 脚本安全审计
 
-<!-- 描述此 Skill 的用途 -->
+## 触发词
+安全扫描、shield scan、权限检查、漏洞检测、security audit
 
-## 触发场景
-
-- <!-- 场景 1 -->
-- <!-- 场景 2 -->
-
-## 使用方法
-
-```
-/skill-name
-```
-
-## 相关资源
-
-- SKILL.md — 完整定义
-- scripts/ — 辅助脚本（若有）
+## 依赖
+无

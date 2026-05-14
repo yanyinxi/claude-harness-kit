@@ -29,7 +29,7 @@ class TestContextInjector:
 
     @pytest.fixture
     def script_path(self):
-        return Path(__file__).parent.parent / "hooks" / "bin" / "context-injector.py"
+        return Path(__file__).parent.parent / "hooks" / "bin" / "context_injector.py"
 
     def test_record_session_start_writes_timestamp(self, temp_project, script_path):
         """SessionStart 应该记录开始时间到 .session_start 文件"""

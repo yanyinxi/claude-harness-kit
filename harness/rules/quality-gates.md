@@ -1,7 +1,6 @@
 ---
 name: quality-gates
 scope: global
-paths: ["**/*.test.*", "**/*.spec.*", "**/tests/**", "**/__tests__/**"]
 ---
 
 # Quality Gates — 每个阶段的退出条件

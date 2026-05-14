@@ -1,25 +1,15 @@
----
-description: Skill 索引 — 由 chk-init 自动生成
----
+# eval-harness
 
-# Skill Name
+## 一句话描述
+EDD 评估框架，提供 pass@k 指标体系和 4 种 grader 类型
 
-## 概述
+## 适用场景
+- eval 任务评估
+- Agent 能力基准测试
+- pass@k 指标计算
 
-<!-- 描述此 Skill 的用途 -->
+## 触发词
+eval、pass@k、评估、grader、能力测试、benchmark
 
-## 触发场景
-
-- <!-- 场景 1 -->
-- <!-- 场景 2 -->
-
-## 使用方法
-
-```
-/skill-name
-```
-
-## 相关资源
-
-- SKILL.md — 完整定义
-- scripts/ — 辅助脚本（若有）
+## 依赖
+无

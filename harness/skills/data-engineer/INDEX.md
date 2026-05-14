@@ -1,25 +1,15 @@
----
-description: Skill 索引 — 由 chk-init 自动生成
----
+# data-engineer
 
-# Skill Name
+## 一句话描述
+数据工程 Skill，提供 Spark ETL、Airflow DAG 和 CDC 实时同步方案
 
-## 概述
+## 适用场景
+- Spark 分布式数据处理
+- Airflow 任务编排
+- 数据仓库建模
 
-<!-- 描述此 Skill 的用途 -->
+## 触发词
+spark、etl、airflow、dag、数据管道、数仓、data pipeline、CDC、Debezium
 
-## 触发场景
-
-- <!-- 场景 1 -->
-- <!-- 场景 2 -->
-
-## 使用方法
-
-```
-/skill-name
-```
-
-## 相关资源
-
-- SKILL.md — 完整定义
-- scripts/ — 辅助脚本（若有）
+## 依赖
+无

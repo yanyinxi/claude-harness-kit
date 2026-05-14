@@ -1,25 +1,15 @@
----
-description: Skill 索引 — 由 chk-init 自动生成
----
+# mobile-dev
 
-# Skill Name
+## 一句话描述
+移动端开发 Skill，支持 iOS/Swift 和 Android/Kotlin 双平台
 
-## 概述
+## 适用场景
+- iOS/Android 应用开发
+- 跨平台桥接
+- App Store/Google Play 上架
 
-<!-- 描述此 Skill 的用途 -->
+## 触发词
+iOS、Android、Swift、Kotlin、Flutter、移动端、mobile、SwiftUI、Jetpack Compose
 
-## 触发场景
-
-- <!-- 场景 1 -->
-- <!-- 场景 2 -->
-
-## 使用方法
-
-```
-/skill-name
-```
-
-## 相关资源
-
-- SKILL.md — 完整定义
-- scripts/ — 辅助脚本（若有）
+## 依赖
+无

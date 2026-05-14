@@ -11,7 +11,7 @@ Verify, then ship.
 Evolve, don't just learn.
 ```
 
-[![Version](https://img.shields.io/badge/CHK-v0.6.1-blue?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/CHK-v0.7.0-blue?style=flat-square)](#)
 [![Platform](https://img.shields.io/badge/Platform-Claude%20Code%20CLI-green?style=flat-square)](#)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square)](LICENSE)
 
@@ -23,108 +23,64 @@ Evolve, don't just learn.
 
 ---
 
-## 你是否也遇到过？
+## CHK vs 原生 Claude Code
 
-```
-😫 每次新会话都要花 30 分钟介绍项目背景
-😫 两个 Agent 同时改一个文件，代码全乱了
-😫 AI 犯过的错，下次遇到照样犯
-😫 团队 10 个人用 AI，输出质量参差不齐
-😫 接手别人的代码库，AI 完全两眼一抹黑
-```
-
-这些问题，不是 AI 不够强——而是**缺乏上下文管理和协作基础设施**。
-
----
-
-## 我们走过的三个阶段
-
-这个问题不是凭空出现的，是我们团队在 AI 落地过程中，一步步踩过来的。
-
-### 阶段一：Prompt Engineering（提示词阶段）
-
-```
-时间：2023-2024 年
-
-状态：痴迷于写更好的 prompt
-├── "你是一个资深 Java 工程师，熟悉 Spring Boot..."
-├── "请用中文回答，代码要有注释..."
-└── "遵循以下格式..."
-
-遇到的问题：
-├── prompt 越写越长，2000 tokens 都不够用
-├── 不同人写的 prompt 质量参差不齐
-├── 跨项目完全无法复用
-└── 每次新会话都要把项目背景重新说一遍
-```
-
-**核心教训**：prompt 再好，也解决不了"AI 不知道我的项目"这个根本问题。
+| 场景 | 原生 Claude Code | CHK 增强 |
+|------|-----------------|----------|
+| 新会话 | 每次要说"这是一个 Spring Boot 项目..." | 自动注入项目上下文，零配置 |
+| 多 Agent | 不支持，只能串行 | 22 个 Agent 并行协作，冲突自动规避 |
+| 错误学习 | 纠正了，下次还犯 | 进化闭环，同一错误永不重现 |
+| 团队协作 | 每个人输出风格各异 | 统一 Agent/Skill/Rules 规范 |
+| 安全审查 | 无内置安全门禁 | Deny-First，危险操作自动拦截 |
+| 任务执行 | 单人模式 | 7 种执行模式（Solo/Team/Ultrawork/Ralph...）|
 
 ---
 
-### 阶段二：Context Management（上下文管理阶段）
+## 演进历程
 
-```
-时间：2024 年
+历经 3 年 AI 落地实践，从痛点中生长出来。
 
-状态：意识到 prompt 只是表面，核心是上下文
-├── 创建 CLAUDE.md 文件描述项目
-├── 用 SessionStart Hook 注入项目上下文
-└── 按需分层：个人 → 团队 → 项目
+**阶段一：Prompt Engineering（2023-2024）**
+痴迷于写更好的 prompt，但 prompt 再好也解决不了「AI 不知道我的项目」这个根本问题。
 
-遇到的问题：
-├── 上下文有了，但 Session 之间不持久
-├── 多 Agent 同时工作，互相打架
-├── 团队 20 个人，各用各的，没有统一规范
-└── AI 犯过的错，下次照样犯，没有学习机制
-```
+**阶段二：Context Management（2024）**
+意识到 prompt 只是表面，核心是上下文。创建 CLAUDE.md、SessionStart Hook，但上下文解决不了「让 AI 持续进化」。
 
-**核心教训**：上下文解决了"让 AI 知道"，但解决不了"让 AI 持续进化"。
+**阶段三：Harness Engineering（2024-2025）**
+借鉴 OpenAI 方法论，不只是「给 AI 信息」，而是系统性地「驾驭 AI 行为」—— 22 Agents + 35 Skills + 进化闭环。
 
 ---
 
-### 阶段三：Harness Engineering（驾驭阶段）
+## 与众不同
 
+**传统 AI Coding — 在黑暗中摸索**
 ```
-时间：2024-2025 年
-
-借鉴 OpenAI Harness Engineering 方法论
-
-不只是"给 AI 信息"，而是系统性地"驾驭 AI 行为"：
-
-  ┌─────────────────────────────────────────┐
-  │           Human steers,                  │
-  │            Agents execute.               │
-  │                                         │
-  │  人是骑手，Agent 是马                    │
-  │  Rule/Skill 是缰绳                       │
-  │  不是让 AI 自由发挥，而是给它划好赛道     │
-  └─────────────────────────────────────────┘
-
-核心改变：
-├── 22 个专业 Agent（架构师、开发、测试、审查...）
-├── 19 个标准 Skill（如何做 TDD、如何设计 API...）
-├── 6 条强制 Rules（协作协议、安全底线...）
-├── 5 个 Hook 事件（上下文注入、安全拦截、质量门禁...）
-└── 进化闭环（犯错 → 学习 → 固化，不再犯第二次）
-
-这就是 CHK 0.6.1
+"这是一个 Spring Boot 项目，数据库用 PostgreSQL..."
+→ 每次会话重复一次
+→ 输出质量依赖你描述得好不好
 ```
 
----
-
-## 换个方式用 AI
-
+**CHK — AI 一进来就懂**
 ```
-❌ 传统方式（AI 在黑暗中摸索）
-   "这是一个 Spring Boot 项目，数据库用 PostgreSQL..."
-   → 每一次会话重复一次
-   → AI 输出质量依赖你描述得好不好
+SessionStart Hook → 自动注入项目上下文
+→ 第一次对话就是有效对话
+→ 60x 上下文启动速度提升
+```
 
-✅ CHK 方式（AI 一进来就懂）
-   SessionStart Hook → 自动注入项目上下文
-   → 第一次对话就是有效对话
-   → 60x 上下文启动速度提升
+**传统团队 — 各行其是**
+```
+张三用 AI → 代码风格 A
+李四用 AI → 代码风格 B
+王五用 AI → 没有测试覆盖
+→ 输出质量参差不齐，全靠个人能力
+```
+
+**CHK 团队 — 统一标准**
+```
+统一 22 个 Agent 定义
+统一 35 个 Skill 规范
+统一 6 条 Rules 约束
+→ 输出质量稳定可预期
 ```
 
 ---
@@ -290,141 +246,15 @@ claude
 
 ---
 
-### 进阶：用自然语言指挥
+### 进阶：直接说你想做什么
 
-在 Claude Code 中，不用记命令，直接说你想做什么：
+不用记命令，直接描述需求：
 
-**场景 1: 启动多 Agent 并行分析**
-
-```
-你: 我要对这 20 个文件统一添加日志
-
-CHK: (自动启动 Ultrawork Mode)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 Ultrawork Mode: 极限并行开始
-
-🔍 分析 20 个文件 → 拆成 4 组
-🔍 派发 4 个并行 Agent
-   → Agent 1: 处理文件 1-5
-   → Agent 2: 处理文件 6-10
-   → Agent 3: 处理文件 11-15
-   → Agent 4: 处理文件 16-20
-   → 汇总结果 → 报告
-
-✅ 完成: 20 个文件全部添加日志
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-**场景 2: 激活特定 Agent**
-
-```
-你: 使用 architect Agent 设计这个模块的架构
-
-CHK: (切换到 architect Agent, 使用 Opus 模型)
-
-# architect 输出:
-## 模块架构设计: 用户标签系统
-
-### 现状分析
-- 现有: 用户表、标签表、关联表
-- 缺失: 打标接口、标签查询接口
-
-### 方案选择
-方案 A: 独立标签服务
-方案 B: 在用户服务内集成（推荐）
-
-推荐理由: 标签是用户域的一部分，拆出去增加复杂度
-
-### 数据模型
-- UserTag: id, user_id, tag_id, created_at
-- Tag: id, name, type, color
-
-### API 设计
-POST /api/users/{userId}/tags     # 打标
-DELETE /api/users/{userId}/tags/{tagId}  # 取消打标
-GET /api/users/{userId}/tags     # 查询标签
-
-### 注意事项
-⚠️ 需要考虑标签数量上限（建议 20 个）
-⚠️ 需要考虑标签重复打标（幂等处理）
-```
-
-**场景 3: 切换执行模式**
-
-```
-你: 用 ralph 模式重写支付模块
-
-CHK: (切换到 Ralph Mode)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🐴 Ralph Mode: 不通过不停止
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🔄 第 1 轮: 生成支付服务
-   → 产出: PayService.java
-   → 测试运行: ❌ 金额精度问题 (BigDecimal)
-
-🔄 第 2 轮: 修复金额精度
-   → 修复: amount.multiply(100).longValue()
-   → 测试运行: ❌ 并发问题
-
-🔄 第 3 轮: 添加分布式锁
-   → 修复: RedissonLock beforePay()
-   → 测试运行: ❌ 事务边界问题
-
-🔄 第 4 轮: 调整事务传播
-   → 修复: @Transactional(propagation=REQUIRES_NEW)
-   → 测试运行: ❌ 幂等性问题
-
-🔄 第 5 轮: 添加幂等 token
-   → 修复: IdempotentTokenInterceptor
-   → 测试运行: ✅
-
-🔄 第 6 轮: 安全审查
-   → security-auditor (Opus): ✅ SQL 注入检查通过
-   → security-auditor (Opus): ✅ 金额篡改检查通过
-
-🔄 第 7 轮: 最终验证
-   → 全量测试: ✅ 45/45 通过
-   → 性能测试: ✅ 1000 TPS
-   → 安全测试: ✅
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ Ralph Mode 完成 (7 轮，全部通过)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-**场景 4: 使用特定 Skill**
-
-```
-你: 使用 tdd skill 实现用户注册功能
-
-CHK: (激活 tdd Skill，执行 TDD 流程)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔴 TDD 模式: Red → Green → Refactor
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🔴 Step 1: 写一个失败的测试
-   → UserServiceTest.register_success()
-   → UserServiceTest.register_email_duplicate()
-   → 测试编译失败（功能未实现）
-
-🟢 Step 2: 让测试通过（最小化实现）
-   → 实现 UserService.register()
-   → 测试运行: ✅ 2/2 通过
-
-🔵 Step 3: 重构
-   → 提取 ValidationUtils
-   → 添加参数校验
-   → 测试运行: ✅ 2/2 通过
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ TDD 完成
-   - 测试数: 5 个
-   - 覆盖率: 78%
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```text
+"我要对 20 个文件统一添加日志"  → 自动派发 4 个并行 Agent
+"用 ralph 模式重写支付模块"     → TDD 强制，不通过不停止
+"使用 architect 设计这个模块"   → 切换到架构师 Agent
+"用 tdd skill 实现注册功能"     → 执行 Red→Green→Refactor
 ```
 
 ---

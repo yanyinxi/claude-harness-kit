@@ -6,12 +6,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/context-injector.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/context_injector.py",
             "timeout": 5
           },
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/auto-start-evolve.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/auto_start_evolve.py",
             "timeout": 10
           },
           {
@@ -120,7 +120,7 @@
           },
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/output-secret-filter.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/output_secret_filter.py",
             "timeout": 3
           }
         ]
@@ -144,7 +144,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/stop-hook-wrapper.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/harness/hooks/bin/stop_hook_wrapper.py",
             "timeout": 15
           },
           {

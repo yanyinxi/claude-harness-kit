@@ -1,25 +1,15 @@
----
-description: Skill 索引 — 由 chk-init 自动生成
----
+# security-pipeline
 
-# Skill Name
+## 一句话描述
+安全扫描流水线 Skill，提供 CWE Top 25 漏洞检测和 STRIDE 威胁建模
 
-## 概述
+## 适用场景
+- 代码安全审计
+- 漏洞检测和修复
+- 安全合规检查
 
-<!-- 描述此 Skill 的用途 -->
+## 触发词
+安全扫描、security scan、CWE、SQL注入、XSS、命令注入、STRIDE、漏洞检测
 
-## 触发场景
-
-- <!-- 场景 1 -->
-- <!-- 场景 2 -->
-
-## 使用方法
-
-```
-/skill-name
-```
-
-## 相关资源
-
-- SKILL.md — 完整定义
-- scripts/ — 辅助脚本（若有）
+## 依赖
+无

@@ -7,7 +7,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 # 运行版本检查
 cd "$ROOT_DIR" || exit
-python3 harness/hooks/bin/version-consistency-check.py
+python3 harness/hooks/bin/version_consistency_check.py
 exit_code=$?
 
 if [ $exit_code -ne 0 ]; then

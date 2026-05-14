@@ -7,8 +7,13 @@
 import json
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
+
+# ── 统一路径导入 ─────────────────────────────────────────────
+# 从 paths.py 获取统一路径常量，避免硬编码
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from paths import KNOWLEDGE_DIR
 
 
 def run_gc_agent(knowledge_dir: Path, output_path: Path):
@@ -81,7 +86,6 @@ def generate_fallback_report(knowledge_dir: Path, output_path: Path, timestamp: 
             issues.append(f"  - 无法解析: {f.name}")
 
     # 过期条目（超过6个月未用）
-    from datetime import timedelta
     cutoff = (datetime.now() - timedelta(days=180)).isoformat()
     stale = [e for e in entries if e.get("last_used_at", "") < cutoff]
     if stale:
@@ -112,9 +116,8 @@ def generate_fallback_report(knowledge_dir: Path, output_path: Path, timestamp: 
 
 
 def main():
-    target = sys.argv[1] if len(sys.argv) > 1 else "."
-    root = Path(target).resolve()
-    knowledge_dir = root / "harness" / "knowledge"
+    # 使用统一路径常量
+    knowledge_dir = KNOWLEDGE_DIR
 
     if not knowledge_dir.exists():
         print(f"错误: 找不到 {knowledge_dir} 目录")

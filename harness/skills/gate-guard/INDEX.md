@@ -1,25 +1,15 @@
----
-description: Skill 索引 — 由 chk-init 自动生成
----
+# gate-guard
 
-# Skill Name
+## 一句话描述
+架构守卫 Skill，DENY→FORCE→ALLOW 三阶段拦截无根据修改
 
-## 概述
+## 适用场景
+- 首次代码变更前拦截
+- 关键业务逻辑修改
+- 核心模块重构
 
-<!-- 描述此 Skill 的用途 -->
+## 触发词
+gate-guard、架构守卫、变更拦截、证据、refactor、修改
 
-## 触发场景
-
-- <!-- 场景 1 -->
-- <!-- 场景 2 -->
-
-## 使用方法
-
-```
-/skill-name
-```
-
-## 相关资源
-
-- SKILL.md — 完整定义
-- scripts/ — 辅助脚本（若有）
+## 依赖
+无

@@ -1,25 +1,15 @@
----
-description: Skill 索引 — 由 chk-init 自动生成
----
+# council
 
-# Skill Name
+## 一句话描述
+四声部决策 Skill，提供 Architect/Skeptic/Pragmatist/Critic 四视角独立分析
 
-## 概述
+## 适用场景
+- 复杂架构决策
+- 方案评审和技术选型
+- 技术债务评估
 
-<!-- 描述此 Skill 的用途 -->
+## 触发词
+council、决策、评审、方案对比、技术选型、architecture review
 
-## 触发场景
-
-- <!-- 场景 1 -->
-- <!-- 场景 2 -->
-
-## 使用方法
-
-```
-/skill-name
-```
-
-## 相关资源
-
-- SKILL.md — 完整定义
-- scripts/ — 辅助脚本（若有）
+## 依赖
+无
