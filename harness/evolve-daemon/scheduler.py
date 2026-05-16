@@ -19,10 +19,12 @@ from datetime import datetime
 from pathlib import Path
 from threading import Lock
 
-# 添加 harness 到 Python path
-_harness_root = Path(__file__).parent.parent.parent
-if str(_harness_root) not in sys.path:
-    sys.path.insert(0, str(_harness_root))
+# 统一 sys.path 设置
+_project_root = Path(__file__).parent.parent.parent
+if str(_project_root) not in sys.path:
+    sys.path.insert(0, str(_project_root))
+from harness.paths import setup_syspath
+setup_syspath(_project_root)
 
 from harness._core.exceptions import handle_exception
 
@@ -40,7 +42,7 @@ except ImportError:
 
 
 from _daemon_config import load_config
-from _find_root import find_root as get_project_root
+from harness.paths import find_root as get_project_root
 
 
 def parse_interval(interval_str: str) -> int:
@@ -81,7 +83,7 @@ def parse_interval(interval_str: str) -> int:
 def run_evolution_cycle():
     """执行一次完整的进化周期"""
     root = get_project_root()
-    daemon_path = root / "evolve-daemon" / "daemon.py"
+    daemon_path = root / "harness" / "evolve-daemon" / "daemon.py"
 
     if not daemon_path.exists():
         print(f"[{datetime.now().isoformat()}] daemon.py not found: {daemon_path}")
@@ -340,7 +342,7 @@ class SchedulerManager:
         """定期回滚检查"""
         try:
             root = get_project_root()
-            daemon_path = root / "evolve-daemon" / "daemon.py"
+            daemon_path = root / "harness" / "evolve-daemon" / "daemon.py"
 
             result = subprocess.run(
                 [sys.executable, str(daemon_path), "rollback-check"],

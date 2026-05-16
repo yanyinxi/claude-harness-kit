@@ -1,6 +1,6 @@
 {
   "knowledge_stats": {
-    "9aa01460": {
+    "auto-c51fe453": {
       "apply_count": 1,
       "success_count": 1,
       "failure_count": 0,
@@ -8,23 +8,23 @@
       "success_rate": 1.0,
       "status": "testing"
     },
-    "446e83f9": {
-      "apply_count": 1,
-      "success_count": 1,
-      "failure_count": 0,
-      "partial_count": 0,
-      "success_rate": 1.0,
-      "status": "testing"
-    },
-    "5fa14ad3": {
+    "auto-2b43c1ea": {
       "apply_count": 1,
       "success_count": 0,
-      "failure_count": 0,
-      "partial_count": 1,
+      "failure_count": 1,
+      "partial_count": 0,
       "success_rate": 0.0,
       "status": "testing"
     },
-    "fa6e54e7": {
+    "auto-d66a9aad": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "auto-9f4c446b": {
       "apply_count": 1,
       "success_count": 1,
       "failure_count": 0,
@@ -32,14 +32,46 @@
       "success_rate": 1.0,
       "status": "testing"
     },
-    "df22bb5e": {
+    "auto-fa31d2ad": {
       "apply_count": 1,
       "success_count": 0,
-      "failure_count": 0,
-      "partial_count": 1,
+      "failure_count": 1,
+      "partial_count": 0,
       "success_rate": 0.0,
       "status": "testing"
+    },
+    "auto-b7d6519c": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "auto-683b729f": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-e776b831": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-c3740391": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
     }
   },
-  "updated": "2026-05-03T11:31:25.680383"
+  "updated": "2026-05-16T12:16:00.789291"
 }

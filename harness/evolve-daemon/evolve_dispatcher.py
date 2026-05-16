@@ -20,7 +20,7 @@ from pathlib import Path
 from datetime import datetime
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from _find_root import find_root as get_project_root
+from harness.paths import find_root as get_project_root
 
 
 def get_dimension(target: str) -> str:
@@ -61,30 +61,35 @@ def get_dimension(target: str) -> str:
         return "instinct"
 
 
+def _load_dimension_thresholds() -> dict:
+    """
+    从 config.yaml 统一加载 8 个维度的进化阈值。
+
+    阈值定义在 config.yaml 的 thresholds.dimensions 块中，
+    所有模块统一从此处读取，禁止硬编码。
+    """
+    try:
+        from _daemon_config import load_config
+        config = load_config()
+        dims = config.get("thresholds", {}).get("dimensions", {})
+        if dims:
+            return {k: v.get("min_count", 3) for k, v in dims.items()}
+    except Exception:
+        pass
+    # 兜底默认值（仅在 config.yaml 不可用时使用）
+    return {
+        "agent": 3, "skill": 3, "rule": 5, "instinct": 2,
+        "performance": 4, "interaction": 4, "security": 2, "context": 3,
+    }
+
+
 def meets_threshold(dimension: str, count: int) -> bool:
     """
     判断纠正次数是否达到维度阈值。
 
-    维度差异化阈值:
-      agent:       >= 3 次
-      skill:       >= 3 次
-      rule:        >= 5 次（Rules 改动更谨慎）
-      instinct:    >= 2 次
-      performance: >= 4 次（性能问题需谨慎）
-      interaction: >= 4 次（交互问题积累后处理）
-      security:    >= 2 次（安全问题立即关注）
-      context:     >= 3 次
+    阈值从 config.yaml 的 thresholds.dimensions 块读取，统一管理。
     """
-    thresholds = {
-        "agent": 3,
-        "skill": 3,
-        "rule": 5,
-        "instinct": 2,
-        "performance": 4,
-        "interaction": 4,
-        "security": 2,
-        "context": 3,
-    }
+    thresholds = _load_dimension_thresholds()
     return count >= thresholds.get(dimension, 3)
 
 

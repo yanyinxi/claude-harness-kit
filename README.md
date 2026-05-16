@@ -1,442 +1,150 @@
 # Claude Harness Kit (CHK)
 
-> **让 AI 真正"看懂"你的代码库 — 团队级 AI 驾驭工具包**
->
-> CHK = Claude Harness Kit ，  使用CHK描述。
+> 让 AI 真正"看懂"你的代码库 — Claude Code 插件，安装即用
 
-```
-Human steers, Agents execute.
-Context first, then reasoning.
-Verify, then ship.
-Evolve, don't just learn.
-```
-
-[![Version](https://img.shields.io/badge/CHK-v0.7.0-blue?style=flat-square)](#)
-[![Platform](https://img.shields.io/badge/Platform-Claude%20Code%20CLI-green?style=flat-square)](#)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square)](LICENSE)
+[![Version](https://img.shields.io/badge/CHK-v0.9.0-blue)](#)
+[![Platform](https://img.shields.io/badge/Platform-Claude%20Code%20Plugin-green)](#)
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
 
 ---
 
-## 一句话定义
+## 痛点 & 目标
 
-**CHK（ Claude Harness Kit）** 解决一个根本问题：AI Coding 工具在小项目上表现惊艳，但一到团队、大代码库、复杂任务就歇菜——因为 AI **根本不知道你的项目是什么**。
+**AI 写代码不慢，但"不懂你的项目"是致命的**：每次新会话要重新描述项目 → 团队 20 人输出风格各异 → 纠正过的错反复犯 → 100+ 存量代码库没人敢让 AI 碰。
+
+**CHK 解决的就是这个**：让 AI 一进会话就懂项目，22 个 Agent 并行协作，错误自动进化不重现。目标是把 20 人团队 + 100+ 代码库的 AI 开发效率提升 **2.5x**。
+
+---
+
+## 安装
+
+```bash
+# 1. 克隆
+git clone https://github.com/yanyinxi/claude-harness-kit.git
+cd claude-harness-kit
+
+# 2. 一键安装
+bash ./harness/cli/install.sh
+
+# 3. 验证
+claude plugins list
+# 看到 ✔ claude-harness-kit 即成功
+
+
+### 卸载插件（如果不想用了执行下面命令）
+claude plugin uninstall claude-harness-kit --scope user
+
+```
+
+---
+
+## 5 分钟体验
+
+```bash
+cd /path/to/your-project   # 进入你的项目
+claude                     # 启动 Claude Code
+```
+
+在聊天框输入：
+
+```
+/chk-init                  # 让 AI 先认识你的项目（首次必做）
+
+/chk-team 实现用户登录功能  # 完整开发流程：需求→设计→编码→测试→审查
+```
+
+---
+
+## 命令速查
+
+| 场景 | 命令 | 示例 |
+|------|------|------|
+| 初始化项目 | `/chk-init` | `/chk-init` |
+| 开发新功能 | `/chk-team <需求>` | `/chk-team 实现用户权限管理` |
+| 快速修 Bug | `/chk-auto <问题>` | `/chk-auto 修复登录页密码错误不提示` |
+| 批量重构 | `/chk-ultra <目标>` | `/chk-ultra 把 30 个文件的 console.log 改成 logging` |
+| 核心代码（不能出错）| `/chk-ralph <需求>` | `/chk-ralph 实现支付回调验签` |
+| 审查代码 | `/chk-ccg <内容>` | `/chk-ccg 审查这次 PR 的改动` |
+| 数据库迁移 | `/chk-pipeline <目标>` | `/chk-pipeline 把 user 表拆成 user + profile` |
+| 简单问答 | `/chk-solo <问题>` | `/chk-solo 这个项目的缓存怎么设计的` |
+| 查看状态 | `/chk-status` | `/chk-status` |
+| 清理过期知识 | `/chk-gc` | `/chk-gc` |
+
+**场景选择指南**：
+
+```
+复杂程度低 ────────────────────────────────────────→ 复杂程度高
+
+/chk-solo       /chk-auto      /chk-team     /chk-ultra     /chk-ralph
+（简单问答）     （快速修Bug）   （新功能开发）  （批量重构）    （零容忍）
+```
 
 ---
 
 ## CHK vs 原生 Claude Code
 
-| 场景 | 原生 Claude Code | CHK 增强 |
-|------|-----------------|----------|
-| 新会话 | 每次要说"这是一个 Spring Boot 项目..." | 自动注入项目上下文，零配置 |
-| 多 Agent | 不支持，只能串行 | 22 个 Agent 并行协作，冲突自动规避 |
-| 错误学习 | 纠正了，下次还犯 | 进化闭环，同一错误永不重现 |
-| 团队协作 | 每个人输出风格各异 | 统一 Agent/Skill/Rules 规范 |
-| 安全审查 | 无内置安全门禁 | Deny-First，危险操作自动拦截 |
-| 任务执行 | 单人模式 | 7 种执行模式（Solo/Team/Ultrawork/Ralph...）|
+| 痛点 | 原生 | CHK |
+|------|------|-----|
+| 新会话要重复描述项目 | 每次说"这是 Spring Boot 项目…" | 自动注入，零配置 |
+| 多 Agent 不可用 | 只能串行 | 22 Agent 并行，冲突自动规避 |
+| 错误反复犯 | 纠正 100 次，犯错 100 次 | 进化闭环，同错不重现 |
+| 团队输出不一致 | 每人风格各异 | 统一 Agent/Skill/Rules 规范 |
+| 无安全门禁 | 危险操作无拦截 | Deny-First，自动拦截 |
 
 ---
 
-## 演进历程
+## 核心能力
 
-历经 3 年 AI 落地实践，从痛点中生长出来。
-
-**阶段一：Prompt Engineering（2023-2024）**
-痴迷于写更好的 prompt，但 prompt 再好也解决不了「AI 不知道我的项目」这个根本问题。
-
-**阶段二：Context Management（2024）**
-意识到 prompt 只是表面，核心是上下文。创建 CLAUDE.md、SessionStart Hook，但上下文解决不了「让 AI 持续进化」。
-
-**阶段三：Harness Engineering（2024-2025）**
-借鉴 OpenAI 方法论，不只是「给 AI 信息」，而是系统性地「驾驭 AI 行为」—— 22 Agents + 35 Skills + 进化闭环。
+- **22 个 Agent**：architect / backend-dev / frontend-dev / code-reviewer / security-auditor / qa-tester …
+- **36 个 Skill**：testing / tdd / debugging / api-designer / database-designer / performance …
+- **8 种模式**：Solo → Auto → Team → Ultra → Pipeline → Ralph → CCG → Default
+- **自动进化**：用户纠正 → 置信度累积 → 自动优化 Agent/Skill/Rule
 
 ---
 
-## 与众不同
+## 目录结构
 
-**传统 AI Coding — 在黑暗中摸索**
 ```
-"这是一个 Spring Boot 项目，数据库用 PostgreSQL..."
-→ 每次会话重复一次
-→ 输出质量依赖你描述得好不好
-```
-
-**CHK — AI 一进来就懂**
-```
-SessionStart Hook → 自动注入项目上下文
-→ 第一次对话就是有效对话
-→ 60x 上下文启动速度提升
-```
-
-**传统团队 — 各行其是**
-```
-张三用 AI → 代码风格 A
-李四用 AI → 代码风格 B
-王五用 AI → 没有测试覆盖
-→ 输出质量参差不齐，全靠个人能力
-```
-
-**CHK 团队 — 统一标准**
-```
-统一 22 个 Agent 定义
-统一 35 个 Skill 规范
-统一 6 条 Rules 约束
-→ 输出质量稳定可预期
+claude-harness-kit/
+├── agents/        # 22 个 Agent 定义 — AI 的角色分工
+├── skills/        # 36 个 Skill 规范 — AI 的工作流程
+├── hooks/         # SessionStart/Stop 等自动化钩子
+├── harness/
+│   ├── evolve-daemon/  # 自动进化引擎 — 越用越聪明
+│   ├── knowledge/      # 双知识库 — 专家知识 + 进化知识
+│   ├── memory/         # 记忆系统 — 团队经验自动积累
+│   ├── rules/          # 团队规范 — 统一输出标准
+│   └── cli/            # kit 命令行工具
+├── index.js       # 插件入口
+└── package.json
 ```
 
 ---
 
-## 核心能力一览
+## FAQ
 
-### 多 Agent 并行协作 — 不再"打架"
+**Q: 和 Claude Code 冲突吗？**
+> 不冲突。CHK 是插件，补充了上下文、协作、进化能力。
 
-```
-CHK 自动处理：
+**Q: 团队都要装吗？**
+> 负责人装一次，成员 `claude plugins install claude-harness-kit` 即可。
 
-   ┌─ 冲突检测 ─────────────────────────────┐
-   │  Agent A 要改 file.java                 │
-   │  Agent B 也要改 file.java              │
-   │  → 自动识别 → 强制串行                  │
-   │  → 不会覆盖，不会冲突                  │
-   └────────────────────────────────────────┘
+**Q: 会自动改我的代码吗？**
+> 不会。安全模块锁定，高风险变更需人工审批。
 
-   ┌─ 任务拆解 ─────────────────────────────┐
-   │  "实现标签过滤"                         │
-   │  → 自动拆成 5 个独立任务                 │
-   │  → backend | frontend | database       │
-   │  → 可以并行的并行，不能并行的串行         │
-   └────────────────────────────────────────┘
-
-   ┌─ 阶段交接 ─────────────────────────────┐
-   │  研究 → 设计 → 实现 → 审查 → 交付        │
-   │  产出物写文件，不丢在上下文里            │
-   │  /compact 之后精确恢复                   │
-   └────────────────────────────────────────┘
-```
-
-### 持续进化 — 犯过的错不再犯
-
-```
-❌ 没有进化（大多数工具）
-   你纠正 AI → AI 记住了 → 下次还是犯错
-   → 纠正 100 次，犯错 100 次
-
-✅ CHK 进化闭环
-   纠正 1 次 → instinct 记录（置信度 0.3）
-   纠正 2 次 → 置信度 0.5，观察报告
-   纠正 3 次 → 置信度 0.7，生成提案
-   提案通过 → 自动修复 Skill/Rule
-   7天验证 → 效果提升 → 固化
-   → 同一个错，永远只犯一次
-```
-
-### 团队级规范 — 新人也能用好 AI
-
-```
-20 人团队：
-
-   没有 CHK:
-     张三用 AI → 代码风格 A
-     李四用 AI → 代码风格 B
-     王五用 AI → 没有测试覆盖
-     → 输出质量参差不齐，全靠个人能力
-
-   有 CHK:
-     统一 22 个 Agent 定义
-     统一 19 个 Skill 规范
-     统一 6 条 Rules 约束
-     统一插件分发
-     → 输出质量稳定可预期
-```
+**Q: 装完不生效？**
+> 重启 Claude Code，或 `claude plugins update claude-harness-kit`。
 
 ---
 
-## 快速开始
+## 故障排查
 
-### 安装（两步搞定）
-
-**Step 1：克隆项目**
-
-```bash
-git clone https://github.com/yanyinxi/claude-harness-kit.git
-cd claude-harness-kit
-```
-
-**Step 2：一键安装（插件 + 斜杠命令，一次搞定）**
-
-```bash
-bash ./cli/install.sh
-
-# 查看插件是否安装成功
-claude plugins list 
-
-显示表示成功
-  ❯ claude-harness-kit@claude-harness-kit
-    Version: 0.4.0
-    Scope: user
-    Status: ✔ enabled
-
-```
-
-输出示例：
-
-```text
-CHK 一键安装开始...
-
-Step 1: 安装 Claude Code 插件
-  ✅ marketplace 已添加
-  ✅ 插件安装成功
-
-Step 2: 复制斜杠命令
-  ✅ chk-init
-  ✅ chk-team
-  ✅ chk-auto
-  ...
-  ✅ 斜杠命令已复制到 ~/.claude/skills
-
-✅ 安装完成！
-```
-
-
-### 卸载插件
-
-```bash
-claude plugins uninstall claude-harness-kit@claude-harness-kit --scope user  
-```
----
-
-### 使用
-
-**Step 1：进入你的项目目录，启动 Claude Code**
-
-```bash
-cd /path/to/your-project
-
-claude
-```
-
-**Step 2：在聊天框输入斜杠命令**
-
-在 Claude Code 聊天框输入 `/chk-init` 等命令即可：
-```
-线上有个 Bug      → /chk-auto
-新功能要从零做    → /chk-team
-代码要全面重构     → /chk-ultra
-写转账/加密代码   → /chk-ralph
-系统要怎么改      → /chk-ccg
-接手一个新项目   → /chk-init
-```
+| 问题 | 解决 |
+|------|------|
+| `Plugin not found` | `claude plugins marketplace add --scope local $(pwd)` 然后重装 |
+| 装完不生效 | 重启 Claude Code |
+| 找不到 chk 命令 | 重新执行 `bash ./harness/cli/install.sh` |
 
 ---
-
-### 常用命令
-
-| 你想做什么 | 输入命令 | 备注 |
-| ---------- | -------- | ---- |
-| 初始化新项目 | `/chk-init` | 自动分析技术栈，生成 CLAUDE.md，省去 30 分钟配置 |
-| 快速修复 Bug | `/chk-auto` | 全自动端到端，5 分钟搞定，零干预 |
-| 功能开发（默认） | `/chk-team` | 标准 5 阶段流程，研究→设计→实现→审查→交付 |
-| 批量代码改造 | `/chk-ultra` | 极限并行，3-5 个 Agent 同时工作，效率翻倍 |
-| 数据库迁移 | `/chk-pipeline` | 严格阶段顺序，每一步验证通过才进入下一步 |
-| 写支付/安全代码 | `/chk-ralph` | TDD 强制，不通过测试不停止，零风险 |
-| 架构决策 | `/chk-ccg` | 三方（Claude + Codex + Gemini）独立审查，最优方案 |
-| 简单问答 | `/chk-solo` | 直接对话，不用 Agent，零开销 |
-| 查看状态 | `/chk-status` | 查看当前模式、Hooks、Sessions、Instinct |
-| 清理过期知识 | `/chk-gc` | 扫描 .claude/knowledge/，清理漂移和过时内容 |
-| 查看帮助 | `/chk-help` | 显示所有命令和场景选择指南 |
-
----
-
-### 进阶：直接说你想做什么
-
-不用记命令，直接描述需求：
-
-```text
-"我要对 20 个文件统一添加日志"  → 自动派发 4 个并行 Agent
-"用 ralph 模式重写支付模块"     → TDD 强制，不通过不停止
-"使用 architect 设计这个模块"   → 切换到架构师 Agent
-"用 tdd skill 实现注册功能"     → 执行 Red→Green→Refactor
-```
-
----
-
-## 执行流程可视化
-
-### 标准开发（Team 模式）
-
-```
-输入 /chk-team，然后说：我要实现素材标签过滤
-
-Phase 1: Research (并行分析) — ~2 min
-  🔍 explore ──→ 找到相关代码和调用链
-  🔍 analyzer ──→ 分析模块结构和依赖
-  🔍 impact ────→ 评估变更影响范围
-  → research/summary.md
-          ↓
-Phase 2: Plan (串行设计) — ~5 min
-  🏗️ architect (Opus) ──→ 架构设计
-  📋 tech-lead (Opus) ──→ 技术评审
-  → plan/architecture.md
-          ↓
-Phase 3: Implement (并行编码) — ~15 min
-  Task 1: backend ──→ Service 层逻辑      [并行]
-  Task 2: frontend ──→ 标签选择器组件   [并行]
-  Task 3: database ──→ 动态 SQL + 索引   [并行]
-  → output/task_*.md
-          ↓
-Phase 4: Verify (并行审查) — ~10 min
-  🔍 code-reviewer ──→ 5 维度审查（正确性/性能/安全...）
-  🔍 qa-tester ────→ 测试覆盖验证
-  🔍 security ──────→ 安全审计（Opus）
-  → review/report.md
-          ↓
-Phase 5: Ship (交付) — ~3 min
-  ✅ 最终验证 → ✅ 审查通过 → ✅ git commit + push
-
-总耗时: ~35 min（传统串行方式: ~90 min）
-
-```
-
----
-
-## 架构图
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Claude Harness Kit (CHK)                    │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  Layer 4: 进化层  (让 AI 越来越聪明)                        │
-│  ┌───────────┐  ┌────────────┐  ┌─────────────────────┐  │
-│  │ Instinct  │  │ evolve-    │  │  Knowledge          │  │
-│  │ System    │  │ daemon     │  │  Lifecycle          │  │
-│  │ 0.3→0.9   │  │ 守护进程   │  │  draft→verified→   │  │
-│  │ 置信度累积 │  │           │  │  proven 自动衰减     │  │
-│  └───────────┘  └────────────┘  └─────────────────────┘  │
-│                                                             │
-│  Layer 3: 编排层  (多 Agent 协作)                            │
-│  ┌─────────────────────────────────────────────────────┐  │
-│  │  Orchestrator — 冲突检测 | 任务拆解 | 结果汇聚       │  │
-│  │  7 种执行模式: Solo | Autopilot | Team | Ultrawork  │  │
-│  │                 Pipeline | Ralph | CCG              │  │
-│  └─────────────────────────────────────────────────────┘  │
-│                                                             │
-│  Layer 2: 能力层  (22 Agents + 19 Skills + 6 Rules)        │
-│  ┌─────────────────────────────────────────────────────┐  │
-│  │  Opus: architect | tech-lead | security-auditor     │  │
-│  │  Sonnet: executor | backend | frontend | database   │  │
-│  │          code-reviewer | qa-tester | ralph | ...     │  │
-│  │  Haiku: explore | codebase-analyzer | impact-analyzer│  │
-│  └─────────────────────────────────────────────────────┘  │
-│                                                             │
-│  Layer 1: 上下文层  (让 AI 快速看懂项目)                    │
-│  ┌─────────────────────────────────────────────────────┐  │
-│  │  4 级 CLAUDE.md: 个人 → 团队 → 项目 → 模块          │  │
-│  │  Hook: SessionStart 自动注入项目上下文               │  │
-│  │  Progressive: 3级索引节省 90% 上下文占用            │  │
-│  └─────────────────────────────────────────────────────┘  │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 竞品对比
-
-| 工具 | 多 Agent 协作 | 上下文管理 | 自动进化 | 团队规范 | 适合场景 |
-|------|:-------------:|:---------:|:-------:|:-------:|---------|
-| **CHK** | ✅ 完整协议 | ✅ 4级分层 | ✅ 闭环 | ✅ 完善 | **20+ 人团队** |
-| everything-claude-code | ✅ 基础 | ⚠️ 分散 | ✅ Instinct | ✅ | 插件生态 |
-| oh-my-claudecode | ✅ 7 模式 | ❌ | ✅ Learner | ❌ | 个人效率 |
-| Superpowers | ❌ | ❌ | ❌ | ❌ | TDD 流程 |
-| Claude Code 原生 | ❌ | ❌ | ❌ | ❌ | 个人小项目 |
-| GitHub Copilot | ❌ | ❌ | ❌ | ❌ | IDE 辅助 |
-
-### CHK 的独特价值
-
-```
-✅ 上下文启动: 30 分钟 → 30 秒 (60x)
-✅ 开发效率: 复杂任务 2.5x 提升
-✅ 错误率: 同一错误重复出现 40% → <5% (8x)
-✅ 新人上手: 1 周 → 1 天 (7x)
-✅ 审查覆盖: 30% → 100% (3.3x)
-```
-
----
-
-## 常见问题
-
-**Q: 需要学习很多新东西吗？**
-> 不用。安装后输入 `/chk-init` 初始化项目，日常用 `/chk-team` 开发，和平时用 Claude Code 一样。
-
-**Q: 和 Claude Code 原生冲突吗？**
-> 不冲突。CHK 是插件，运行在 Claude Code 之上，补充了上下文、协作、进化能力。
-
-**Q: 团队所有人都要安装吗？**
-> 团队负责人安装一次，配置中央仓库，成员运行 `claude plugins install claude-harness-kit` 同步即可。
-
-**Q: 我的项目很小，需要 CHK 吗？**
-> 如果是个人小项目，Claude Code 原生就够用了。CHK 适合需要多人协作、有大量存量代码、或需要持续维护的项目。
-
-**Q: evolve-daemon 会自动修改我的代码吗？**
-> 不会。安全模块（`rules/security.md`）被锁定，AI 不可修改。只有低风险变更才自动应用，高风险变更需要人工审批。
-
-**Q: 安装时报错 "Plugin not found in any marketplace"？**
-> 这是因为需要先添加插件市场。请使用「安装方式二：本地安装」的方式，先执行 `claude plugins marketplace add --scope local $(pwd)`，然后再安装。
-
-**Q: 安装后不生效？**
-> 请重启 Claude Code（退出后重新进入），或者尝试 `claude plugins update claude-harness-kit`。
-
-**Q: 可以在 Windows 上使用吗？**
-> CHK 主要面向 macOS 和 Linux。Windows 用户可以在 WSL2 环境下使用。
-
----
-
-## 安装故障排查
-
-| 问题 | 解决方案 |
-|------|---------|
-| `Plugin not found in marketplace` | 先运行 `claude plugins marketplace add --scope local $(pwd)` |
-| `marketplace.json not found` | 确保 marketplace.json 在 `.claude-plugin/` 目录下 |
-| 插件已安装但不生效 | 重启 Claude Code，或重新安装插件 |
-| 找不到 chk 命令 | 重新安装：`claude plugins install claude-harness-kit@claude-harness-kit --scope local $(pwd)` |
-
-
----
-
-## 设计原则
-
-```
-1. Human steers, Agents execute
-   → 人是骑手，Agent 是马，Rule/Skill 是缰绳
-
-2. 上下文优先于推理
-   → 与其让 AI 猜，不如告诉它
-
-3. 安全优先于功能
-   → Deny-First，危险命令直接拦截
-
-4. 验证闭环优先于一次生成
-   → Ralph Loop：不通过不停止
-
-5. 渐进式复杂度
-   → Solo → Team → Ultrawork → Ralph，按需引入
-```
-
----
-
-## License
 
 MIT License
-
-## 致谢
-
-借鉴了以下优秀项目的设计理念：
-
-| 来源 | 借鉴点 |
-|------|--------|
-| **OpenAI Harness Engineering** | Human steers, Agents execute / 知识生命周期 |
-| **everything-claude-code** | 5 阶段编排 / Instinct v2 |
-| **oh-my-claudecode** | 7 种执行模式 / Ralph Loop |
-| **Superpowers** | 7 阶段工程流水线 / TDD 铁律 |
-| **Claude Code 源码 (KAIROS)** | 后台 daemon / Prompt 缓存优化 |
-| **Harness CI/CD** | AutoFix / AI 验证 + 自动回滚 |

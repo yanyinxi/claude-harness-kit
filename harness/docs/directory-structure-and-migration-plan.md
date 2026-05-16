@@ -1,6 +1,10 @@
 # CHK 目录结构规范与迁移方案
 
 > 本文档定义 CHK 项目的目录架构规范，以及现状改造的执行计划。
+> 
+> **状态**: PARTIALLY EXECUTED (2026-05-16)
+> **已完成**: harness/ 目录统一、paths.py 全局路径配置、instinct → memory 迁移、agents/skills/hooks 迁移至插件根目录
+> **待完成**: data/ archive 归档机制、.claude/data/ worktrees/ rate-limits/ 清理
 
 ---
 

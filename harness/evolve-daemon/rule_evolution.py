@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Rule 维度进化策略"""
 import json
+from datetime import datetime
 from pathlib import Path
 
 
@@ -11,8 +12,9 @@ def evolve_rule(target: str, corrections: list, config: dict, root: Path) -> dic
     rule_file = rules_dir / f"{rule_name}.md"
     if not rule_file.exists():
         return {"success": False, "error": f"Rule file not found: {rule_file}"}
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     suggested_changes = _generate_rule_change(rule_name, corrections)
-    return {"success": True, "action": "propose", "target_file": str(rule_file), "change_type": "exception", "suggested_change": f"\n## [Auto-Evolved Exceptions]\n以下情况为例外：\n{suggested_changes}\n"}
+    return {"success": True, "action": "propose", "target_file": str(rule_file), "change_type": "exception", "suggested_change": f"\n## [Auto-Evolved Exceptions] {timestamp}\n以下情况为例外：\n{suggested_changes}\n"}
 
 
 def _generate_rule_change(rule_name: str, corrections: list) -> str:

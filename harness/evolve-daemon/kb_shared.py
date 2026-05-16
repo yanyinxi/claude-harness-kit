@@ -95,7 +95,13 @@ def get_llm_config() -> dict:
     }
 
 def create_llm_client() -> "Anthropic":  # noqa: F821
-    """创建统一的 LLM 客户端"""
+    """
+    创建统一的 LLM 客户端。
+
+    ⚠️ 已废弃：进化系统的 LLM 任务应由 Claude Code 会话中的 Agent 执行，
+    不再独立配置 Anthropic API。此函数保留仅为向后兼容。
+    未来版本将删除，改为生成进化任务文件。
+    """
     from anthropic import Anthropic
     _ensure_env_loaded()
     cfg = get_llm_config()
@@ -151,13 +157,15 @@ def _evolve_dir() -> Path:
 
 
 def _knowledge_dir() -> Path:
-    d = _evolve_dir() / "knowledge"
+    """返回统一的知识库目录（harness/knowledge/evolved/）"""
+    from paths import EVOLVED_KB_DIR
+    d = EVOLVED_KB_DIR
     d.mkdir(parents=True, exist_ok=True)
     return d
 
 
 KB_PATH = _knowledge_dir() / "knowledge_base.jsonl"
-INSTINCT_PATH = _find_root() / "harness" / "memory" / "instinct-record.json"
+from harness.paths import INSTINCT_FILE as INSTINCT_PATH
 EFFECT_PATH = _knowledge_dir() / "effect_tracking.jsonl"
 MERGE_COOLDOWN_PATH = _knowledge_dir() / "merge_cooldown.jsonl"
 NOTIFY_COOLDOWN_PATH = _knowledge_dir() / "notify_cooldown.jsonl"
@@ -257,14 +265,11 @@ def write_json(path: Path, data):
 # ── 知识库读写 ─────────────────────────────────────────────
 def load_knowledge_base(root: Optional[Path] = None) -> list[dict]:
     """加载所有知识库条目"""
-    from paths import EVOLVED_KB_DIR, KNOWLEDGE_DIR  # 延迟导入避免循环
+    from paths import EVOLVED_KB_DIR
     if root:
-        kb_file = root / "harness" / "evolve-daemon" / "knowledge" / "knowledge_base.jsonl"
+        kb_file = root / "harness" / "knowledge" / "evolved" / "knowledge_base.jsonl"
     else:
-        # 使用统一的进化知识库路径
         kb_file = EVOLVED_KB_DIR / "knowledge_base.jsonl"
-        if not kb_file.exists():
-            kb_file = KNOWLEDGE_DIR / "knowledge_base.jsonl"
     return read_jsonl(kb_file)
 
 
@@ -276,25 +281,21 @@ def load_active_kb(root: Optional[Path] = None) -> list[dict]:
 
 def save_kb_entry(entry: dict, root: Optional[Path] = None):
     """追加一条知识到知识库"""
-    from paths import EVOLVED_KB_DIR, KNOWLEDGE_DIR  # 延迟导入避免循环
+    from paths import EVOLVED_KB_DIR
     if root:
-        kb_file = root / "harness" / "evolve-daemon" / "knowledge" / "knowledge_base.jsonl"
+        kb_file = root / "harness" / "knowledge" / "evolved" / "knowledge_base.jsonl"
     else:
         kb_file = EVOLVED_KB_DIR / "knowledge_base.jsonl"
-        if not kb_file.exists():
-            kb_file = KNOWLEDGE_DIR / "knowledge_base.jsonl"
     append_jsonl(kb_file, entry)
 
 
 def update_kb_all(entries: list[dict], root: Optional[Path] = None):
     """重写整个知识库"""
-    from paths import EVOLVED_KB_DIR, KNOWLEDGE_DIR  # 延迟导入避免循环
+    from paths import EVOLVED_KB_DIR
     if root:
-        kb_file = root / "harness" / "evolve-daemon" / "knowledge" / "knowledge_base.jsonl"
+        kb_file = root / "harness" / "knowledge" / "evolved" / "knowledge_base.jsonl"
     else:
         kb_file = EVOLVED_KB_DIR / "knowledge_base.jsonl"
-        if not kb_file.exists():
-            kb_file = KNOWLEDGE_DIR / "knowledge_base.jsonl"
     write_jsonl(kb_file, entries)
 
 

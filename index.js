@@ -4,50 +4,56 @@
  *
  * This plugin provides:
  * - 22 specialized Agents (architect, orchestrator, code-reviewer, etc.)
- * - 19 Skills (tdd, testing, debugging, etc.)
- * - 6 Rules (collaboration, security, quality-gates, etc.)
+ * - 38+ Skills (tdd, testing, debugging, etc.)
  * - Hook system for session management, safety checks, quality gates
  * - evolve-daemon for continuous learning
+ * - 8 execution modes (solo, auto, team, ultra, pipeline, ralph, ccg, default)
  *
  * Usage:
  *   In Claude Code, use natural language to invoke CHK capabilities:
  *   - "分析一下如何实现这个功能"
- *   - "使用 architect Agent 设计架构"
- *   - "用 ralph 模式重写支付模块"
+ *   - "使用 /chk-team 进入团队开发模式"
+ *   - "用 /chk-ralph TDD 重写支付模块"
  */
 
 const path = require('path');
 const fs = require('fs');
 
+// 插件路径（官方规范）
 const PLUGIN_ROOT = __dirname;
-const HARNESS_DIR = path.join(PLUGIN_ROOT, 'harness');
-const AGENTS_DIR = path.join(HARNESS_DIR, 'agents');
-const SKILLS_DIR = path.join(HARNESS_DIR, 'skills');
-const RULES_DIR = path.join(HARNESS_DIR, 'rules');
-const HOOKS_DIR = path.join(HARNESS_DIR, 'hooks');
+const ROOT_AGENTS_DIR = path.join(PLUGIN_ROOT, 'agents');
+const ROOT_SKILLS_DIR = path.join(PLUGIN_ROOT, 'skills');
+const ROOT_HOOKS_DIR = path.join(PLUGIN_ROOT, 'hooks');
+const COMMANDS_DIR = path.join(PLUGIN_ROOT, 'commands');
 
-// Load agents
+// CHK 内部模块路径
+const HARNESS_DIR = path.join(PLUGIN_ROOT, 'harness');
+const RULES_DIR = path.join(HARNESS_DIR, 'rules');
+
+// Load agents from plugins root
 function loadAgents() {
     const agents = {};
-    if (fs.existsSync(AGENTS_DIR)) {
-        fs.readdirSync(AGENTS_DIR).forEach(file => {
+    if (fs.existsSync(ROOT_AGENTS_DIR)) {
+        fs.readdirSync(ROOT_AGENTS_DIR).forEach(file => {
             if (file.endsWith('.md') && !file.startsWith('.')) {
                 const name = file.replace('.md', '');
-                agents[name] = path.join(AGENTS_DIR, file);
+                if (!agents[name]) {
+                    agents[name] = path.join(ROOT_AGENTS_DIR, file);
+                }
             }
         });
     }
     return agents;
 }
 
-// Load skills
+// Load skills from plugins root
 function loadSkills() {
     const skills = {};
-    if (fs.existsSync(SKILLS_DIR)) {
-        fs.readdirSync(SKILLS_DIR).forEach(dir => {
-            const skillPath = path.join(SKILLS_DIR, dir);
-            if (fs.statSync(skillPath).isDirectory()) {
-                skills[dir] = skillPath;
+    if (fs.existsSync(ROOT_SKILLS_DIR)) {
+        fs.readdirSync(ROOT_SKILLS_DIR).forEach(dirName => {
+            const skillPath = path.join(ROOT_SKILLS_DIR, dirName);
+            if (fs.statSync(skillPath).isDirectory() && !skills[dirName]) {
+                skills[dirName] = skillPath;
             }
         });
     }
@@ -68,16 +74,69 @@ function loadRules() {
     return rules;
 }
 
-// Plugin info
-const pluginInfo = {
-    name: 'claude-harness-kit',
-    version: '0.8.0',
-    description: 'Claude Harness Kit — Human steers, Agents execute. 多 Agent 协作、通用 Skills、持续进化',
-    agents: Object.keys(loadAgents()),
-    skills: Object.keys(loadSkills()),
-    rules: Object.keys(loadRules()),
-    hooks: fs.existsSync(HOOKS_DIR) ? fs.readdirSync(HOOKS_DIR).filter(f => f.endsWith('.json')).length : 0,
+// Load commands (斜杠命令)
+function loadCommands() {
+    const commands = {};
+    if (fs.existsSync(COMMANDS_DIR)) {
+        fs.readdirSync(COMMANDS_DIR).forEach(file => {
+            if (file.endsWith('.md') && !file.startsWith('.')) {
+                const name = file.replace('.md', '');
+                commands[name] = path.join(COMMANDS_DIR, file);
+            }
+        });
+    }
+    return commands;
+}
+
+// 执行模式配置
+const EXECUTION_MODES = {
+    solo: { description: '直接对话，零开销', hooks: 'minimal' },
+    auto: { description: '全自动端到端，5 分钟搞定 Bug', hooks: 'automated' },
+    team: { description: '多 Agent 协作开发（默认）', hooks: 'balanced' },
+    ultra: { description: '极限并行 (3-5 Agent)', hooks: 'intensive' },
+    pipeline: { description: '严格阶段顺序，TaskFile 协议', hooks: 'forced' },
+    ralph: { description: 'TDD 强制模式，不通过测试不停止', hooks: 'tdd' },
+    ccg: { description: 'Claude + Codex + Gemini 三方独立审查', hooks: 'review' },
+    default: { description: '兼容旧名，等同 team 模式', hooks: 'balanced' }
 };
+
+// 插件信息（增强版）
+function getPluginInfo() {
+    const agents = loadAgents();
+    const skills = loadSkills();
+    const rules = loadRules();
+    const commands = loadCommands();
+
+    return {
+        name: 'claude-harness-kit',
+        version: '0.9.1',
+        description: 'Claude Harness Kit — Human steers, Agents execute. 多 Agent 协作、通用 Skills、持续进化',
+        author: 'yanyinxi',
+        keywords: ['claude-code', 'multi-agent', 'self-evolution', 'devops'],
+        // 能力统计
+        capabilities: {
+            agents: Object.keys(agents).length,
+            skills: Object.keys(skills).length,
+            rules: Object.keys(rules).length,
+            commands: Object.keys(commands).length,
+            executionModes: Object.keys(EXECUTION_MODES).length
+        },
+        // 执行模式
+        executionModes: EXECUTION_MODES,
+        // 文件路径
+        paths: {
+            agents: ROOT_AGENTS_DIR,
+            skills: ROOT_SKILLS_DIR,
+            hooks: ROOT_HOOKS_DIR,
+            commands: COMMANDS_DIR,
+            rules: RULES_DIR,
+            harness: HARNESS_DIR
+        }
+    };
+}
+
+// Plugin info
+const pluginInfo = getPluginInfo();
 
 // Auto-load agents and skills on Claude Code startup
 module.exports = {
@@ -93,21 +152,52 @@ module.exports = {
     // Get all available rules
     getRules: loadRules,
 
+    // Get all available commands (斜杠命令)
+    getCommands: loadCommands,
+
     // Get hooks configuration
     getHooks: () => {
-        const hooksPath = path.join(HOOKS_DIR, 'hooks.json');
+        const hooksPath = path.join(ROOT_HOOKS_DIR, 'hooks.json');
         if (fs.existsSync(hooksPath)) {
             return JSON.parse(fs.readFileSync(hooksPath, 'utf-8'));
         }
         return null;
     },
 
+    // Get execution modes
+    getExecutionModes: () => EXECUTION_MODES,
+
+    // 生命周期钩子（预留接口）
+    onAgentStart: (agentName, context) => {
+        console.log(`[CHK] Agent started: ${agentName}`);
+        // 可以在这里添加 agent 启动时的逻辑
+    },
+
+    onAgentEnd: (agentName, result) => {
+        console.log(`[CHK] Agent ended: ${agentName}`);
+        // 可以在这里添加 agent 结束时的逻辑
+    },
+
+    onToolCall: (toolName, args) => {
+        // 工具调用拦截，可以用于安全检查
+        return { allowed: true };
+    },
+
+    onCompact: (context) => {
+        // 上下文压缩回调，用于同步状态
+        console.log('[CHK] Context compaction triggered');
+    },
+
     // Initialize plugin
     init: () => {
-        console.log('✓ Claude Harness Kit (CHK) v0.8.0 loaded');
-        console.log(`  Agents: ${pluginInfo.agents.length}`);
-        console.log(`  Skills: ${pluginInfo.skills.length}`);
-        console.log(`  Rules: ${pluginInfo.rules.length}`);
+        const info = getPluginInfo();
+        console.log('✓ Claude Harness Kit (CHK) v' + info.version + ' loaded');
+        console.log(`  Agents: ${info.capabilities.agents}`);
+        console.log(`  Skills: ${info.capabilities.skills}`);
+        console.log(`  Rules: ${info.capabilities.rules}`);
+        console.log(`  Commands: ${info.capabilities.commands}`);
+        console.log(`  Execution Modes: ${info.capabilities.executionModes}`);
+        console.log(`  Hooks: ${info.paths.hooks}`);
     }
 };
 

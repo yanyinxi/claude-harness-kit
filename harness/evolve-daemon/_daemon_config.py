@@ -38,6 +38,8 @@ _ensure_env_loaded()
 _DEFAULT_CONFIGS: Dict[str, Dict[str, Any]] = {
     "daemon": {
         "daemon": {
+            "mode": "external",
+            "scheduler_interval": "30 minutes",
             "schedule": "*/30 * * * *",
             "idle_trigger_minutes": 120,
             "extract_timeout_seconds": 5,

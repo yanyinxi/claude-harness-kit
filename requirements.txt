@@ -1,0 +1,10 @@
+# CHK Python 运行时依赖
+# 安装: pip install -r requirements.txt
+
+# 核心依赖
+PyYAML>=6.0          # 配置解析 (config.yaml, hooks.json)
+pytest>=7.0          # 测试框架 (357 tests)
+
+# 可选依赖
+# APScheduler>=3.10   # 进化守护进程内置调度 (daemon.py 内部模式需要)
+# ruff>=0.11           # 代码 lint (npm test 需要)

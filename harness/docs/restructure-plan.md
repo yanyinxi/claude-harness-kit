@@ -2,9 +2,13 @@
 
 > 目标：将项目目录结构对齐 Claude Code 官方规范，CHK 扩展能力统一收敛到 `harness/` 扩展目录；建立全局路径配置体系，根治硬编码路径问题。
 
-**状态**：v3.0 — 完整评审版
+**状态**：PARTIALLY EXECUTED (2026-05-16)
 **作者**：Claude Code
 **日期**：2026-05-02
+
+> 大部分 Step P (paths.py 路径配置) 和 Step M (harness/ 目录迁移) 已完成。
+> agents/、skills/、hooks/、commands/ 已迁移至插件根目录（符合 Claude Code 官方规范）。
+> marketplace.json 已删除。
 
 ---
 

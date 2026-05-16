@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Skill 维度进化策略"""
 import json
+from datetime import datetime
 from pathlib import Path
 
 
@@ -11,8 +12,9 @@ def evolve_skill(target: str, corrections: list, config: dict, root: Path) -> di
     skill_file = skills_dir / skill_name / "SKILL.md"
     if not skill_file.exists():
         return {"success": False, "error": f"Skill file not found: {skill_file}"}
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     suggested_changes = _generate_skill_change(skill_name, corrections)
-    return {"success": True, "action": "propose", "target_file": str(skill_file), "change_type": "supplement", "suggested_change": f"\n## [Auto-Evolved]\n补充场景：\n{suggested_changes}\n"}
+    return {"success": True, "action": "propose", "target_file": str(skill_file), "change_type": "supplement", "suggested_change": f"\n## [Auto-Evolved] {timestamp}\n补充场景：\n{suggested_changes}\n"}
 
 
 def _generate_skill_change(skill_name: str, corrections: list) -> str:

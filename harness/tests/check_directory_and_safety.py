@@ -311,7 +311,7 @@ def test_instinct_record_uuid_unique():
 def test_all_agents_have_frontmatter():
     """正向: 所有 Agent 文件有 frontmatter"""
     violations = []
-    for agent_md in (HARNESS_DIR / "agents").glob("*.md"):
+    for agent_md in PROJECT_ROOT.glob("agents/*.md"):
         content = agent_md.read_text()
         if not content.startswith("---"):
             violations.append(agent_md.name)
@@ -322,7 +322,7 @@ def test_all_agents_have_frontmatter():
 def test_all_skills_have_frontmatter():
     """正向: 所有 Skill 文件有 frontmatter"""
     violations = []
-    for skill_dir in (HARNESS_DIR / "skills").glob("*"):
+    for skill_dir in PROJECT_ROOT.glob("skills/*"):
         if not skill_dir.is_dir():
             continue
         skill_md = skill_dir / "SKILL.md"

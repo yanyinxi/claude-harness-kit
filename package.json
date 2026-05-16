@@ -1,18 +1,27 @@
 {
   "name": "claude-harness-kit",
-  "version": "0.8.0",
+  "version": "0.9.1",
   "description": "Claude Harness Kit — Human steers, Agents execute. 多 Agent 协作、通用 Skills、持续进化",
   "main": "index.js",
   "scripts": {
-    "test": "shellcheck harness/hooks/bin/*.sh && ruff check harness/ && cd harness && python3 -m pytest tests/ --ignore=tests/evolve-daemon/ -q"
+    "test": "shellcheck hooks/bin/*.sh && ruff check harness/ && python3 -m pytest harness/tests/ --ignore=harness/tests/evolve-daemon/ -q",
+    "test:py": "python3 -m pytest harness/tests/ -q",
+    "test:js": "node -e \"require('./index.js')\"",
+    "lint": "ruff check harness/",
+    "lint:sh": "shellcheck hooks/bin/*.sh"
   },
   "files": [
     ".claude-plugin/",
+    "agents/",
+    "skills/",
+    "hooks/",
+    "commands/",
     "harness/",
     "index.js",
     "CLAUDE.md",
     "README.md",
-    "package.json"
+    "package.json",
+    "LICENSE"
   ],
   "keywords": ["claude-code", "claude-code-plugin", "harness-engineering", "multi-agent", "self-evolution"],
   "license": "MIT",

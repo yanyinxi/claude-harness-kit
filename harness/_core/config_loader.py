@@ -7,7 +7,6 @@ ConfigLoader - 统一配置加载器
 - .claude/settings.json / settings.local.json
 - harness/evolve-daemon/config.yaml
 - harness/hooks/hooks.json
-- harness/.mcp.json
 - harness/cli/modes/*.json
 """
 import json
@@ -38,8 +37,7 @@ class ConfigLoader:
         },
         "cli": {},
         "settings": {},
-        "package": {},
-        "mcp": {}
+        "package": {}
     }
 
     def __init__(self, project_root: Optional[Path] = None):
@@ -62,7 +60,7 @@ class ConfigLoader:
         获取指定类型的配置
 
         Args:
-            config_type: 配置类型 (core/daemon/hooks/cli/settings/package/mcp)
+            config_type: 配置类型 (core/daemon/hooks/cli/settings/package)
             use_cache: 是否使用缓存
 
         Returns:
@@ -167,15 +165,6 @@ class ConfigLoader:
         with open(package_path, encoding="utf-8") as f:
             return json.load(f)
 
-    def _load_mcp(self) -> dict:
-        """加载 MCP 服务器配置"""
-        mcp_path = self.project_root / "harness" / ".mcp.json"
-        if not mcp_path.exists():
-            return self.DEFAULTS["mcp"].copy()
-
-        with open(mcp_path, encoding="utf-8") as f:
-            return json.load(f)
-
     def _merge(self, base: dict, override: dict) -> dict:
         """深度合并两个字典"""
         result = base.copy()
@@ -226,8 +215,7 @@ class ConfigLoader:
             "hooks": self.project_root / "harness" / "hooks" / "hooks.json",
             "cli": self.project_root / "harness" / "cli" / "modes",
             "settings": self.project_root / ".claude" / "settings.json",
-            "package": self.project_root / "package.json",
-            "mcp": self.project_root / "harness" / ".mcp.json"
+            "package": self.project_root / "package.json"
         }
         return paths.get(config_type)
 

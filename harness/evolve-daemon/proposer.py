@@ -19,12 +19,14 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
-# 添加 harness 到 Python path
-_harness_root = Path(__file__).parent.parent.parent
-if str(_harness_root) not in sys.path:
-    sys.path.insert(0, str(_harness_root))
+# 统一 sys.path 设置
+_project_root = Path(__file__).parent.parent.parent
+if str(_project_root) not in sys.path:
+    sys.path.insert(0, str(_project_root))
+from harness.paths import setup_syspath
+setup_syspath(_project_root)
 
-# 添加同级的 kb_shared 到 Python path
+# 同目录模块导入（kb_shared 在同一目录）
 _kb_root = Path(__file__).parent
 if str(_kb_root) not in sys.path:
     sys.path.insert(0, str(_kb_root))

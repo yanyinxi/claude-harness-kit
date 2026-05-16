@@ -14,17 +14,23 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-# ── 标准路径设置 ────────────────────────────────────────────────
+# 强制覆盖 CLAUDE_PROJECT_DIR（防止幽灵目录 bug）
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 EVOLVE_DIR = PROJECT_ROOT / "harness" / "evolve-daemon"
 
-# 强制覆盖 CLAUDE_PROJECT_DIR（防止幽灵目录 bug）
 os.environ["CLAUDE_PROJECT_DIR"] = str(PROJECT_ROOT)
 
-# 确保模块可导入
-for p in [str(EVOLVE_DIR), str(PROJECT_ROOT / "harness"), str(PROJECT_ROOT / "harness" / "knowledge")]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
+# 确保 paths.py 可导入
+_harness_path = str(PROJECT_ROOT / "harness")
+if _harness_path not in sys.path:
+    sys.path.insert(0, _harness_path)
+
+from paths import setup_syspath  # noqa: E402
+setup_syspath(PROJECT_ROOT)
+
+# evolve-daemon 内部互导入需要此目录在 sys.path
+if str(EVOLVE_DIR) not in sys.path:
+    sys.path.insert(0, str(EVOLVE_DIR))
 
 
 # ── 测试工具函数 ────────────────────────────────────────────────

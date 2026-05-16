@@ -94,10 +94,12 @@ ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages"  # Anthropic 消息 
 # 根路径（模块级常量，供其他模块直接引用）
 # ============================================================================
 # ROOT: 项目根目录（包含 .claude/ 和 harness/ 的目录）
-# PLUGIN_ROOT: harness/ 目录，所有 CHK 插件资产在此之下
+# PLUGIN_ROOT: 插件根目录，遵循 Claude Code 官方插件规范：
+#   - agents/, skills/, hooks/ 在插件根目录
+#   - harness/ 包含 CHK 内部模块
 
 ROOT = _project_root()
-PLUGIN_ROOT = _project_root() / "harness"
+PLUGIN_ROOT = ROOT  # 插件根目录 = 项目根目录
 
 # ============================================================================
 # Claude 运行时路径（位于 .claude/ 下）
@@ -128,28 +130,34 @@ def observations_file() -> Path: return HOMUNCULUS_DIR / FILE_OBSERVATIONS
 def obs_errors_file() -> Path: return HOMUNCULUS_DIR / FILE_OBS_ERRORS
 
 # ============================================================================
-# CHK 插件资产路径（位于 harness/ 下）
+# CHK 插件资产路径（官方插件规范）
 # ============================================================================
+# 根据 Claude Code 官方插件规范：
+#   - agents/ 在插件根目录
+#   - skills/ 在插件根目录
+#   - hooks/ 在插件根目录
+#   - harness/ 包含 CHK 内部模块
 
-SKILLS_DIR = PLUGIN_ROOT / DIR_SKILLS      # harness/skills/ — 35+ Skill 定义
-AGENTS_DIR = PLUGIN_ROOT / DIR_AGENTS      # harness/agents/ — 22 个 Agent 定义
-RULES_DIR = PLUGIN_ROOT / DIR_RULES        # harness/rules/ — 扩展规则
-HOOKS_DIR = PLUGIN_ROOT / DIR_HOOKS        # harness/hooks/ — Hook 配置
-HOOKS_BIN_DIR = HOOKS_DIR / DIR_HOOKS_BIN # harness/hooks/bin/ — Hook 脚本
-MEMORY_DIR = PLUGIN_ROOT / DIR_MEMORY      # harness/memory/ — 记忆系统
-KNOWLEDGE_DIR = PLUGIN_ROOT / DIR_KNOWLEDGE # harness/knowledge/ — 知识推荐引擎
-TESTS_DIR = PLUGIN_ROOT / DIR_TESTS        # harness/tests/ — 测试套件
-DOCS_DIR = PLUGIN_ROOT / DIR_DOCS          # harness/docs/ — 设计文档
-CLI_DIR = PLUGIN_ROOT / DIR_CLI            # harness/cli/ — CLI 入口
+HARNESS_DIR = ROOT / "harness"  # CHK 内部模块目录
+
+AGENTS_DIR = ROOT / "agents"              # 插件根目录/agents/
+SKILLS_DIR = ROOT / "skills"              # 插件根目录/skills/
+HOOKS_DIR = ROOT / "hooks"                # 插件根目录/hooks/
+HOOKS_BIN_DIR = HOOKS_DIR / "bin"        # hooks/bin/
+RULES_DIR = HARNESS_DIR / "rules"        # harness/rules/ — 扩展规则
+MEMORY_DIR = HARNESS_DIR / "memory"      # harness/memory/ — 记忆系统
+KNOWLEDGE_DIR = HARNESS_DIR / "knowledge" # harness/knowledge/ — 知识推荐引擎
+TESTS_DIR = HARNESS_DIR / "tests"        # harness/tests/ — 测试套件
+DOCS_DIR = HARNESS_DIR / "docs"          # harness/docs/ — 设计文档
+CLI_DIR = HARNESS_DIR / "cli"            # harness/cli/ — CLI 入口
 CLI_MODES_DIR = CLI_DIR / DIR_CLI_MODES   # harness/cli/modes/ — 7 种执行模式
 
 # ============================================================================
 # 进化系统路径（位于 harness/evolve-daemon/ 下）
 # ============================================================================
-# 注：harness/knowledge/evolved/ 是符号链接，指向 evolve-daemon/knowledge/，
-#     保持手工知识和进化知识的目录统一
+# 注：harness/knowledge/evolved/ 是独立目录，存储进化生成的知识条目
 
-EVOLVE_DIR = PLUGIN_ROOT / "evolve-daemon"
+EVOLVE_DIR = HARNESS_DIR / "evolve-daemon"
 EVOLVE_TEMPLATES_DIR = EVOLVE_DIR / "templates"        # 进化提案模板
 EVOLVE_CONFIG_FILE = EVOLVE_DIR / "config.yaml"        # 进化配置
 
@@ -174,10 +182,9 @@ INSTINCT_FILE = MEMORY_DIR / "instinct-record.json"  # 本能记录文件
 # ============================================================================
 # 知识库包含两部分：
 #   - 手工维护：harness/knowledge/decision/, guideline/, pitfall/, process/, model/
-#   - 进化生成：harness/knowledge/evolved/ (符号链接到 evolve-daemon/knowledge/)
+#   - 进化生成：harness/knowledge/evolved/
 
-KNOWLEDGE_DIR = PLUGIN_ROOT / DIR_KNOWLEDGE # harness/knowledge/ — 知识推荐引擎
-EVOLVED_KB_DIR = EVOLVE_DIR / "knowledge"   # 进化知识库目录（符号链接源）
+EVOLVED_KB_DIR = KNOWLEDGE_DIR / "evolved"   # 进化知识库目录
 EFFECT_TRACKING_FILE = KNOWLEDGE_DIR / "effect_tracking.jsonl"  # 效果跟踪
 MERGE_COOLDOWN_FILE = KNOWLEDGE_DIR / "merge_cooldown.jsonl"  # merge 冷却期
 NOTIFY_COOLDOWN_FILE = KNOWLEDGE_DIR / "notify_cooldown.jsonl"  # 通知冷却期
@@ -188,8 +195,8 @@ LIFECYCLE_YAML = KNOWLEDGE_DIR / FILE_LIFECYCLE_YAML  # 知识生命周期配置
 # ============================================================================
 
 SETTINGS_LOCAL = CLAUDE_DIR / FILE_SETTINGS_LOCAL      # 本地配置覆盖
-MCP_JSON = PLUGIN_ROOT / ".mcp.json"                  # MCP 服务器配置
-MARKETPLACE_JSON = PLUGIN_ROOT / "marketplace.json"    # 市场配置
+# MCP 工具由 Claude Code 原生支持，通过 `claude mcp add` 安装
+# Agent/Skill 中嵌入 MCP 推荐逻辑，AI 自动检测并决策是否使用
 
 # ============================================================================
 # Hook 脚本映射（命令名 → 脚本路径）
@@ -197,48 +204,52 @@ MARKETPLACE_JSON = PLUGIN_ROOT / "marketplace.json"    # 市场配置
 # 通过名称引用而非硬编码路径，便于 Hook 配置集中管理。
 # scripts.json 中引用脚本名称，运行时解析为实际路径。
 
+# Hook 脚本映射（命令名 → 脚本路径）
+# 通过名称引用而非硬编码路径，便于 Hook 配置集中管理。
+# scripts.json 中引用脚本名称，运行时解析为实际路径。
+
 HOOK_SCRIPTS = {
     # ── 安全/质量门禁 ──────────────────────────────────────────────
-    "safety-check.sh": HOOKS_BIN_DIR / "safety-check.sh",       # 前置安全检查
-    "quality-gate.sh": HOOKS_BIN_DIR / "quality-gate.sh",       # 质量门禁
-    "tdd-check.sh": HOOKS_BIN_DIR / "tdd-check.sh",             # TDD 检查
-    "rate-limiter.sh": HOOKS_BIN_DIR / "rate-limiter.sh",       # API 速率限制
+    "safety-check.sh": "hooks/bin/safety-check.sh",       # 前置安全检查
+    "quality-gate.sh": "hooks/bin/quality-gate.sh",         # 质量门禁
+    "tdd-check.sh": "hooks/bin/tdd-check.sh",              # TDD 检查
+    "rate-limiter.sh": "hooks/bin/rate-limiter.sh",        # API 速率限制
 
     # ── 自动保存/检查点 ─────────────────────────────────────────────
-    "checkpoint-auto-save.sh": HOOKS_BIN_DIR / "checkpoint-auto-save.sh",  # 自动保存
+    "checkpoint-auto-save.sh": "hooks/bin/checkpoint-auto-save.sh",  # 自动保存
 
     # ── Worktree 管理 ──────────────────────────────────────────────
-    "worktree-sync.sh": HOOKS_BIN_DIR / "worktree-sync.sh",     # 工作区同步
-    "worktree-cleanup.sh": HOOKS_BIN_DIR / "worktree-cleanup.sh",  # 工作区清理
-    "worktree-init.sh": HOOKS_BIN_DIR / "worktree-init.sh",     # 工作区初始化
-    "worktree-manager.sh": HOOKS_BIN_DIR / "worktree-manager.sh",  # 工作区管理器
+    "worktree-sync.sh": "hooks/bin/worktree-sync.sh",       # 工作区同步
+    "worktree-cleanup.sh": "hooks/bin/worktree-cleanup.sh", # 工作区清理
+    "worktree-init.sh": "hooks/bin/worktree-init.sh",        # 工作区初始化
+    "worktree-manager.sh": "hooks/bin/worktree-manager.sh", # 工作区管理器
 
     # ── 观测系统 ──────────────────────────────────────────────────
-    "observe.sh": HOOKS_BIN_DIR / "observe.sh",                 # 观测 Hook
-    "observe.py": HOOKS_BIN_DIR / "observe.py",                 # 观测（Python 版）
+    "observe.sh": "hooks/bin/observe.sh",                   # 观测 Hook
+    "observe.py": "hooks/bin/observe.py",                   # 观测（Python 版）
 
     # ── 安全自动触发 ──────────────────────────────────────────────
-    "security-auto-trigger.sh": HOOKS_BIN_DIR / "security-auto-trigger.sh",  # 安全扫描触发
+    "security-auto-trigger.sh": "hooks/bin/security-auto-trigger.sh",  # 安全扫描触发
 
     # ── 数据收集 ──────────────────────────────────────────────────
-    "collect-failure.py": HOOKS_BIN_DIR / "collect-failure.py", # 失败收集 (已废弃，使用 collect_error.py)
-    "collect_agent.py": HOOKS_BIN_DIR / "collect_agent.py",       # Agent 调用收集
-    "collect-skill.py": HOOKS_BIN_DIR / "collect_skill.py",     # Skill 调用收集
-    "collect_session.py": HOOKS_BIN_DIR / "collect_session.py",  # 会话收集
-    "collect_error.py": HOOKS_BIN_DIR / "collect_error.py",     # 错误收集
+    "collect_failure.py": "hooks/bin/collect_failure.py",    # 失败收集
+    "collect_agent.py": "hooks/bin/collect_agent.py",      # Agent 调用收集
+    "collect_skill.py": "hooks/bin/collect_skill.py",       # Skill 调用收集
+    "collect_session.py": "hooks/bin/collect_session.py",   # 会话收集
+    "collect_error.py": "hooks/bin/collect_error.py",       # 错误收集
 
     # ── 安全过滤 ──────────────────────────────────────────────────
-    "output_secret_filter.py": HOOKS_BIN_DIR / "output_secret_filter.py",  # 敏感信息过滤
+    "output_secret_filter.py": "hooks/bin/output_secret_filter.py",  # 敏感信息过滤
 
     # ── 上下文注入 ────────────────────────────────────────────────
-    "context_injector.py": HOOKS_BIN_DIR / "context_injector.py",  # 知识注入
-    "extract_semantics.py": HOOKS_BIN_DIR / "extract_semantics.py",  # 语义提取
+    "context_injector.py": "hooks/bin/context_injector.py",  # 知识注入
+    "extract_semantics.py": "hooks/bin/extract_semantics.py",  # 语义提取
 
     # ── 进化自动触发 ──────────────────────────────────────────────
-    "auto_start_evolve.py": HOOKS_BIN_DIR / "auto_start_evolve.py",  # 进化守护进程触发
+    "auto_start_evolve.py": "hooks/bin/auto_start_evolve.py",  # 进化守护进程触发
 
     # ── 错误处理 ──────────────────────────────────────────────────
-    "error_writer.py": HOOKS_BIN_DIR / "error_writer.py",       # 错误写入
+    "error_writer.py": "hooks/bin/error_writer.py",         # 错误写入
 }
 
 
@@ -400,6 +411,37 @@ get_project_root = find_root
 get_project_dir = find_root
 
 
+# ============================================================================
+# sys.path 统一管理（消除分散的 sys.path.insert 调用）
+# ============================================================================
+
+def setup_syspath(root: Path | None = None) -> list[str]:
+    """统一设置 sys.path，确保 harness 包可导入。
+
+    在所有入口点（CLI、Hook 脚本、测试）的最顶部调用此函数，
+    替代分散的 sys.path.insert(0, ...) 调用。
+
+    参数:
+        root: 项目根目录，默认使用 ROOT
+
+    返回:
+        list: 新增到 sys.path 的路径列表
+    """
+    import sys as _sys
+
+    _root = root if root is not None else ROOT
+    _harness = _root / "harness"
+
+    added = []
+    # 优先级高 → 低：harness/ 在前（直接导入 paths），项目根在后（from harness.xxx import）
+    for p in [str(_harness), str(_root)]:
+        if p not in _sys.path:
+            _sys.path.insert(0, p)
+            added.append(p)
+
+    return added
+
+
 __all__ = [
     # ── 目录名常量（字符串，语义标识）─────────────────────────────────
     "DIR_CLAUDE", "DIR_DATA", "DIR_PROPOSALS", "DIR_HOOKS", "DIR_HOOKS_BIN",
@@ -413,13 +455,14 @@ __all__ = [
     "FILE_SETTINGS_LOCAL", "FILE_LIFECYCLE_YAML", "FILE_PROPOSAL_HISTORY",
     "ANTHROPIC_API_URL",
     # ── 根路径常量（Path 对象）───────────────────────────────────────
-    "ROOT", "PLUGIN_ROOT",
+    "ROOT", "PLUGIN_ROOT", "HARNESS_DIR",
     # ── .claude/ 下路径（Path 对象）──────────────────────────────────
     "CLAUDE_DIR", "DATA_DIR", "PROPOSALS_DIR", "RATE_LIMITS_DIR", "WORKTREES_DIR",
     "HOMUNCULUS_DIR", "ANALYSIS_STATE_FILE", "PROPOSAL_HISTORY_FILE",
+    # ── 插件资产路径（Path 对象）────────────────────────────────────
+    "AGENTS_DIR", "SKILLS_DIR", "HOOKS_DIR", "HOOKS_BIN_DIR",
     # ── harness/ 下路径（Path 对象）──────────────────────────────────
-    "SKILLS_DIR", "AGENTS_DIR", "RULES_DIR", "HOOKS_DIR", "HOOKS_BIN_DIR",
-    "MEMORY_DIR", "KNOWLEDGE_DIR", "TESTS_DIR", "DOCS_DIR",
+    "RULES_DIR", "MEMORY_DIR", "KNOWLEDGE_DIR", "TESTS_DIR", "DOCS_DIR",
     "CLI_DIR", "CLI_MODES_DIR", "EVOLVE_DIR", "EVOLVE_TEMPLATES_DIR",
     "EVOLVE_CONFIG_FILE",
     # ── 记忆系统路径（Path 对象）──────────────────────────────────────
@@ -428,7 +471,7 @@ __all__ = [
     "EVOLVED_KB_DIR", "EFFECT_TRACKING_FILE", "MERGE_COOLDOWN_FILE",
     "NOTIFY_COOLDOWN_FILE", "LIFECYCLE_YAML",
     # ── 其他插件路径（Path 对象）─────────────────────────────────────
-    "SETTINGS_LOCAL", "MCP_JSON", "MARKETPLACE_JSON",
+    "SETTINGS_LOCAL",
     # ── 动态文件路径工厂函数（返回新 Path 对象）────────────────────
     "sessions_file", "errors_file", "errors_lock_file", "failures_file",
     "agent_calls_file", "skill_calls_file", "analysis_state_file",
@@ -436,7 +479,7 @@ __all__ = [
     # ── Hook 映射表（名称 → 脚本路径）──────────────────────────────
     "HOOK_SCRIPTS",
     # ── 工具函数 ────────────────────────────────────────────────────
-    "validate_paths", "warn_missing_paths",
+    "setup_syspath", "validate_paths", "warn_missing_paths",
     # ── 统一路径查找函数 ──────────────────────────────────────────
     "find_root", "get_project_root", "get_project_dir",
 ]

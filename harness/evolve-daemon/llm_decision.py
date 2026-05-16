@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from kb_shared import get_sonnet_model, create_llm_client, get_llm_config, load_sessions
 from instinct_updater import load_instinct
-from _find_root import find_root
+from harness.paths import find_root
 
 
 def load_config():
@@ -266,6 +266,15 @@ def decide_action(sessions: list[dict], analysis: dict, config: Optional[dict] =
             "id": f"proposal-{datetime.now().strftime('%Y%m%d%H%M%S')}",
         }
 
+    if llm_result is None:
+        return {
+            "action": "propose",
+            "reason": "LLM 返回空，使用规则决策",
+            "confidence": 0.3,
+            "risk_level": "high",
+            "id": f"proposal-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+        }
+
     # 风险检查
     risk_level = llm_result.get("risk_level", "medium")
     if risk_level == "high" or risk_score >= config.get("decision", {}).get("high_risk_threshold", 0.5):
@@ -348,9 +357,66 @@ def _rule_based_decision(analysis: dict, config: dict) -> dict:
 
 
 def _check_circuit_breaker(config: dict) -> bool:
-    """检查熔断器状态"""
-    # TODO: 实现熔断器检查
-    # 检查最近回滚次数，超过阈值暂停
+    """检查熔断器状态。
+
+    检测条件（任一触发即熔断）：
+    1. 同一目标连续被拒绝次数 >= max_consecutive_rejects
+    2. 每周回滚次数 >= max_rollbacks_per_week
+
+    返回 True 表示熔断激活，应暂停自动优化。
+    """
+    try:
+        from kb_shared import read_jsonl
+        from harness.paths import EFFECT_TRACKING_FILE, EVOLVED_KB_DIR
+    except ImportError:
+        return False
+
+    safety = config.get("safety", {})
+    breaker_cfg = safety.get("breaker", {})
+    max_rejects = breaker_cfg.get("max_consecutive_rejects", 3)
+    max_rollbacks = breaker_cfg.get("max_rollbacks_per_week", 5)
+    _pause_days = breaker_cfg.get("pause_days", 30)
+
+    # ── 检查 1: 效果跟踪中的回滚统计 ──
+    effect_file = EFFECT_TRACKING_FILE
+    if effect_file.exists():
+        try:
+            effects = read_jsonl(effect_file)
+            now = datetime.now()
+            week_ago = now.timestamp() - 7 * 24 * 3600
+            recent_rollbacks = 0
+            for e in effects:
+                ts = e.get("timestamp", "")
+                try:
+                    t = datetime.fromisoformat(ts).timestamp()
+                except (ValueError, TypeError):
+                    continue
+                if t >= week_ago and e.get("action") == "rollback":
+                    recent_rollbacks += 1
+
+            if recent_rollbacks >= max_rollbacks:
+                logger.warning(
+                    f"断路器触发: 本周回滚 {recent_rollbacks} 次，超过阈值 {max_rollbacks}"
+                )
+                return True
+        except (OSError, json.JSONDecodeError) as e:
+            logger.warning(f"读取效果跟踪失败: {e}")
+
+    # ── 检查 2: 知识库中的连续拒绝 ──
+    kb_file = EVOLVED_KB_DIR / "knowledge_base.jsonl"
+    if kb_file.exists():
+        try:
+            kb = read_jsonl(kb_file)
+            rejections = [e for e in kb if e.get("action") == "reject"]
+            rejections.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+            if len(rejections) >= max_rejects:
+                logger.warning(
+                    f"断路器触发: 连续拒绝 {len(rejections)} 次，超过阈值 {max_rejects}"
+                )
+                return True
+        except (OSError, json.JSONDecodeError) as e:
+            logger.warning(f"读取知识库失败: {e}")
+
     return False
 
 

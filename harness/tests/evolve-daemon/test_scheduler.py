@@ -67,8 +67,8 @@ class TestConfigLoading:
     def test_load_config_structure(self):
         config = sched_mod.load_config()
         assert "daemon" in config
-        assert "mode" in config["daemon"]
-        assert "scheduler_interval" in config["daemon"]
+        assert "mode" in config["daemon"]["daemon"]
+        assert "scheduler_interval" in config["daemon"]["daemon"]
 
 
 if __name__ == "__main__":

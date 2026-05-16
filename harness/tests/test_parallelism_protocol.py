@@ -11,9 +11,8 @@ import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-HARNESS_DIR = PROJECT_ROOT / "harness"
-AGENTS_DIR = HARNESS_DIR / "agents"
-RULES_DIR = HARNESS_DIR / "rules"
+sys.path.insert(0, str(PROJECT_ROOT / "harness"))
+from paths import AGENTS_DIR, RULES_DIR  # noqa: E402
 
 _failures = 0
 

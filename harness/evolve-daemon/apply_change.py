@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Optional
 
 from _daemon_config import load_config
-from _find_root import find_root
+from harness.paths import find_root
 import kb_shared
 
 

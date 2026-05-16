@@ -19,7 +19,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 sys.path.insert(0, str(Path(__file__).parent))
 from kb_shared import get_haiku_model, create_llm_client, get_llm_config, read_jsonl
-from _find_root import find_root as get_project_root
+from harness.paths import find_root as get_project_root
 
 
 def extract_with_haiku(session: dict) -> list[dict]:

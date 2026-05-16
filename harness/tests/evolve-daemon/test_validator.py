@@ -327,8 +327,8 @@ class TestSecurityChecks:
 
         result = validator_mod.validate_sessions_file(sessions_file)
         assert result["valid"] == 2
-        # total 计入所有非空行（blank lines 在 strip 前会被计入 splitlines）
-        assert result["total"] == 3
+        # total 排除空白行（validator 逐行递减空白行计数）
+        assert result["total"] == 2
 
 
 # =============================================================================
@@ -382,7 +382,8 @@ class TestCleanOldSessions:
 
     def test_invalid_json_cleaned_as_well(self, tmp_path):
         """
-        无法解析的 JSON 行应被视为过期并被清理。
+        无法解析的 JSON 行被 read_jsonl 静默跳过，不进入 clean 流程。
+        只有有效 JSON 且 timestamp 过期的行才被计入 cleaned。
         """
         sessions_file = tmp_path / "invalid.jsonl"
         old_date = (datetime.now() - timedelta(days=100)).isoformat()
@@ -393,8 +394,8 @@ class TestCleanOldSessions:
         )
 
         result = validator_mod.clean_old_sessions(sessions_file, max_age_days=90)
-        # 两条都是"过期"的（invalid JSON 无法解析 timestamp）
-        assert result["cleaned"] == 2
+        # read_jsonl 跳过无效 JSON 行，只有 1 条有效旧 session 被清理
+        assert result["cleaned"] == 1
 
 
 # =============================================================================

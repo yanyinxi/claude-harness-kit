@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Agent 维度进化策略"""
 import json
+from datetime import datetime
 from pathlib import Path
 
 
@@ -15,9 +16,11 @@ def evolve_agent(target: str, corrections: list, config: dict, root: Path) -> di
     suggested_changes = _generate_agent_change(agent_name, corrections)
     if not suggested_changes:
         return {"success": False, "error": "No clear change pattern"}
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    header = f"\n## [Auto-Evolved] {timestamp}\n"
     if "[auto-evolved]" in content or "[Auto-Evolved]" in content:
-        return {"success": True, "action": "replace", "target_file": str(agent_file), "change_type": "replace", "suggested_change": suggested_changes}
-    return {"success": True, "action": "append", "target_file": str(agent_file), "change_type": "append", "suggested_change": f"\n## [Auto-Evolved]\n{suggested_changes}\n"}
+        return {"success": True, "action": "replace", "target_file": str(agent_file), "change_type": "replace", "suggested_change": header + suggested_changes}
+    return {"success": True, "action": "append", "target_file": str(agent_file), "change_type": "append", "suggested_change": header + suggested_changes + "\n"}
 
 
 def _generate_agent_change(agent_name: str, corrections: list) -> str:

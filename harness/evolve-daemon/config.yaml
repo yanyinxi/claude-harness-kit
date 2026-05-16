@@ -305,7 +305,7 @@ paths:
   # 数据文件目录
   # 包含：sessions.jsonl, agent_calls.jsonl, failures.jsonl 等
 
-  instinct_dir: harness/instinct
+  instinct_dir: harness/memory
   # 本能记录目录
   # 包含：instinct-record.json
 
@@ -414,6 +414,41 @@ thresholds:
   # 同一模式被纠正的最小次数
   # 同一模式被纠正达到此数触发分析
   # 建议值：2-5
+
+  # -------------------------------------------------------------------------
+  # 8 个进化维度的独立阈值
+  # -------------------------------------------------------------------------
+  # evolve_dispatcher.py 8 维度差异化阈值：
+  #   min_count: 达到此纠正次数后触发该维度的进化
+  #   cooldown_hours: 同一维度两次进化之间的最小冷却时间
+  dimensions:
+    # ── 核心 4 维 ──
+    agent:
+      min_count: 3        # Agent 行为优化阈值
+      cooldown_hours: 24  # 冷却期 24 小时
+    skill:
+      min_count: 3        # Skill 决策完善阈值
+      cooldown_hours: 24  # 冷却期 24 小时
+    rule:
+      min_count: 5        # Rule 调整更谨慎，阈值更高
+      cooldown_hours: 48  # 冷却期 48 小时
+    instinct:
+      min_count: 2        # 本能记录更新阈值，灵敏度最高
+      cooldown_hours: 12  # 冷却期 12 小时
+
+    # ── 扩展 4 维 ──
+    performance:
+      min_count: 4        # 性能问题需积累足够证据
+      cooldown_hours: 24
+    interaction:
+      min_count: 4        # 交互问题积累后处理
+      cooldown_hours: 24
+    security:
+      min_count: 2        # 安全问题立即关注
+      cooldown_hours: 12
+    context:
+      min_count: 3        # 上下文管理优化阈值
+      cooldown_hours: 24
 
 # -----------------------------------------------------------------------------
 # 11. 数据验证配置

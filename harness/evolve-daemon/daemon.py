@@ -44,7 +44,7 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-from _find_root import find_root
+from harness.paths import find_root
 import kb_shared
 
 
@@ -336,6 +336,17 @@ def load_config():
             "min_new_sessions": 1,
             "min_same_pattern_corrections": 2,
             "max_hours_since_last_analyze": 6,
+            # 8 维度进化阈值（兜底默认值，完整配置在 config.yaml）
+            "dimensions": {
+                "agent": {"min_count": 3, "cooldown_hours": 24},
+                "skill": {"min_count": 3, "cooldown_hours": 24},
+                "rule": {"min_count": 5, "cooldown_hours": 48},
+                "instinct": {"min_count": 2, "cooldown_hours": 12},
+                "performance": {"min_count": 4, "cooldown_hours": 24},
+                "interaction": {"min_count": 4, "cooldown_hours": 24},
+                "security": {"min_count": 2, "cooldown_hours": 12},
+                "context": {"min_count": 3, "cooldown_hours": 24},
+            },
         },
         "safety": {
             "max_proposals_per_day": 3,
@@ -605,6 +616,28 @@ def _execute_auto_apply(decision: dict, analysis: dict, config: dict, root: Path
             _apply_file_change(target_file, result.get("suggested_change", ""), config, root)
             print(f"✅ [Agent] {target}: {result.get('change_type')}")
             # 关联 KB 条目
+            if kb_id:
+                update_kb_confidence(kb_id, "applied", root)
+
+    elif dimension == "skill":
+        # Skill 维度进化：自动更新 Skill 定义
+        from skill_evolution import evolve_skill
+        corrections = analysis.get("correction_patterns", {}).get(f"{target}:unknown", {}).get("examples", [])
+        result = evolve_skill(target, corrections, config, root)
+        if result.get("success"):
+            _apply_file_change(target_file, result.get("suggested_change", ""), config, root)
+            print(f"✅ [Skill] {target}: {result.get('change_type')}")
+            if kb_id:
+                update_kb_confidence(kb_id, "applied", root)
+
+    elif dimension == "rule":
+        # Rule 维度进化：自动更新规则定义
+        from rule_evolution import evolve_rule
+        corrections = analysis.get("correction_patterns", {}).get(f"{target}:unknown", {}).get("examples", [])
+        result = evolve_rule(target, corrections, config, root)
+        if result.get("success"):
+            _apply_file_change(target_file, result.get("suggested_change", ""), config, root)
+            print(f"✅ [Rule] {target}: {result.get('change_type')}")
             if kb_id:
                 update_kb_confidence(kb_id, "applied", root)
 

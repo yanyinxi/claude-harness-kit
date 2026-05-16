@@ -3,10 +3,7 @@
     "allow": [
       "*"
     ],
-    "defaultMode": "bypassPermissions",
-    "additionalDirectories": [
-      "*"
-    ]
+    "defaultMode": "default"
   },
   "hooks": {
     "PreToolUse": [
@@ -48,7 +45,14 @@
   "enabledPlugins": {
     "claude-harness-kit": true
   },
-  "extraKnownMarketplaces": {},
+  "extraKnownMarketplaces": {
+    "claude-harness-kit": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/yanyinxi/工作/code/github/claude-harness-kit"
+      }
+    }
+  },
   "mode": "pipeline",
   "mode_description": "Pipeline 模式 — 严格阶段顺序，上一步输出喂下一步"
 }

@@ -30,8 +30,6 @@ UPDATE_FILES = [
     "package-lock.json",
     "index.js",
     ".claude-plugin/plugin.json",
-    "harness/marketplace.json",
-    ".claude-plugin/marketplace.json",
 ]
 
 VERSION_TYPES = {

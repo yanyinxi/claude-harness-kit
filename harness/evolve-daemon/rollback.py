@@ -21,7 +21,7 @@ import kb_shared
 
 
 from _daemon_config import load_config
-from _find_root import find_root
+from harness.paths import find_root
 
 
 def load_proposal_history(history_file: Path) -> list:

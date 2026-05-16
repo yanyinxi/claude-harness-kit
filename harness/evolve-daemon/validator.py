@@ -15,10 +15,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-# 添加 harness 到 Python path
-_harness_root = Path(__file__).parent.parent.parent
-if str(_harness_root) not in sys.path:
-    sys.path.insert(0, str(_harness_root))
+# 统一 sys.path 设置
+_project_root = Path(__file__).parent.parent.parent
+if str(_project_root) not in sys.path:
+    sys.path.insert(0, str(_project_root))
+from harness.paths import setup_syspath
+setup_syspath(_project_root)
 
 from harness._core.exceptions import handle_exception
 
@@ -27,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 import kb_shared
 from _daemon_config import load_config
-from _find_root import find_root
+from harness.paths import find_root
 
 
 def validate_session(session: dict) -> tuple[bool, Optional[str]]:
