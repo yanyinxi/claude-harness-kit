@@ -73,13 +73,29 @@ claude-harness-kit/
 
 ## 安装与更新
 
-### 安装
+### 一键安装（推荐）
 ```bash
-# 从插件市场安装
-claude plugins install claude-harness-kit
+# 在项目目录下运行
+./install.sh
 
-# 本地开发安装
-claude plugins install claude-harness-kit@claude-harness-kit --scope user $(pwd)
+# 或手动指定模式
+./install.sh --local   # 本地目录模式（离线可用）
+./install.sh --github  # GitHub 模式（需要网络）
+```
+
+### 手动安装
+```bash
+# 1. 添加本地目录为插件市场
+claude plugins marketplace add /path/to/claude-harness-kit
+
+# 2. 安装插件
+claude plugins install claude-harness-kit --scope user
+```
+
+### 从插件市场安装
+```bash
+# 从 GitHub 安装（需要网络）
+claude plugins install yanyinxi/claude-harness-kit
 ```
 
 ### 更新
@@ -180,7 +196,7 @@ architect, backend-dev, code-reviewer, codebase-analyzer, database-dev, devops, 
 - 运行测试套件 (`npm test`)
 - 安装依赖 (`npm install`)
 - 执行 Claude Code 插件命令
-- 使用 `/chk` 系列命令切换执行模式
+- 使用 `/team` 系列命令切换执行模式
 
 ### 限制的操作
 - 禁止直接修改 `.claude/` 目录下的运行时数据
@@ -227,28 +243,35 @@ architect, backend-dev, code-reviewer, codebase-analyzer, database-dev, devops, 
 ## Commands
 
 ### 核心命令
-| 命令 | 描述 |
-|------|------|
-| `/chk team` | 切换到 Team 模式（默认） |
-| `/chk auto` | 切换到 Autopilot 模式 |
-| `/chk ultra` | 切换到 Ultrawork 模式 |
-| `/chk ralph` | 切换到 Ralph TDD 模式 |
-| `/chk pipeline` | 切换到 Pipeline 模式 |
-| `/chk ccg` | 切换到 CCG 审查模式 |
-| `/chk solo` | 切换到 Solo 直接对话模式 |
+| 命令 | 描述 | 适用场景 |
+|------|------|----------|
+| `/chk-team` | 切换到 Team 模式（默认） | 新功能开发、需求分析、架构设计 |
+| `/chk-auto` | 切换到 Autopilot 模式 | 快速修 Bug、根因明确的简单问题 |
+| `/chk-ultra` | 切换到 Ultrawork 模式 | 批量重构、大规模修改 |
+| `/chk-ralph` | 切换到 Ralph TDD 模式 | 核心代码、支付/安全等零容忍场景 |
+| `/chk-pipeline` | 切换到 Pipeline 模式 | 数据库迁移、严格阶段依赖的任务 |
+| `/chk-ccg` | 切换到 CCG 审查模式 | 重要 PR、需要三方独立审查 |
+| `/chk-solo` | 切换到 Solo 直接对话模式 | 简单问答、知识查询、零开销对话 |
 
 ### 开发命令
-| 命令 | 描述 |
-|------|------|
-| `/tdd` | 激活 TDD 开发流程 |
-| `/council` | 激活四声部决策模式 |
-| `/gate-guard` | 激活架构守卫检查 |
-| `/ship` | 执行发布前检查清单 |
-| `/debugging` | 进入调试模式 |
+| 命令 | 描述 | 适用场景 |
+|------|------|----------|
+| `/chk-init` | 初始化项目分析 | 首次使用 CHK 时让 AI 认识项目 |
+| `/chk-gc` | 知识垃圾回收 | 清理过期的上下文和漂移知识 |
+| `/chk-status` | 查看 CHK 状态 | 查看当前模式、Hooks、知识库状态 |
+
+### 工具命令
+| 命令 | 描述 | 适用场景 |
+|------|------|----------|
+| `/tdd` | 激活 TDD 开发流程 | 测试驱动开发、确保测试先行 |
+| `/council` | 激活四声部决策模式 | 复杂架构决策、多角度方案评审 |
+| `/gate-guard` | 激活架构守卫检查 | 高风险变更前的安全拦截 |
+| `/ship` | 执行发布前检查清单 | 功能完成后的质量门禁 |
+| `/debugging` | 进入调试模式 | 排查问题、系统性根因分析 |
 
 ### 管理命令
-| 命令 | 描述 |
-|------|------|
-| `/evolve` | 查看进化系统状态 |
-| `/instinct` | 查看本能记录 |
-| `/knowledge` | 查看知识库推荐 |
+| 命令 | 描述 | 适用场景 |
+|------|------|----------|
+| `/chk-evolve` | 查看进化系统状态 | 了解 CHK 自我优化进展 |
+| `/chk-instinct` | 查看本能记录 | 查看已学习的经验教训 |
+| `/chk-knowledge` | 查看知识库推荐 | 获取项目相关的最佳实践 |

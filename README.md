@@ -37,49 +37,26 @@ node --version && git --version && claude --version
 
 ## 安装
 
-### 方式一：一键安装（推荐）
+### 一键安装（推荐）
 
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/yanyinxi/claude-harness-kit.git
 cd claude-harness-kit
 
-# 2. 运行安装脚本（自动检查环境、解决依赖）
-bash ./harness/cli/install.sh
+# 2. 运行安装脚本
+./install.sh
+
+# 支持离线使用（本地目录模式）
+./install.sh --local
 ```
 
 安装脚本会：
-- ✅ 检查 Node.js、Git、npm 版本
-- ✅ 自动选择最优安装方式（GitHub/marketplace/手动）
-- ✅ 复制 Skills 到 `~/.claude/skills/`
-- ✅ 安装推荐 MCP 工具（filesystem、playwright）
-- ✅ 验证插件状态
+- ✅ 检测环境并自动选择最优安装方式
+- ✅ 清理旧配置避免冲突
+- ✅ 添加 marketplace 并安装插件
+- ✅ 提供详细的成功/失败信息
 
-### 方式二：手动安装
-
-```bash
-# 1. 确保 Claude Code 已安装
-claude --version
-
-# 2. 通过 GitHub 安装
-claude plugin install yanyinxi/claude-harness-kit --scope user
-
-# 3. 验证
-claude plugins list
-```
-
-### 方式三：通过 marketplace
-
-```bash
-# 1. 添加本地 marketplace
-claude plugins marketplace add --scope user /path/to/claude-harness-kit
-
-# 2. 安装
-claude plugin install claude-harness-kit --scope user
-
-# 3. 验证
-claude plugins list
-```
 
 ### 验证安装
 
@@ -120,26 +97,26 @@ claude                     # 启动 Claude Code
 
 ## 命令速查
 
-| 场景 | 命令 | 示例 |
-|------|------|------|
-| 初始化项目 | `/chk-init` | `/chk-init` |
-| 开发新功能 | `/chk-team <需求>` | `/chk-team 实现用户权限管理` |
-| 快速修 Bug | `/chk-auto <问题>` | `/chk-auto 修复登录页密码错误不提示` |
-| 批量重构 | `/chk-ultra <目标>` | `/chk-ultra 把 30 个文件的 console.log 改成 logging` |
-| 核心代码（不能出错）| `/chk-ralph <需求>` | `/chk-ralph 实现支付回调验签` |
-| 审查代码 | `/chk-ccg <内容>` | `/chk-ccg 审查这次 PR 的改动` |
-| 数据库迁移 | `/chk-pipeline <目标>` | `/chk-pipeline 把 user 表拆成 user + profile` |
-| 简单问答 | `/chk-solo <问题>` | `/chk-solo 这个项目的缓存怎么设计的` |
-| 查看状态 | `/chk-status` | `/chk-status` |
-| 清理过期知识 | `/chk-gc` | `/chk-gc` |
+| 场景 | 命令 | 示例 | 说明 |
+|------|------|------|------|
+| 初始化项目 | `/chk-init` | `/chk-init` | 让 AI 认识你的项目结构和规范 |
+| 开发新功能 | `/chk-team <需求>` | `/chk-team 实现用户权限管理` | 5 阶段流程：需求→设计→编码→测试→审查 |
+| 快速修 Bug | `/chk-auto <问题>` | `/chk-auto 修复登录页密码错误不提示` | 全自动端到端，5 分钟搞定 Bug |
+| 批量重构 | `/chk-ultra <目标>` | `/chk-ultra 把 30 个文件的 console.log 改成 logging` | 3-5 个 Agent 并行，加速大规模修改 |
+| 核心代码（不能出错）| `/chk-ralph <需求>` | `/chk-ralph 实现支付回调验签` | TDD 强制模式，不通过测试不停止 |
+| 审查代码 | `/chk-ccg <内容>` | `/chk-ccg 审查这次 PR 的改动` | Claude + Codex + Gemini 三方独立审查 |
+| 数据库迁移 | `/chk-pipeline <目标>` | `/chk-pipeline 把 user 表拆成 user + profile` | 严格阶段顺序，上一步输出喂下一步 |
+| 简单问答 | `/chk-solo <问题>` | `/chk-solo 这个项目的缓存怎么设计的` | 直接对话，零开销，不用 Agent |
+| 查看状态 | `/chk-status` | `/chk-status` | 查看当前模式、Hooks、知识库状态 |
+| 清理过期知识 | `/chk-gc` | `/chk-gc` | 扫描上下文，清理漂移和过期的知识 |
 
 **场景选择指南**：
 
 ```
-复杂程度低 ────────────────────────────────────────→ 复杂程度高
+简单 ───────────────────────────────────────────────→ 复杂
 
-/chk-solo       /chk-auto      /chk-team     /chk-ultra     /chk-ralph
-（简单问答）     （快速修Bug）   （新功能开发）  （批量重构）    （零容忍）
+/chk-solo   /chk-auto   /chk-team   /chk-ultra   /chk-ralph
+简单问答    快速修Bug    新功能开发   批量重构      零容忍
 ```
 
 ---
@@ -182,7 +159,7 @@ claude-harness-kit/
 │   ├── knowledge/         # 双知识库 — 专家知识 + 进化知识
 │   ├── memory/            # 记忆系统 — 团队经验自动积累
 │   ├── rules/             # 团队规范 — 统一输出标准
-│   └── cli/               # kit 命令行工具
+│   └── cli/               # CHK 命令行工具
 ├── index.js               # 插件入口
 └── package.json
 ```
@@ -195,7 +172,7 @@ claude-harness-kit/
 |------|------|------|
 | `Plugin not found` | Git 版本不支持 sparse checkout | 更新 Git >= 2.27 或使用手动安装 |
 | 装完不生效 | Claude Code 未重启 | 重启 Claude Code 或重新打开终端 |
-| 找不到 chk 命令 | Skills 未复制 | 重新执行 `bash ./harness/cli/install.sh` |
+| 找不到命令 | 命令未加载 | 重新运行 `./install.sh` |
 | `Permission denied` | 权限不足 | 检查 Claude Code 权限设置 |
 | Node 版本过低 | Node.js 版本老旧 | `brew install node` 或从 nodejs.org 下载 |
 
@@ -203,13 +180,13 @@ claude-harness-kit/
 
 ```bash
 # 1. 卸载插件
-claude plugin uninstall claude-harness-kit --scope user
+claude plugins uninstall chk --scope user
 
 # 2. 清理配置
-rm -rf ~/.claude/plugins/cache/claude-harness-kit
+rm -rf ~/.claude/plugins/cache/chk*
 
 # 3. 重新安装
-bash ./harness/cli/install.sh
+./install.sh
 ```
 
 ---
@@ -220,7 +197,7 @@ bash ./harness/cli/install.sh
 > 不冲突。CHK 是插件，补充了上下文、协作、进化能力。
 
 **Q: 团队都要装吗？**
-> 负责人装一次，成员 `claude plugin install yanyinxi/claude-harness-kit` 即可。
+> 负责人装一次，成员 `claude plugins install chk` 即可。
 
 **Q: 会自动改我的代码吗？**
 > 不会。安全模块锁定，高风险变更需人工审批。
