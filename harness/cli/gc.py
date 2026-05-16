@@ -18,7 +18,6 @@ from paths import KNOWLEDGE_DIR
 
 def run_gc_agent(knowledge_dir: Path, output_path: Path):
     """通过 Claude Code CLI 调用 GC Agent"""
-    drift_file = knowledge_dir / "drift-report.md"
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     # 构建 prompt 给 GC Agent
@@ -29,7 +28,7 @@ def run_gc_agent(knowledge_dir: Path, output_path: Path):
 3. **过期知识**: 上次使用时间超过 6 个月的条目
 4. **孤儿引用**: 被 INDEX.md 引用但文件已不存在的条目
 
-扫描 {knowledge_dir} 中所有 .json 条目和 INDEX.md，生成 markdown 报告到 {drift_file}。
+扫描 {knowledge_dir} 中所有 .json 条目和 INDEX.md，生成 markdown 报告到 {output_path}。
 
 报告格式:
 ## 模式漂移
@@ -61,13 +60,13 @@ def run_gc_agent(knowledge_dir: Path, output_path: Path):
         )
         # 如果 Claude Code 不可用，生成基础报告
         if result.returncode != 0:
-            generate_fallback_report(knowledge_dir, drift_file, timestamp)
+            generate_fallback_report(knowledge_dir, output_path, timestamp)
     except FileNotFoundError:
-        generate_fallback_report(knowledge_dir, drift_file, timestamp)
+        generate_fallback_report(knowledge_dir, output_path, timestamp)
     except subprocess.TimeoutExpired:
-        generate_fallback_report(knowledge_dir, drift_file, timestamp)
+        generate_fallback_report(knowledge_dir, output_path, timestamp)
 
-    return drift_file
+    return output_path
 
 
 def generate_fallback_report(knowledge_dir: Path, output_path: Path, timestamp: str):
@@ -79,7 +78,18 @@ def generate_fallback_report(knowledge_dir: Path, output_path: Path, timestamp: 
         if f.name == "INDEX.md":
             continue
         try:
-            entry = json.loads(f.read_text(encoding="utf-8"))
+            data = json.loads(f.read_text(encoding="utf-8"))
+            # 处理 JSON 数组（取第一项作为 entry）
+            if isinstance(data, list):
+                if not data:
+                    continue
+                entry = data[0]
+            else:
+                entry = data
+            # 确保 entry 是字典
+            if not isinstance(entry, dict):
+                issues.append(f"  - 无法解析: {f.name} (非字典类型)")
+                continue
             entry["_file"] = str(f.relative_to(knowledge_dir))
             entries.append(entry)
         except (json.JSONDecodeError, OSError):
@@ -130,3 +140,7 @@ def main():
     if drift_file.exists():
         lines = drift_file.read_text().splitlines()
         print(f"   共 {len(lines)} 行")
+
+
+if __name__ == "__main__":
+    main()

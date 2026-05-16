@@ -75,7 +75,7 @@ class PathGuard:
         Returns:
             True 如果路径危险
         """
-        abs_path = os.path.abspath(path)
+        abs_path = os.path.realpath(path)  # 解析符号链接，防止路径穿越
 
         # 检查危险模式
         for pattern in self._dangerous_path_re:

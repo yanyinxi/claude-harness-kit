@@ -174,7 +174,7 @@ def _generate_from_template(analysis: dict, config: dict, root: Path) -> Path:
     content = f"""# 改进提案: 自动检测到需优化的模式
 
 ## 数据依据
-- 来自 {analysis['total_sessions']} 个会话
+- 来自 {analysis.get("total_sessions", 0)} 个会话
 - 发现 {len(hotspots)} 个纠正热点
 
 ## 发现

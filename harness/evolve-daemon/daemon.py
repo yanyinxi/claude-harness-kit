@@ -441,7 +441,8 @@ def run_analysis(config: dict, root: Path, sessions: list[dict]):
 
     # 统计两个信号源
     original_corrections = sum(len(s.get("corrections", [])) for s in sessions)
-    sum(
+    # 记录 failure_stats 供后续日志使用
+    _ = sum(
         s.get("rich_context", {}).get("failure_stats", {}).get("total", 0)
         for s in sessions
     )

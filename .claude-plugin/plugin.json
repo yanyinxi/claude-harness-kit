@@ -1,5 +1,6 @@
 {
   "name": "chk",
+  "version": "0.9.1",
   "description": "Claude Harness Kit - Human steers, Agents execute. 多 Agent 协作、通用 Skills、持续进化。提供 22 个 Agent、36 个 Skill、8 种执行模式、双知识库进化系统。",
   "author": {
     "name": "yanyinxi"
