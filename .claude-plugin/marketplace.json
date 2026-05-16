@@ -1,23 +1,27 @@
 {
-  "name": "claude-harness-kit",
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-harness-kit-marketplace",
+  "description": "Claude Harness Kit - 团队级 AI 驾驭工具包。多 Agent 协作、通用 Skills、持续进化",
   "owner": {
-    "name": "yanyinxi"
-  },
-  "metadata": {
-    "description": "Claude Harness Kit — 团队级 AI 驾驭工具包。多 Agent 协作、通用 Skills、持续进化。",
-    "version": "0.9.0"
+    "name": "yanyinxi",
+    "email": "yanyinxi@example.com"
   },
   "plugins": [
     {
       "name": "claude-harness-kit",
-      "source": ".",
       "description": "CHK: 22 Agents + 36 Skills + 8 执行模式 + 自动化 Hook 系统 + 双知识库进化引擎",
-      "version": "0.9.0",
       "author": {
         "name": "yanyinxi"
       },
-      "license": "MIT",
-      "keywords": ["claude-code", "claude-code-plugin", "harness-engineering", "multi-agent", "self-evolution", "agent-orchestration"]
+      "category": "development",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/yanyinxi/claude-harness-kit.git",
+        "path": ".",
+        "ref": "main"
+      },
+      "homepage": "https://github.com/yanyinxi/claude-harness-kit",
+      "keywords": ["claude-code", "claude-code-plugin", "multi-agent", "self-evolution", "devops", "harness-engineering"]
     }
   ]
 }
