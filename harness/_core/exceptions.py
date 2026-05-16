@@ -97,7 +97,7 @@ def safe_json_loads(
 
     try:
         return json.loads(data)
-    except (json.JSONDecodeError, ValueError) as e:
+    except json.JSONDecodeError as e:
         handle_exception(e, context, default_return=default, log_level="warning")
         return default
 

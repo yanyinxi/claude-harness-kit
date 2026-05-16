@@ -163,7 +163,7 @@ def extract_git_insights(root: Path) -> list[str]:
     try:
         result = subprocess.run(
             ["git", "-C", str(root), "log", "--oneline", "-50", "--no-merges"],
-            capture_output=True, text=True, timeout=5
+            capture_output=True, text=True, timeout=15
         )
         fix_count = 0
         refactor_count = 0
@@ -335,18 +335,14 @@ def validate_target_path(target: Optional[str]) -> Path:
             raise ValueError(f"目标不是目录: {target}")
 
         # 检查路径安全性（防止路径遍历攻击）
-        # 检查用户输入中是否包含 ".." 或绝对路径尝试跳出
+        # 策略：先检查 user_input 是否有 ".."，再 resolve，最后检查是否越界
         user_input = target.strip()
-        if ".." in user_input or user_input.startswith("/"):
-            # 进一步验证：确保解析后的路径仍然在预期范围内
-            try:
-                # 尝试解析输入路径并检查其父路径是否安全
-                resolved = Path(user_input).resolve()
-                # 如果解析后的路径与预期差异太大，提示用户
-                if resolved != root:
-                    raise ValueError(f"无效的路径（路径遍历检测）: {target}")
-            except Exception:
-                raise ValueError(f"无效的路径: {target}")
+        if ".." in user_input:
+            raise ValueError(f"路径遍历攻击: {target}")
+
+        resolved = Path(user_input).resolve()
+        if not resolved.is_relative_to(root):
+            raise ValueError(f"路径越界: {target}")
 
         return root
 

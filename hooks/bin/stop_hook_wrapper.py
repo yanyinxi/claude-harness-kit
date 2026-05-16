@@ -38,17 +38,13 @@ def detect_plugin_root() -> Path:
         except (json.JSONDecodeError, OSError):
             pass
 
-    # 优先级 3: 从当前文件位置向上查找
+    # 优先级 3/4: 统一遍历，两种条件一起检查
     current = Path(__file__).resolve().parent
     for ancestor in [current] + list(current.parents):
-        plugin_marker = ancestor / ".claude-plugin" / "plugin.json"
-        index_js = ancestor / "index.js"
-        if plugin_marker.exists() or index_js.exists():
+        # 检查 .claude-plugin 或 index.js
+        if (ancestor / ".claude-plugin" / "plugin.json").exists() or (ancestor / "index.js").exists():
             return ancestor
-
-    # 优先级 4: 向上查找 harness/hooks 结构
-    current = Path(__file__).resolve().parent
-    for ancestor in [current] + list(current.parents):
+        # 检查 hooks/harness 结构
         if ancestor.name == "hooks" and ancestor.parent.name == "harness":
             return ancestor.parent.parent
 

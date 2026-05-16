@@ -1,6 +1,8 @@
 ---
 name: mobile-dev
 version: 1.0.0
+trigger_words: >
+  iOS、Android、Swift、Kotlin、移动端、App Store、上架、React Native、Flutter
 description: >
   移动端开发 Skill。提供 iOS/Swift 和 Android/Kotlin 双平台开发模板、跨平台桥接规范、
   Flutter 组件模式。内置 SwiftUI ViewController、Jetpack Compose、Platform Channel 桥接代码模板，

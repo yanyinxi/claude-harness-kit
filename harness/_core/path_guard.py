@@ -104,9 +104,10 @@ class PathGuard:
         return False
 
     def _in_allowed_dir(self, abs_path: str) -> bool:
-        """检查路径是否在允许目录内"""
+        """检查路径是否在允许目录内（使用 os.sep 防止 /tmp-foo 被 /tmp 误匹配）"""
         for allowed in self.allowed_dirs:
-            if abs_path.startswith(os.path.abspath(allowed)):
+            allowed_abs = os.path.abspath(allowed)
+            if abs_path == allowed_abs or abs_path.startswith(allowed_abs + os.sep):
                 return True
         return False
 

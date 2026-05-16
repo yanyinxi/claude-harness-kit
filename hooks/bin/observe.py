@@ -20,7 +20,14 @@ from typing import Optional
 
 # ── 环境 ──────────────────────────────────────────────────────────────────────
 
-PLUGIN_ROOT = Path(os.environ.get("CLAUDE_PLUGIN_ROOT", ""))
+# PLUGIN_ROOT: 优先使用环境变量，为空时 fallback 到脚本自身的父目录链
+_plugin_root_env = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
+if _plugin_root_env:
+    PLUGIN_ROOT = Path(_plugin_root_env)
+else:
+    # fallback: hooks/bin/ → bin/ → hooks/ → 插件根目录
+    PLUGIN_ROOT = Path(__file__).resolve().parent.parent.parent
+
 OBS_DIR = PLUGIN_ROOT / ".claude" / "homunculus"
 OBS_LOG = OBS_DIR / "observations.jsonl"
 ERROR_LOG = OBS_DIR / "observe_errors.log"

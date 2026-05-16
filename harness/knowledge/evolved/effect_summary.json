@@ -71,7 +71,151 @@
       "partial_count": 0,
       "success_rate": 1.0,
       "status": "verified"
+    },
+    "auto-478e9203": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-4655a5d9": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-1b058154": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "auto-0ba2c449": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-9421f0a5": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-fd03b136": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "auto-4e402acc": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-ab01a0ee": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-ae6391c5": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "auto-a3d41a0b": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-24df76ec": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-0b0b0b8e": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "auto-36908699": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-e0597df2": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-600f0951": {
+      "apply_count": 4,
+      "success_count": 4,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
+    },
+    "auto-0ce45d1f": {
+      "apply_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "testing"
+    },
+    "auto-accc6399": {
+      "apply_count": 1,
+      "success_count": 0,
+      "failure_count": 1,
+      "partial_count": 0,
+      "success_rate": 0.0,
+      "status": "testing"
+    },
+    "auto-e86dfe62": {
+      "apply_count": 5,
+      "success_count": 5,
+      "failure_count": 0,
+      "partial_count": 0,
+      "success_rate": 1.0,
+      "status": "verified"
     }
   },
-  "updated": "2026-05-16T12:16:00.789291"
+  "updated": "2026-05-16T22:45:00.380475"
 }

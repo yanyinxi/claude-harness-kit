@@ -1,6 +1,8 @@
 ---
 name: multi-model-review
 version: 1.0.0
+trigger_words: >
+  多方审查、三方审查、安全审查、支付代码、关键代码、独立验证
 description: >
   使用多个AI模型进行独立验证的交叉审查。适用于关键代码路径、安全敏感变更或需要第二意见时。
   同时发3个独立Agent（Sonnet代码审查+Opus安全审计+Sonnet测试覆盖），

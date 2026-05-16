@@ -20,15 +20,15 @@ def run_gc_agent(knowledge_dir: Path, output_path: Path):
     """通过 Claude Code CLI 调用 GC Agent"""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    # 构建 prompt 给 GC Agent
-    gc_prompt = f"""你是知识垃圾回收 Agent。扫描 {knowledge_dir} 目录，识别以下问题：
+    # 构建 prompt 给 GC Agent（使用占位符引用，避免内嵌具体路径）
+    gc_prompt = """你是知识垃圾回收 Agent。扫描知识目录，识别以下问题：
 
 1. **模式漂移**: 知识条目与当前代码库实践不一致
 2. **死知识**: 从未被引用的条目（无 project_count 或 usage_count）
 3. **过期知识**: 上次使用时间超过 6 个月的条目
 4. **孤儿引用**: 被 INDEX.md 引用但文件已不存在的条目
 
-扫描 {knowledge_dir} 中所有 .json 条目和 INDEX.md，生成 markdown 报告到 {output_path}。
+扫描知识目录中所有 .json 条目和 INDEX.md，生成 markdown 报告到 drift-report.md。
 
 报告格式:
 ## 模式漂移
@@ -51,7 +51,7 @@ def run_gc_agent(knowledge_dir: Path, output_path: Path):
         result = subprocess.run(
             [
                 sys.executable, "-m", "claude_code",
-                "--print", gc_prompt,
+                "--print", "--", gc_prompt,
             ],
             capture_output=True,
             text=True,

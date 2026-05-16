@@ -15,13 +15,10 @@ instinct_engine.py — CHK 本能推理引擎
 """
 import json
 from datetime import datetime
-from pathlib import Path
 from typing import Optional
 
-# 路径配置
-import sys
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from paths import INSTINCT_FILE, MEMORY_DIR
+# 使用相对导入，避免 sys.path.insert 绕过包管理器
+from ..paths import INSTINCT_FILE, MEMORY_DIR
 
 
 class InstinctEngine:
@@ -77,7 +74,7 @@ class InstinctEngine:
                 self._instincts = []
 
     def _save(self):
-        """保存本能记录"""
+        """保存本能记录（原子写入，防止 json.dumps 失败导致文件截断）"""
         MEMORY_DIR.mkdir(parents=True, exist_ok=True)
         data = {
             "evolution": {
@@ -87,7 +84,11 @@ class InstinctEngine:
             },
             "records": self._instincts,
         }
-        INSTINCT_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+        # 原子写入：先写临时文件再 rename，防止 json.dumps 失败时文件被截断
+        temp_file = INSTINCT_FILE.with_suffix(".tmp")
+        content = json.dumps(data, ensure_ascii=False, indent=2)
+        temp_file.write_text(content)
+        temp_file.replace(INSTINCT_FILE)
 
     def detect_scene(self, task: str) -> str:
         """
@@ -133,7 +134,9 @@ class InstinctEngine:
             if isinstance(instinct, dict):
                 context = instinct.get("context", {})
                 domain = context.get("domain", "") if isinstance(context, dict) else ""
-                if domain == scene or domain in task.lower():
+                if domain == scene or (
+                    domain and domain in task.lower().split()
+                ):
                     relevant_instincts.append({
                         "correction": instinct.get("correction", ""),
                         "confidence": instinct.get("confidence", 0),

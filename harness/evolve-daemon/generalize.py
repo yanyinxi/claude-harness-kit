@@ -472,14 +472,17 @@ def process_errors(
 
 
 def _do_reuse(result: dict, error: dict, root: Path | None):
-    """执行 reuse：更新已有知识的 specific_examples"""
+    """执行 reuse：追加更新后的知识到 knowledge_base.jsonl（避免全量重写）"""
     matched_id = result.get("matched_id")
     if not matched_id:
         return
 
     kb = load_active_kb(root)
-    for entry in kb:
+    # 查找并更新条目
+    entry_idx = -1
+    for i, entry in enumerate(kb):
         if entry.get("id") == matched_id:
+            entry_idx = i
             # 新增具体例子
             error_text = error.get("error", "")
             if error_text not in entry.get("specific_examples", []):
@@ -491,10 +494,19 @@ def _do_reuse(result: dict, error: dict, root: Path | None):
             entry["confidence"] = min(1.0, entry.get("confidence", 0.5) + delta)
             entry["updated_at"] = now_iso()
             entry["last_reused_at"] = now_iso()
+            break
 
-            update_kb_all(kb, root)
-            print(f"  [reuse] {matched_id} ← {error.get('error', '')[:50]}")
-            return
+    if entry_idx >= 0:
+        # 追加模式：只追加更新后的条目（不重写整个知识库）
+        from kb_shared import append_jsonl
+        from paths import EVOLVED_KB_DIR
+        # 如果有 root，使用 root 下路径
+        if root:
+            kb_file = root / "harness" / "knowledge" / "evolved" / "knowledge_base.jsonl"
+        else:
+            kb_file = EVOLVED_KB_DIR / "knowledge_base.jsonl"
+        append_jsonl(kb_file, kb[entry_idx])
+        print(f"  [reuse] {matched_id} ← {error.get('error', '')[:50]} (追加模式)")
 
 
 def _do_merge(kb_entries: list[dict], merged_pattern: str, risk: dict, root: Path | None) -> dict:

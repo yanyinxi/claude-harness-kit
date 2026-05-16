@@ -10,12 +10,15 @@ ConfigLoader - 统一配置加载器
 - harness/cli/modes/*.json
 """
 import json
+import logging
 from pathlib import Path
 from typing import Any, Optional
 try:
     import yaml
 except ImportError:
     yaml = None
+
+logger = logging.getLogger("config_loader")
 
 
 class ConfigLoader:
@@ -93,7 +96,11 @@ class ConfigLoader:
             return self.DEFAULTS["core"].copy()
 
         with open(version_path, encoding="utf-8") as f:
-            return json.load(f)
+            config = json.load(f)
+        # 同步更新 _version（修复 reload 后 _version 不一致的问题）
+        if "version" in config:
+            self._version = config["version"]
+        return config
 
     def _load_daemon(self) -> dict:
         """加载守护进程配置"""
@@ -102,6 +109,7 @@ class ConfigLoader:
             return self.DEFAULTS["daemon"].copy()
 
         if yaml is None:
+            logger.warning("pyyaml 未安装，daemon 配置使用默认值")
             return self.DEFAULTS["daemon"].copy()
 
         with open(config_path, encoding="utf-8") as f:

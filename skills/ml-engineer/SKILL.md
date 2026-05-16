@@ -1,6 +1,8 @@
 ---
 name: ml-engineer
 version: 1.0.0
+trigger_words: >
+  机器学习、训练模型、PyTorch、TensorFlow、特征工程、MLflow、模型部署
 description: >
   机器学习工程 Skill。提供 ML 训练流程（PyTorch/TensorFlow）、特征工程规范、
   模型评估指标（accuracy/F1/ROC-AUC）、FastAPI 部署模板。

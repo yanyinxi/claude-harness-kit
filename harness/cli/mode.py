@@ -20,10 +20,15 @@ import json
 import os
 import shutil
 import sys
+import warnings
 from pathlib import Path
 
 
 MODES_DIR = Path(__file__).parent / "modes"
+
+# 检测 modes 目录是否存在，不存在时发出警告
+if not MODES_DIR.exists():
+    warnings.warn(f"Modes directory not found: {MODES_DIR}")
 
 MODE_DESCRIPTIONS = {
     "solo":     "Solo 模式 — 直接对话，不用 Agent，零开销",

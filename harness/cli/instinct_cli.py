@@ -57,8 +57,13 @@ def load_records() -> dict:
 
 def save_records(data: dict):
     data["meta"]["updated"] = datetime.utcnow().isoformat() + "Z"
-    with open(INSTINCT_FILE, "w") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    temp_path = INSTINCT_FILE.with_suffix(".tmp")
+    try:
+        with open(temp_path, "w") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        temp_path.replace(INSTINCT_FILE)  # 原子替换
+    except IOError as e:
+        raise IOError(f"保存本能记录失败: {e}") from e
 
 # ── Confidence helpers ───────────────────────────────────────────────────────────
 

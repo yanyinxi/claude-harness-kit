@@ -368,7 +368,7 @@ def test_rollback_keep_good_metrics():
     metrics = {"task_success_rate": 0.9, "user_correction_rate": 0.1,
                "agent_failure_rate": 0.05, "satisfaction_score": 4.2,
                "sample_size": 10}
-    decision = evaluate_proposal(proposal, metrics, baseline)
+    decision, triggers = evaluate_proposal(proposal, metrics, baseline)
     assert decision == "keep", f"Expected keep, got {decision}"
     ok("指标改善 → keep")
 
@@ -381,7 +381,7 @@ def test_rollback_degraded_success_rate():
     metrics = {"task_success_rate": 0.7, "user_correction_rate": 0.12,
                "agent_failure_rate": 0.06, "satisfaction_score": 3.5,
                "sample_size": 10}
-    decision = evaluate_proposal(proposal, metrics, baseline)
+    decision, triggers = evaluate_proposal(proposal, metrics, baseline)
     assert decision == "rollback", f"Expected rollback, got {decision}"
     ok("任务成功率下降 22% → rollback")
 
@@ -394,7 +394,7 @@ def test_rollback_low_satisfaction():
     metrics = {"task_success_rate": 0.86, "user_correction_rate": 0.14,
                "agent_failure_rate": 0.07, "satisfaction_score": 2.1,
                "sample_size": 10}
-    decision = evaluate_proposal(proposal, metrics, baseline)
+    decision, triggers = evaluate_proposal(proposal, metrics, baseline)
     assert decision == "rollback", f"Expected rollback, got {decision}"
     ok("满意度 2.1/5 → rollback")
 
@@ -406,7 +406,7 @@ def test_rollback_observe_no_change():
                 "agent_failure_rate": 0.08, "satisfaction_score": 3.5}
     metrics = {"task_success_rate": 0.85, "user_correction_rate": 0.15,
                "agent_failure_rate": 0.08, "satisfaction_score": 3.5}
-    decision = evaluate_proposal(proposal, metrics, baseline)
+    decision, triggers = evaluate_proposal(proposal, metrics, baseline)
     assert decision == "observe", f"Expected observe, got {decision}"
     ok("指标无变化 → observe")
 
@@ -417,7 +417,7 @@ def test_rollback_missing_baseline():
     baseline = {}
     metrics = {"task_success_rate": 0.5, "user_correction_rate": 0.5,
                "agent_failure_rate": 0.5, "satisfaction_score": 2.0}
-    decision = evaluate_proposal(proposal, metrics, baseline)
+    decision, triggers = evaluate_proposal(proposal, metrics, baseline)
     # Should not crash; just evaluate with safe defaults
     assert decision in ("keep", "observe", "rollback")
     ok(f"缺失 baseline → 不崩溃 (decision={decision})")
@@ -544,14 +544,14 @@ def test_full_pipeline_without_api():
         good_metrics = {"task_success_rate": 0.92, "user_correction_rate": 0.03,
                         "agent_failure_rate": 0.02, "satisfaction_score": 4.8,
                         "sample_size": 10}
-        decision = evaluate_proposal({"id": "pipeline-test"}, good_metrics, baseline)
+        decision, triggers = evaluate_proposal({"id": "pipeline-test"}, good_metrics, baseline)
         assert decision == "keep"
         ok("Pipeline Step 4: 回滚评估 → keep（指标改善）")
 
         bad_metrics = {"task_success_rate": 0.6, "user_correction_rate": 0.3,
                        "agent_failure_rate": 0.15, "satisfaction_score": 2.0,
                        "sample_size": 10}
-        decision = evaluate_proposal({"id": "pipeline-test"}, bad_metrics, baseline)
+        decision, triggers = evaluate_proposal({"id": "pipeline-test"}, bad_metrics, baseline)
         assert decision == "rollback"
         ok("Pipeline Step 5: 回滚评估 → rollback（指标恶化）")
 

@@ -1,6 +1,8 @@
 ---
 name: performance
 version: 1.0.0
+trigger_words: >
+  性能优化、慢查询、瓶颈、optimization、profiler、测量、缓存、响应时间
 description: >
   性能分析与优化指南。调查响应慢、高资源占用或部署性能敏感功能前调用。
   遵循测量先行→定位热点→优化→复测的四步流程。

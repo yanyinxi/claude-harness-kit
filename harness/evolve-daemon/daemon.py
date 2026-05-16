@@ -441,11 +441,12 @@ def run_analysis(config: dict, root: Path, sessions: list[dict]):
 
     # 统计两个信号源
     original_corrections = sum(len(s.get("corrections", [])) for s in sessions)
-    # 记录 failure_stats 供后续日志使用
-    _ = sum(
+    # 记录 failure_stats 供后续日志使用（过滤前后都打印，帮助诊断）
+    total_failures = sum(
         s.get("rich_context", {}).get("failure_stats", {}).get("total", 0)
         for s in sessions
     )
+    print(f"  [KB过滤] 原始 corrections={original_corrections}, failure_stats总计={total_failures}")
 
     # 过滤 corrections
     filtered_sessions = []

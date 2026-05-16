@@ -1,6 +1,8 @@
 ---
 name: agent-shield
 version: 1.0.0
+trigger_words: >
+  安全、审计、OWASP、漏洞、渗透测试、配置扫描、权限检查、安全合规
 description: >
   Claude Code 安全扫描器 Skill。自动化扫描 CLAUDE.md、settings.json、MCP 配置、hooks 和 agents 目录，
   检测配置错误、权限漏洞和安全风险。提供 1282 条测试用例，覆盖 102 条安全规则，

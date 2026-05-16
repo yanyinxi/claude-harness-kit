@@ -102,7 +102,7 @@ def apply_decay(entry: dict, config: dict) -> str | None:
         # 解析 "N months unused" 或 "N days unused"
         if "month" in threshold_str:
             months = int("".join(filter(str.isdigit, threshold_str.split("month")[0])))
-            threshold_days = months * 30
+            threshold_days = months * 365 // 12  # 精确月均天数 30.4
         elif "day" in threshold_str:
             threshold_days = int("".join(filter(str.isdigit, threshold_str.split("day")[0])))
         else:
@@ -179,10 +179,18 @@ def cmd_check(knowledge_file: Path):
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 
-def cmd_decay(knowledge_dir: Path):
-    """扫描目录下所有知识文件，执行衰减检查"""
+def cmd_decay(knowledge_dir: Path, dry_run: bool = False):
+    """扫描目录下所有知识文件，执行衰减检查
+
+    Args:
+        knowledge_dir: 知识目录路径
+        dry_run: 为 True 时仅预览不写入
+    """
     config = load_lifecycle_config()
     decayed = []
+    backup_dir = knowledge_dir / "_decay_backups" / datetime.now().strftime("%Y%m%d_%H%M%S")
+    if not dry_run:
+        backup_dir.mkdir(parents=True, exist_ok=True)
 
     for f in knowledge_dir.rglob("*.json"):
         if f.name == "INDEX.md":
@@ -194,12 +202,23 @@ def cmd_decay(knowledge_dir: Path):
 
         target = apply_decay(entry, config)
         if target:
+            if dry_run:
+                decayed.append(str(f.relative_to(knowledge_dir)))
+                continue
+            # 写入前创建备份
+            backup_file = backup_dir / f.relative_to(knowledge_dir)
+            backup_file.parent.mkdir(parents=True, exist_ok=True)
+            backup_file.write_bytes(f.read_bytes())
+            # 执行衰减
             entry["maturity"] = target
             entry["decayed_at"] = datetime.now().isoformat()
             f.write_text(json.dumps(entry, ensure_ascii=False, indent=2), encoding="utf-8")
             decayed.append(str(f.relative_to(knowledge_dir)))
 
-    print(json.dumps({"decayed": decayed, "count": len(decayed)}, indent=2))
+    result = {"decayed": decayed, "count": len(decayed)}
+    if dry_run:
+        result["dry_run"] = True
+    print(json.dumps(result, indent=2))
 
 
 def cmd_promote(knowledge_dir: Path):
@@ -225,7 +244,7 @@ def cmd_promote(knowledge_dir: Path):
 def main():
     if len(sys.argv) < 3:
         print("用法: lifecycle.py check <knowledge-file.json>")
-        print("      lifecycle.py decay <knowledge-dir>")
+        print("      lifecycle.py decay [--dry-run | -n] <knowledge-dir>")
         print("      lifecycle.py promote <knowledge-dir>")
         sys.exit(1)
 
@@ -235,7 +254,8 @@ def main():
     if cmd == "check":
         cmd_check(path)
     elif cmd == "decay":
-        cmd_decay(path)
+        dry_run = "--dry-run" in sys.argv or "-n" in sys.argv
+        cmd_decay(path, dry_run=dry_run)
     elif cmd == "promote":
         cmd_promote(path)
     else:

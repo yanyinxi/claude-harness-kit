@@ -85,8 +85,6 @@ PYEOF
 
 NOW_MS=$(python3 -c "import time; print(int(time.time()*1000))" 2>/dev/null) || NOW_MS=0
 
-# 加载状态并清理过期记录（timestamp 作为首行传入 stdin）
-STATE=$(load_state)
 # 加载状态并清理过期记录（timestamp+JSON 同一管道传入 stdin）
 STATE=$(load_state)
 STATE=$(printf '%s

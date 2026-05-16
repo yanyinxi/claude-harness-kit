@@ -1,6 +1,8 @@
 ---
 name: security-pipeline
 version: 1.0.0
+trigger_words: >
+  安全扫描、漏洞检测、CWE、SQL注入、XSS、STRIDE、CVSS、OWASP、代码审计
 description: >
   安全扫描流水线 Skill。提供 CWE Top 25 漏洞检测规则（CWE-89 SQL 注入、CWE-79 XSS、CWE-78 命令注入、CWE-798 硬编码凭证），
   自动修复 Before/After 示例代码和 STRIDE 威胁建模模板，内置 vuln_prioritizer.py 按 CVSS 优先级排序。

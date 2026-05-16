@@ -16,15 +16,12 @@ cache_manager.py — CHK Prompt 缓存管理器
 3. 本能记录 (前 20 条高置信度)
 4. 知识库索引 (仅索引，不加载内容)
 """
+import atexit
 import json
 import time
-from pathlib import Path
 from typing import Optional
 
-# 路径配置（直接从 paths.py 导入）
-import sys
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from paths import (
+from ..paths import (
     ROOT, DATA_DIR, RULES_DIR, INSTINCT_FILE
 )
 
@@ -121,6 +118,8 @@ class CacheManager:
         self._cache: dict[str, CacheEntry] = {}
         self._stats = CacheStats()
         self._load_from_disk()
+        # 注册进程退出时自动保存缓存
+        atexit.register(self.flush)
 
     def _load_from_disk(self):
         """从磁盘加载缓存索引"""
@@ -181,6 +180,9 @@ class CacheManager:
     def set(self, key: str, content: str, priority: int = 1):
         """设置缓存"""
         self._cache[key] = CacheEntry(key, content, priority)
+
+    def flush(self):
+        """显式保存缓存到磁盘（供外部调用或进程退出时使用）"""
         self._save_to_disk()
 
     def invalidate(self, key: str):

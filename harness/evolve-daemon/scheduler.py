@@ -259,7 +259,6 @@ class SchedulerManager:
 
         # 心跳检测
         data_dir = self.get_data_dir()
-        daemon_config.get("heartbeat_check_minutes", 180)
         heartbeat_result = check_heartbeat(config, data_dir)
 
         # 如果心跳正常且非强制启动，检查是否需要先运行一次

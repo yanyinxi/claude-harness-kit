@@ -99,11 +99,11 @@ def collect_metrics(root, observation_days: int = 7) -> dict:
     return metrics
 
 
-def evaluate_proposal(proposal: dict, metrics: dict, baseline: dict, config: dict = None) -> str:
+def evaluate_proposal(proposal: dict, metrics: dict, baseline: dict, config: dict = None) -> tuple[str, list[str]]:
     """
     评估是否应该保留或回滚。
 
-    返回: "keep" | "rollback" | "observe"
+    返回: (decision, triggers) — decision 是 "keep" | "rollback" | "observe"，triggers 是触发条件列表
     """
     triggers = []
 
@@ -142,17 +142,17 @@ def evaluate_proposal(proposal: dict, metrics: dict, baseline: dict, config: dic
 
     # 检查样本量（需要足够的数据才有统计意义）
     if metrics.get("sample_size", 0) < 5:
-        return "observe"  # 样本太少，继续观察
+        return ("observe", triggers)  # 样本太少，继续观察
 
     # 决策
     if triggers:
-        return "rollback"
+        return ("rollback", triggers)
 
     # 所有指标稳定
     if metrics.get("sample_size", 0) >= 10:
-        return "keep"
+        return ("keep", triggers)
 
-    return "observe"
+    return ("observe", triggers)
 
 
 def check_circuit_breaker(history: list, config: dict) -> tuple[bool, str]:
@@ -258,17 +258,14 @@ def run_rollback_check(root: Optional[Path] = None, config: Optional[dict] = Non
         baseline = proposal.get("baseline_metrics", {})
 
         # 评估
-        decision = evaluate_proposal(proposal, metrics, baseline, config)
-
-        # 记录触发条件
-        proposal["rollback_triggers"] = []
+        decision, triggers = evaluate_proposal(proposal, metrics, baseline, config)
 
         if decision == "rollback":
             # 执行回滚
             success = execute_rollback(proposal, root, config)
             if success:
                 stats["rolled_back"] += 1
-                proposal["rollback_triggers"] = proposal.get("rollback_triggers", [])
+                proposal["rollback_triggers"] = triggers  # 保存 evaluate_proposal 返回的触发条件
                 _demote_instinct_on_rollback(proposal, root)
 
         elif decision == "keep":

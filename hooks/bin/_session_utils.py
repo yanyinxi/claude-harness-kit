@@ -21,7 +21,6 @@ from datetime import datetime, date
 from pathlib import Path
 from typing import Optional
 
-
 # ═══════════════════════════════════════════════════════════════════════════════
 # 项目路径
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -180,10 +179,8 @@ def write_log_record(
         if use_lock:
             lock_file = log_file.with_suffix(".jsonl.lock")
             with open(lock_file, "w") as lock_f:
-                if sys.platform == "darwin":
-                    fcntl.flock(lock_f.fileno(), fcntl.LOCK_EX)
-                else:
-                    fcntl.flock(lock_f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                # 所有平台统一使用非阻塞锁，避免 macOS 上永久阻塞风险
+                fcntl.flock(lock_f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
 
                 try:
                     with open(log_file, "a", encoding="utf-8") as f:

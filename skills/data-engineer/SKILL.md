@@ -1,6 +1,8 @@
 ---
 name: data-engineer
 version: 1.0.0
+trigger_words: >
+  数据管道、Spark、Airflow、数仓、ETL、数据建模、星型、雪花、CDC、Kafka
 description: >
   数据工程 Skill。提供 Spark ETL 模板、Airflow DAG 编排、数据质量检查规范、
   数据仓库建模（星型/雪花模型、SCD Type 2）、CDC 实时同步方案。

@@ -37,9 +37,14 @@ print(d.get('sessionId', 'default'))
 " 2>/dev/null) || SESSION_ID="default"
 
 SESSION_STATE="${CHECKPOINT_DIR}/.auto-save-${SESSION_ID}.json"
+export CHK_SESSION_STATE="$SESSION_STATE"
 
-echo "$HOOK_DATA" | python3 -c "
-import json, sys, datetime
+# 将 Python 脚本写入临时文件，避免 heredoc 覆盖 stdin
+SCRIPT_FILE=$(mktemp)
+trap 'rm -f "$SCRIPT_FILE"' EXIT
+
+cat > "$SCRIPT_FILE" << 'PYEOF'
+import json, sys, datetime, os
 d = json.load(sys.stdin)
 ts = datetime.datetime.utcnow().isoformat() + 'Z'
 session = d.get('sessionId', 'unknown')
@@ -52,6 +57,8 @@ if isinstance(content, list):
             text += b.get('text', '') + ' '
 elif isinstance(content, str):
     text = content
+# 通过环境变量获取 SESSION_STATE，避免路径注入风险
+session_state = os.environ.get('CHK_SESSION_STATE', '/tmp/checkpoint.json')
 data = {
     'timestamp': ts,
     'session_id': session,
@@ -59,10 +66,11 @@ data = {
     'message_preview': text[:200],
     'auto_saved': True
 }
-path = '${SESSION_STATE}'
-with open(path, 'w') as f:
+with open(session_state, 'w') as f:
     json.dump(data, f, ensure_ascii=False)
-" 2>/dev/null || { exit 0; }
+PYEOF
+export CHK_SESSION_STATE="$SESSION_STATE"
+echo "$HOOK_DATA" | python3 "$SCRIPT_FILE" 2>/dev/null || true
 
 echo "Auto-checkpoint saved to ${SESSION_STATE}" >&2
 exit 0

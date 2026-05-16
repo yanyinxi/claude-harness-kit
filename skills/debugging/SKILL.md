@@ -1,6 +1,8 @@
 ---
 name: debugging
 version: 1.0.0
+trigger_words: >
+  Bug 修复、debug、调试、根因分析、复现、停线规则、git bisect
 description: >
   Sonnet agents修复bug时在修改代码前调用，系统性识别根因。
   遵循6步检查清单：复现、定位、最小化、修复、验证、预防。

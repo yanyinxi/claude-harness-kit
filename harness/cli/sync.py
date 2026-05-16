@@ -144,7 +144,7 @@ def main():
 
     root = find_root()
 
-    if source.startswith(("http://", "https://", "git@")):
+    if source.startswith(("http://", "https://", "git@", "ssh://", "git://")):
         stats = sync_from_git(source, root, dry_run=args.dry_run)
     else:
         stats = sync_from_local(Path(source).resolve(), root, dry_run=args.dry_run)

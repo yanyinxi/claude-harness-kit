@@ -19,6 +19,7 @@ Knowledge Recommender Engine — 知识推荐引擎
   python3 knowledge_recommender.py recommend --failure "json encoding"
   python3 knowledge_recommender.py inject  # 仅输出推荐上下文 (供 hook 调用)
 """
+import hashlib
 import json
 import math
 import re
@@ -137,7 +138,9 @@ def load_evolved_knowledge() -> list[dict]:
                 analysis = data.get("analysis", {})
                 rule = data.get("rule", {})
                 entry = {
-                    "id": data.get("id", ""),
+                    "id": data.get("id", "") or hashlib.md5(
+                        analysis.get("suggestion", analysis.get("root_cause", "")).encode()
+                    ).hexdigest()[:16],
                     "name": analysis.get("suggestion", analysis.get("root_cause", ""))[:50],
                     "description": analysis.get("root_cause", ""),
                     "type": analysis.get("knowledge_type", "pitfall"),
@@ -207,7 +210,9 @@ def load_instinct_usage() -> dict[str, int]:
         try:
             data = json.loads(instinct_file.read_text(encoding="utf-8"))
             # 支持 { "records": [...] } 或直接的 [...]
-            records = data.get("records", data) if isinstance(data, dict) else data
+            records = data if isinstance(data, list) else data.get("records", [])
+            if not isinstance(records, list):
+                return {}
             for rec in records:
                 if not isinstance(rec, dict):
                     continue

@@ -1,6 +1,8 @@
 ---
 name: karpathy-guidelines
 version: 1.0.0
+trigger_words: >
+  编码、编写代码、简洁、精准修改、过度工程、LLM 编码陷阱
 description: >
   Sonnet agents编写新代码时在开始实现前调用。
   强制执行4条规则：编码前思考、简洁优先、精准修改、目标驱动执行。

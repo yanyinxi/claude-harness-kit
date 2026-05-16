@@ -1,6 +1,8 @@
 ---
 name: council
 version: 1.0.0
+trigger_words: >
+  决策、架构评审、技术选型、方案对比、设计评审、方案评审、四个视角
 description: >
   四声部决策 Skill。提供独立视角分析（Architect 架构正确性、Skeptic 前提质疑、Pragmatist 交付速度、Critic 失败模式），
   输出一致决策与最强异议，适用于复杂架构决策、方案评审和技术选型场景。

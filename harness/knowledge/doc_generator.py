@@ -135,6 +135,16 @@ def _escape_html(text: str) -> str:
     )
 
 
+def is_separator_row(cells: list[str]) -> bool:
+    """检测表格分隔行（|---|:| 格式）"""
+    if not cells:
+        return False
+    return all(
+        re.match(r"^:?-+:?$", c.strip().replace(" ", "")) or c.strip() == ""
+        for c in cells
+    )
+
+
 def _parse_markdown(md_content: str) -> str:
     """Markdown 转 HTML（基础实现）"""
     lines = md_content.split("\n")
@@ -158,7 +168,7 @@ def _parse_markdown(md_content: str) -> str:
             if not in_code_block:
                 flush_list()
                 in_code_block = True
-                lang = line.strip()[3:] if len(line.strip()) > 3 else ""
+                lang = line.strip()[3:].strip().lower()
                 html_parts.append(f'<pre><code class="language-{lang}">')
             else:
                 in_code_block = False
@@ -187,7 +197,7 @@ def _parse_markdown(md_content: str) -> str:
                 in_table = True
                 html_parts.append('<table class="markdown-table"><thead><tr>')
             cells = [c.strip() for c in line.split("|") if c.strip()]
-            if any(c.strip().replace("-", "").replace(":", "").replace(" ", "") == "" for c in cells):
+            if is_separator_row(cells):
                 # 分隔行
                 if in_table:
                     html_parts.append("</thead><tbody>")
@@ -237,20 +247,26 @@ def _parse_markdown(md_content: str) -> str:
             i += 1
             continue
 
-        # 加粗和斜体
+        # 加粗和斜体（移到 blockquote 提取后处理，避免重复应用）
+        # 先检测 blockquote，提取内容并应用 inline 格式，再包裹
         processed = line
-        processed = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", processed)
-        processed = re.sub(r"\*(.+?)\*", r"<em>\1</em>", processed)
-        processed = re.sub(r"`(.+?)`", r"<code>\1</code>", processed)
 
-        # 链接
-        processed = re.sub(r"\[([^\]]+)\]\(([^\)]+)\)", r'<a href="\2">\1</a>', processed)
-
-        # 引用块
+        # 引用块：先提取内容，再应用 inline 格式，最后包裹 blockquote
         if processed.strip().startswith(">"):
-            html_parts.append(f'<blockquote>{processed[1:].strip()}</blockquote>')
-        elif processed.strip():
-            html_parts.append(f"<p>{processed}</p>")
+            inner = processed.lstrip(">").strip()
+            inner = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", inner)
+            inner = re.sub(r"\*(.+?)\*", r"<em>\1</em>", inner)
+            inner = re.sub(r"`(.+?)`", r"<code>\1</code>", inner)
+            inner = re.sub(r"\[([^\]]+)\]\(([^\)]+)\)", r'<a href="\2">\1</a>', inner)
+            html_parts.append(f"<blockquote>{inner}</blockquote>")
+        else:
+            # 非 blockquote 行：应用 inline 格式
+            processed = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", processed)
+            processed = re.sub(r"\*(.+?)\*", r"<em>\1</em>", processed)
+            processed = re.sub(r"`(.+?)`", r"<code>\1</code>", processed)
+            processed = re.sub(r"\[([^\]]+)\]\(([^\)]+)\)", r'<a href="\2">\1</a>', processed)
+            if processed.strip():
+                html_parts.append(f"<p>{processed}</p>")
 
         i += 1
 
@@ -319,7 +335,8 @@ def convert(
     md_file: Path,
     doc_type: str,
     output_dir: Path,
-    metadata: Optional[DocMetadata] = None
+    metadata: Optional[DocMetadata] = None,
+    add_timestamp: bool = False
 ) -> Optional[Path]:
     """
     将 Markdown 文件转换为 HTML
@@ -329,6 +346,7 @@ def convert(
         doc_type: 文档类型
         output_dir: 输出目录
         metadata: 文档元数据
+        add_timestamp: 是否在输出文件名中添加时间戳
 
     Returns:
         生成的 HTML 文件路径，失败返回 None
@@ -393,8 +411,11 @@ def convert(
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # 生成输出文件名
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_file = output_dir / f"{md_file.stem}_{timestamp}.html"
+        if add_timestamp:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_file = output_dir / f"{md_file.stem}_{timestamp}.html"
+        else:
+            output_file = output_dir / f"{md_file.stem}.html"
 
         # 写入 HTML
         output_file.write_text(html, encoding="utf-8")
@@ -567,7 +588,9 @@ def archive_document(source: Path, doc_type: str) -> Optional[Path]:
 
 def async_archive(source: Path, doc_type: str):
     """异步归档，不阻塞主流程"""
-    ThreadPoolExecutor().submit(archive_document, source, doc_type)
+    executor = ThreadPoolExecutor(max_workers=1)
+    executor.submit(archive_document, source, doc_type)
+    executor.shutdown(wait=False)  # 任务提交后立即关闭，避免资源泄漏
 
 
 # ── CLI 入口 ───────────────────────────────────────────────────────────────────

@@ -239,11 +239,18 @@ def append_jsonl(path: Path, entry: dict):
 
 
 def write_jsonl(path: Path, entries: list[dict]):
-    """重写整个 JSONL 文件"""
+    """原子写入整个 JSONL 文件（先写临时文件再 rename，防止并发冲突）"""
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        for entry in entries:
-            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    tmp_path = path.with_suffix(path.suffix + ".tmp")
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            for entry in entries:
+                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        tmp_path.rename(path)
+    except Exception:
+        if tmp_path.exists():
+            tmp_path.unlink()
+        raise
 
 
 def read_json(path: Path) -> dict | list | None:
@@ -391,11 +398,9 @@ def update_kb_confidence(
 
 
 def _track_effect(kb_id: str, outcome: str, root: Optional[Path]):
-    """写入 effect_tracking.jsonl"""
-    if root:
-        effect_file = root / "harness" / "evolve-daemon" / "knowledge" / "effect_tracking.jsonl"
-    else:
-        effect_file = EFFECT_PATH
+    """写入 effect_tracking.jsonl（使用统一路径常量避免重复拼接）"""
+    from paths import EVOLVED_KB_DIR  # 已包含 harness/knowledge/evolved/
+    effect_file = EVOLVED_KB_DIR / "effect_tracking.jsonl"
     append_jsonl(effect_file, {
         "knowledge_id": kb_id,
         "outcome": outcome,

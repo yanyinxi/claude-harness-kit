@@ -449,7 +449,7 @@ def _analyze_context(sessions: list[dict], config: dict, root: Path) -> dict:
 
 def _meets_safety_checks(config: dict, correction_targets: Counter) -> bool:
     """检查安全限制"""
-    # 安全检查：每天最多 N 个提案
-    config.get("safety", {}).get("max_proposals_per_day", 3)
-    # 简化实现：只要有问题就允许提案（详细限制在 proposer 处理）
-    return len(correction_targets) > 0
+    if not correction_targets:
+        return False
+    # TODO: 实现每日提案数量限制检查 (max_proposals_per_day: config.get("safety", {}).get("max_proposals_per_day", 3))
+    return True

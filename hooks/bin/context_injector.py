@@ -173,7 +173,7 @@ def inject_plugin_memory(root: Path) -> str:
     # 跳过文件自身的标题行，保留索引内容
     lines = content.strip().split("\n")
     # 跳过 "# Memory Index — CHK 项目核心记忆"
-    body = [l for l in lines if not l.startswith("# Memory Index")]
+    body = [line for line in lines if not line.startswith("# Memory Index")]
 
     return "\n## CHK Memory（按需 Read 详情）\n" + "\n".join(body[:25])
 

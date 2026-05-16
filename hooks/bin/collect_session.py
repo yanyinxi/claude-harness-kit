@@ -323,8 +323,21 @@ def append_session(root: Path, session: dict) -> Path:
 
     log_file = data_dir / "sessions.jsonl"
     line = json.dumps(session, ensure_ascii=False) + "\n"
-    with open(log_file, "a") as f:
-        f.write(line)
+
+    # 带超时的写入逻辑，防止永久阻塞
+    import signal
+
+    def _timeout_handler(signum, frame):
+        raise TimeoutError("写入超时")
+
+    signal.signal(signal.SIGALRM, _timeout_handler)
+    signal.alarm(5)  # 5秒超时
+
+    try:
+        with open(log_file, "a") as f:
+            f.write(line)
+    finally:
+        signal.alarm(0)  # 取消闹钟
 
     return log_file
 

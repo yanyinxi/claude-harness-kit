@@ -1,6 +1,8 @@
 ---
 name: llm-engineer
 version: 1.0.0
+trigger_words: >
+  Prompt、RAG、Embedding、向量检索、LangChain、Few-shot、CoT、模型微调、LoRA
 description: >
   大模型工程 Skill。提供 Prompt 工程模板（Few-shot、CoT、结构化 JSON 输出）、
   RAG 实现规范（Embedding + 向量检索 + 重排序）、LangChain 链式调用模式。

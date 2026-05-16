@@ -29,6 +29,7 @@ def validate_playbook(playbook_path: Path) -> bool:
     missing = [s for s in required_sections if s not in content]
     if missing:
         print(f"⚠ Playbook 缺少: {', '.join(missing)}")
+        return False
     return True
 
 

@@ -1,6 +1,8 @@
 ---
 name: iac
 version: 1.0.0
+trigger_words: >
+  基础设施、Terraform、Pulumi、云资源、dev/stage/prod、workspace、remote state
 description: >
   基础设施即代码 Skill。提供 Terraform/Pulumi 模块模板、模块设计规范、状态管理最佳实践
   （remote state + DynamoDB lock）、多环境分离（dev/stage/prod）和 Workspace 隔离策略。

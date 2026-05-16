@@ -1,8 +1,9 @@
 ---
 name: change-tracking
-description: 变更追踪 — 需求变更→代码变更的全流程留痕管理
 version: 1.0.0
-trigger: "变更|changes|追溯|追踪|回滚|版本"
+trigger_words: >
+  变更追踪、需求变更、代码变更、追溯、回滚、rollback、版本历史、changelog
+description: 变更追踪 — 需求变更→代码变更的全流程留痕管理
 ---
 
 # Change Tracking Skill — 变更追踪管理

@@ -19,3 +19,45 @@
 {"knowledge_id": "auto-c3740391", "outcome": "success", "context": {}, "timestamp": "2026-05-16T12:16:00.785965"}
 {"knowledge_id": "auto-c3740391", "outcome": "success", "context": {}, "timestamp": "2026-05-16T12:16:00.787563"}
 {"knowledge_id": "auto-c3740391", "outcome": "success", "context": {}, "timestamp": "2026-05-16T12:16:00.789032"}
+{"knowledge_id": "auto-478e9203", "outcome": "success", "context": {"test": true}, "timestamp": "2026-05-16T22:22:09.842302"}
+{"knowledge_id": "auto-4655a5d9", "outcome": "failure", "context": {"test": true}, "timestamp": "2026-05-16T22:22:09.848523"}
+{"knowledge_id": "auto-1b058154", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:22:09.853701"}
+{"knowledge_id": "auto-1b058154", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:22:09.855452"}
+{"knowledge_id": "auto-1b058154", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:22:09.857127"}
+{"knowledge_id": "auto-1b058154", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:22:09.859335"}
+{"knowledge_id": "auto-1b058154", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:22:09.861231"}
+{"knowledge_id": "auto-0ba2c449", "outcome": "success", "context": {"test": true}, "timestamp": "2026-05-16T22:28:47.297337"}
+{"knowledge_id": "auto-9421f0a5", "outcome": "failure", "context": {"test": true}, "timestamp": "2026-05-16T22:28:47.303752"}
+{"knowledge_id": "auto-fd03b136", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:28:47.309360"}
+{"knowledge_id": "auto-fd03b136", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:28:47.311115"}
+{"knowledge_id": "auto-fd03b136", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:28:47.312729"}
+{"knowledge_id": "auto-fd03b136", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:28:47.314092"}
+{"knowledge_id": "auto-fd03b136", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:28:47.315432"}
+{"knowledge_id": "auto-4e402acc", "outcome": "success", "context": {"test": true}, "timestamp": "2026-05-16T22:28:55.507630"}
+{"knowledge_id": "auto-ab01a0ee", "outcome": "failure", "context": {"test": true}, "timestamp": "2026-05-16T22:28:55.514310"}
+{"knowledge_id": "auto-ae6391c5", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:28:55.519329"}
+{"knowledge_id": "auto-ae6391c5", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:28:55.521250"}
+{"knowledge_id": "auto-ae6391c5", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:28:55.522940"}
+{"knowledge_id": "auto-ae6391c5", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:28:55.524494"}
+{"knowledge_id": "auto-ae6391c5", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:28:55.525916"}
+{"knowledge_id": "auto-a3d41a0b", "outcome": "success", "context": {"test": true}, "timestamp": "2026-05-16T22:32:01.801745"}
+{"knowledge_id": "auto-24df76ec", "outcome": "failure", "context": {"test": true}, "timestamp": "2026-05-16T22:32:01.809679"}
+{"knowledge_id": "auto-0b0b0b8e", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:32:01.816958"}
+{"knowledge_id": "auto-0b0b0b8e", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:32:01.819152"}
+{"knowledge_id": "auto-0b0b0b8e", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:32:01.821503"}
+{"knowledge_id": "auto-0b0b0b8e", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:32:01.823617"}
+{"knowledge_id": "auto-0b0b0b8e", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:32:01.825893"}
+{"knowledge_id": "auto-36908699", "outcome": "success", "context": {"test": true}, "timestamp": "2026-05-16T22:45:00.326417"}
+{"knowledge_id": "auto-e0597df2", "outcome": "failure", "context": {"test": true}, "timestamp": "2026-05-16T22:45:00.334616"}
+{"knowledge_id": "auto-600f0951", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:45:00.343198"}
+{"knowledge_id": "auto-600f0951", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:45:00.345415"}
+{"knowledge_id": "auto-0ce45d1f", "outcome": "success", "context": {"test": true}, "timestamp": "2026-05-16T22:45:00.349454"}
+{"knowledge_id": "auto-600f0951", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:45:00.349646"}
+{"knowledge_id": "auto-600f0951", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:45:00.352024"}
+{"knowledge_id": "auto-600f0951", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:45:00.354603"}
+{"knowledge_id": "auto-accc6399", "outcome": "failure", "context": {"test": true}, "timestamp": "2026-05-16T22:45:00.358376"}
+{"knowledge_id": "auto-e86dfe62", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:45:00.365778"}
+{"knowledge_id": "auto-e86dfe62", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:45:00.368236"}
+{"knowledge_id": "auto-e86dfe62", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:45:00.372056"}
+{"knowledge_id": "auto-e86dfe62", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:45:00.376129"}
+{"knowledge_id": "auto-e86dfe62", "outcome": "success", "context": {}, "timestamp": "2026-05-16T22:45:00.379977"}

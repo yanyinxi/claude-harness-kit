@@ -1,6 +1,8 @@
 ---
 name: gate-guard
 version: 1.0.0
+trigger_words: >
+  首次变更、高风险、核心模块、重构、DENY、FORCE、ALLOW、证据拦截
 description: >
   架构守卫 Skill。在首次代码变更前拦截，要求提供事实证据（文件路径、函数签名或 Schema 定义），
   防止无根据修改。内置 DENY → FORCE → ALLOW 三阶段协议，适用于关键业务逻辑、核心模块重构等高风险变更场景。
