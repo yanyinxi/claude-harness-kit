@@ -12,7 +12,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/safety-check.sh",
+            "command": "bash hooks/bin/safety-check.sh",
             "timeout": 5
           }
         ]
@@ -24,7 +24,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bin/quality-gate.sh",
+            "command": "bash hooks/bin/quality-gate.sh",
             "timeout": 10
           }
         ]
@@ -32,10 +32,11 @@
     ],
     "Stop": [
       {
+        "matcher": "Stop",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bin/collect_session.py",
+            "command": "python3 hooks/bin/collect_session.py",
             "timeout": 10
           }
         ]
