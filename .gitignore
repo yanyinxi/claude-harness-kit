@@ -1,16 +1,5 @@
 # Claude Harness Kit — 运行时数据（避免追踪瞬态文件）
-.claude/data/rate-limits/
-.claude/data/worktrees/
-.claude/data/error.jsonl
-.claude/data/error.jsonl.lock
-.claude/data/failures.jsonl
-.claude/data/backups/
-.claude/data/homunculus/
-.claude/data/observations.jsonl
-.claude/data/sessions.jsonl
-.claude/data/agent_calls.jsonl
-.claude/data/skill_calls.jsonl 
-.claude/data/.memory_session_*.json
+.claude/data/
 .claude/proposals/
 
 # harness 运行时数据
