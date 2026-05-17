@@ -25,6 +25,23 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash hooks/bin/memory-inject.sh",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash hooks/bin/check-update.sh",
+            "timeout": 15
+          }
+        ]
+      }
     ]
   }
 }

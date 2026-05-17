@@ -222,6 +222,100 @@ chk.getExecutionModes()  // → { solo, auto, team, ... }
 4. **进化回滚**: 自动进化失败时需手动回滚，保留备份
 5. **权限问题**: Hook 执行需要正确权限配置
 
+## 测试规范（强制执行）
+
+### 测试金字塔
+
+```
+┌─────────────────────────────────────────────────┐
+│         端到端测试 (E2E) — 50%                 │
+│   完整工作流，模拟真实用户操作                  │
+├─────────────────────────────────────────────────┤
+│         集成测试 (Integration) — 30%            │
+│   多模块协作验证                                │
+├─────────────────────────────────────────────────┤
+│         单元测试 (Unit) — 10%                   │
+│   单模块独立正确性                               │
+├─────────────────────────────────────────────────┤
+│         契约测试 (Contract) — 10%               │
+│   Agent/Skill/Hook 接口稳定性                   │
+└─────────────────────────────────────────────────┘
+```
+
+### 测试目录结构
+
+```
+harness/tests/
+├── unit/           # 单元测试
+│   ├── _core/     # ConfigLoader, CacheManager
+│   ├── cli/       # init, mode, scan, gc
+│   └── evolve-daemon/  # analyzer, proposer
+├── integration/    # 集成测试
+│   ├── test_evolution_pipeline.py
+│   └── test_hook_execution.py
+├── contracts/      # 契约测试
+│   ├── agents/    # Agent 接口验证
+│   ├── skills/    # Skill 接口验证
+│   └── hooks/     # Hook 配置验证
+├── e2e/            # 端到端测试
+│   └── test_full_workflow.py
+├── graders/       # LLM-as-Judge 评分器
+└── conftest.py     # 共享 fixtures
+```
+
+### 测试覆盖目标
+
+| 指标 | 目标 |
+|------|------|
+| 测试覆盖率 | >= 95% |
+| Bug 逃逸率 | < 2% |
+| 测试执行时间 | < 5 分钟 |
+| 稳定性 | 98% |
+
+### 提交前检查清单（强制）
+
+- [ ] `npm test` 或 `python3 -m pytest harness/tests/ -v` 通过
+- [ ] 覆盖率 >= 95% (`pytest --cov=harness --cov-fail-under=95`)
+- [ ] `ruff check harness/` 无错误
+- [ ] 新功能有对应测试文件
+- [ ] Bug 修复有复现测试
+
+### TDD 开发流程
+
+```
+RED (失败) → GREEN (通过) → REFACTOR (重构)
+   │             │              │
+   ▼             ▼              ▼
+ 写测试      写代码           优化
+```
+
+### CI/CD 流水线
+
+```yaml
+# GitHub Actions 自动触发
+触发条件:
+  - push: main, develop
+  - pull_request
+  - release: published
+
+流水线阶段:
+  1. lint          # 静态检查 (30s)
+  2. unit-tests   # 单元测试 (2min)
+  3. contract     # 契约测试 (30s)
+  4. integration  # 集成测试 (1min)
+  5. e2e          # E2E测试 (2min)
+  6. quality-gate # 质量门禁汇总
+```
+
+### 发布流程
+
+1. 创建 GitHub Release
+2. 自动触发完整测试流程
+3. 测试通过后自动通知（飞书 Webhook）
+4. 失败则阻断并发送告警
+
+---
+
 ## 开发规范
 
 ### 代码注释（硬性要求）
@@ -272,6 +366,42 @@ python3 harness/cli/mode.py <mode>   # 切换执行模式
 - **团队规范**: `.claude/rules/`
 - **会话记忆**: `harness/memory/`
 - **依赖清单**: `package.json`
+
+## 记忆系统（渐进式披露）
+
+### 架构
+
+```
+用户工作 → 进化系统分析 → 知识固化 → 同步到 MEMORY.md
+    ↓                                        ↓
+observe.sh 捕获 ──→ instinct-record.json ──→ memory-inject 注入
+    ↓                                              ↓
+用户感知"✓已记录"                              AI 上下文
+```
+
+### 层级（L0/L1/L2）
+
+| 层级 | 触发条件 | 内容 |
+|------|----------|------|
+| L0 | 会话首次输入 | MEMORY.md 索引 + 高置信度本能（>=0.7） |
+| L1 | 关键词匹配 | 相关领域记忆（testing/refactor/security 等） |
+| L2 | 按需 | 完整记忆内容 |
+
+### 核心文件
+
+| 文件 | 用途 |
+|------|------|
+| `harness/_core/instinct_reader.py` | 读取并过滤 >=0.7 本能 |
+| `harness/_core/keyword_matcher.py` | 关键词匹配（11 个类别） |
+| `harness/_core/instinct_state.py` | 会话状态管理 |
+| `hooks/bin/memory-inject.sh` | 渐进式注入脚本 |
+| `hooks/bin/memory-cleanup.sh` | 会话状态清理 |
+| `harness/evolve-daemon/memory_sync.py` | 进化知识同步 |
+
+### Hook 配置
+
+- `UserPromptSubmit`: 触发 `memory-inject.sh`
+- 使用 `CLAUDE_CODE_SESSION_ID` 环境变量管理会话状态
 
 ## 版本历史
 
