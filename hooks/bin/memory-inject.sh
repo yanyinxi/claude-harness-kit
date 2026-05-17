@@ -91,15 +91,75 @@ if instincts:
 match_keywords() {
     local user_input="$1"
 
+    # 使用环境变量传递，避免 shell 注入
+    INPUT_FILE="$DATA_DIR/.keyword_input_$$"
+    echo "$user_input" > "$INPUT_FILE"
+
     python3 -c "
 import sys
 sys.path.insert(0, '$PROJECT_ROOT')
 from harness._core.keyword_matcher import match_keywords, format_matched_keywords
 
-categories = match_keywords('''$user_input''')
+with open('$INPUT_FILE') as f:
+    user_input = f.read().strip()
+
+categories = match_keywords(user_input)
 if categories:
     print(format_matched_keywords(categories))
 " 2>/dev/null
+
+    rm -f "$INPUT_FILE"
+}
+
+# ============================================================
+# Capability Registry 按需加载
+# ============================================================
+
+# 从 capability-registry.md 提取相关内容（语义化版）
+inject_capability_registry() {
+    local user_input="$1"
+    local registry_file="$PROJECT_ROOT/.claude/knowledge/capability-registry.md"
+
+    # 关键词到场景的映射
+    local scenarios="agent config hook memory error version cli skill evolution path"
+
+    for scenario in $scenarios; do
+        if echo "$user_input" | grep -qi "$scenario"; then
+            # 转换为大写
+            local scenario_upper
+            scenario_upper=$(echo "$scenario" | tr '[:lower:]' '[:upper:]')
+            # 找到对应的场景章节
+            local section
+            section=$(grep -A 100 "^### 场景: $scenario_upper" "$registry_file" 2>/dev/null | head -80)
+            if [ -n "$section" ]; then
+                echo ""
+                echo "══════════════════════════════════════════════════════════════"
+                echo "【能力地图】场景: $scenario_upper"
+                echo "══════════════════════════════════════════════════════════════"
+                echo "$section"
+                echo "══════════════════════════════════════════════════════════════"
+                return
+            fi
+        fi
+    done
+
+    # 尝试按模块名匹配
+    local keywords="config_loader instinct memory hook mode path version evolve cli agent safety quality"
+    for keyword in $keywords; do
+        if echo "$user_input" | grep -qi "$keyword"; then
+            local section
+            section=$(grep -B 1 -A 30 "^### \`.*$keyword" "$registry_file" 2>/dev/null | head -40)
+            if [ -n "$section" ]; then
+                echo ""
+                echo "══════════════════════════════════════════════════════════════"
+                echo "【能力地图】模块: $keyword"
+                echo "══════════════════════════════════════════════════════════════"
+                echo "$section"
+                echo "══════════════════════════════════════════════════════════════"
+                return
+            fi
+        fi
+    done
 }
 
 # ============================================================
@@ -120,6 +180,13 @@ main() {
             if [ -n "$matched" ]; then
                 echo "$matched"
                 log "Keyword matched: $USER_INPUT"
+            fi
+
+            # Capability Registry 按需加载
+            registry_info=$(inject_capability_registry "$USER_INPUT")
+            if [ -n "$registry_info" ]; then
+                echo "$registry_info"
+                log "Capability Registry loaded: $USER_INPUT"
             fi
         fi
     else
@@ -143,6 +210,14 @@ main() {
         instincts=$(read_high_confidence_instincts)
         if [ -n "$instincts" ]; then
             output+="$instincts\n"
+        fi
+
+        # 首次注入时也加载 Capability Registry（如果用户输入了关键词）
+        if [ -n "$USER_INPUT" ]; then
+            registry_info=$(inject_capability_registry "$USER_INPUT")
+            if [ -n "$registry_info" ]; then
+                output+="$registry_info\n"
+            fi
         fi
 
         output+="\n"

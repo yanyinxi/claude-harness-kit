@@ -3,29 +3,34 @@
 # 设计：永远 exit 0（Hook 失败不阻断工具调用），危险命令通过 hookSpecificOutput 阻断
 set -uo pipefail
 
+# 加载共享日志工具
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/log-utils.sh" 2>/dev/null || true
+
 # 三段式 stdin 读取：空输入 → 静默放行
 INPUT=$(cat 2>/dev/null) || INPUT=""
 [[ -z "$INPUT" ]] && exit 0
 
-# Python 解析：失败 → 静默放行（安全优先，宁放过不阻断）
+# Python 解析：失败 → 静默放行并记录日志（安全优先，宁放过不阻断）
 TOOL_NAME=$(echo "$INPUT" | python3 -c "
 import sys, json
 d = json.load(sys.stdin)
 print(d.get('tool_name', ''))
-" 2>/dev/null) || { exit 0; }
+" 2>/dev/null) || { _hook_log_error "safety-check" "Failed to parse tool_name from input" 2>/dev/null; exit 0; }
 [[ "$TOOL_NAME" != "Bash" ]] && exit 0
 
 COMMAND_INPUT=$(echo "$INPUT" | python3 -c "
 import sys, json
 d = json.load(sys.stdin)
 print(d.get('tool_input', {}).get('command', ''))
-" 2>/dev/null) || { exit 0; }
+" 2>/dev/null) || { _hook_log_error "safety-check" "Failed to parse command from input" 2>/dev/null; exit 0; }
 
 [[ -z "$COMMAND_INPUT" ]] && exit 0
 
 block() {
     local pattern="$1"
     local reason="🚨 安全警告：检测到危险命令模式「${pattern}」\n命令：${COMMAND_INPUT}\n\n此操作已被阻止。如需执行，请手动运行或在 settings.json 中调整规则。"
+    _hook_log_error "safety-check" "Blocked: pattern=$pattern command=$COMMAND_INPUT" 2>/dev/null
     python3 -c "
 import json, sys
 print(json.dumps({

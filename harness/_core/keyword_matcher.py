@@ -86,6 +86,8 @@ def match_keywords(user_input: str) -> list[str]:
     Returns:
         匹配的关键词类别列表
     """
+    if not user_input:
+        return []
     user_input_lower = user_input.lower()
     matched = []
 

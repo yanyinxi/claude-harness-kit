@@ -15,9 +15,11 @@ import json
 import sys
 from pathlib import Path
 
-# 添加同级的 kb_shared 到 Python path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-sys.path.insert(0, str(Path(__file__).parent))
+# 修正：先加入 evolve-daemon/（能找到 kb_shared），再加入 harness/（能找到 harness.paths）
+sys.path.insert(0, str(Path(__file__).parent))        # evolve-daemon/ — 让 import kb_shared 成功
+sys.path.insert(0, str(Path(__file__).parent.parent)) # harness/       — 让 import harness.paths 成功
+# 调整后：sys.path[0]=harness, sys.path[1]=evolve-daemon
+# Python 搜索时先在 harness/ 找 harness.paths ✓，在 evolve-daemon/ 找 kb_shared ✓
 from kb_shared import get_haiku_model, create_llm_client, get_llm_config, read_jsonl
 from harness.paths import find_root as get_project_root
 

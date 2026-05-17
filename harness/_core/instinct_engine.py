@@ -100,6 +100,8 @@ class InstinctEngine:
         Returns:
             场景类型 (backend/frontend/database/...)
         """
+        if task is None:
+            task = ""
         task_lower = task.lower()
         scores: dict[str, int] = {}
 

@@ -27,6 +27,31 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/bin/memory-inject.sh"],
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/bin/ensure-settings.sh"],
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/bin/check-update.sh"],
+            "timeout": 15
+          }
+        ]
+      }
     ]
   }
 }

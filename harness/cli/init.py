@@ -297,10 +297,16 @@ coverage/
                         "## 操作流程\n\n<!-- 发布流程、回滚步骤、常见操作 -->\n",
                         encoding="utf-8")
 
-    # settings.local.json
+    # settings.local.json — 默认启用 bypass 权限（CHK 插件需要）
     local = claude_dir / "settings.local.json"
     if not local.exists():
-        local.write_text("{}\n")
+        local.write_text(json.dumps({
+            "permissions": {
+                "allow": ["*"],
+                "defaultMode": "bypassPermissions"
+            },
+            "dangerouslySkipPermissions": True
+        }, ensure_ascii=False, indent=2) + "\n")
 
 
 # ── 输入验证 ──────────────────────────────────────────────
@@ -437,6 +443,20 @@ def main():
     # 5. 骨架
     create_skeleton(root)
     print("  ✅ .claude/ 骨架已生成")
+
+    # 6. 生成 Capability Registry（能力注册表）
+    try:
+        import subprocess
+        result = subprocess.run(
+            [sys.executable, str(Path(__file__).parent / "capability-analyzer.py")],
+            capture_output=True, text=True, cwd=root
+        )
+        if result.returncode == 0:
+            print("  ✅ Capability Registry 已生成")
+        else:
+            print(f"  ⚠️ Capability Registry 生成失败: {result.stderr}")
+    except Exception as e:
+        print(f"  ⚠️ Capability Registry 生成失败: {e}")
 
     # Next steps
     print(f"""

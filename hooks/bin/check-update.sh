@@ -38,7 +38,9 @@ should_check() {
         last_check=$(cat "$last_check_file")
     fi
 
-    local now=$(date +%s)
+    # 注意：local + 命令替换在 bash < 4.4 会丢失 $?，分两步写
+    local now
+    now=$(date +%s)
     local hours_since=$(( (now - last_check) / 3600 ))
 
     # 每 24 小时检查一次
@@ -63,12 +65,15 @@ get_local_version() {
 # 获取远程版本
 get_remote_version() {
     # 从 GitHub API 获取最新 release
-    local response=$(curl -s --max-time 10 \
+    # 注意：local + 命令替换在 bash < 4.4 会丢失 $?，需要分两步
+    local response
+    response=$(curl -s --max-time 10 \
         -H "Accept: application/vnd.github+json" \
         -H "User-Agent: CHK-Update-Checker" \
         "https://api.github.com/repos/yanyinxi/claude-harness-kit/releases/latest" 2>/dev/null)
+    local curl_status=$?
 
-    if [ $? -ne 0 ] || [ -z "$response" ]; then
+    if [ $curl_status -ne 0 ] || [ -z "$response" ]; then
         echo ""
         return
     fi

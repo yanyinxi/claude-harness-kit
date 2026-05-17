@@ -16,9 +16,9 @@ from pathlib import Path
 from collections import Counter
 
 # ── 统一路径导入 ─────────────────────────────────────────────
-# 从 paths.py 获取统一路径常量，避免硬编码
+# 从 harness.paths 获取统一路径常量，避免硬编码
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from paths import INSTINCT_FILE, PROPOSALS_DIR, DATA_DIR
+from harness.paths import INSTINCT_FILE, PROPOSALS_DIR, DATA_DIR
 
 
 def load_settings(root: Path) -> dict:

@@ -93,7 +93,7 @@ def validate_sessions_file(sessions_file: Path, quarantine_dir: Optional[Path] =
     errors = []
 
     try:
-        content = sessions_file.read_text().strip()
+        content = sessions_file.read_text(encoding='utf-8').strip()
         if not content:
             return {"total": 0, "valid": 0, "invalid": 0, "quarantined": 0, "errors": []}
 
@@ -122,7 +122,7 @@ def validate_sessions_file(sessions_file: Path, quarantine_dir: Optional[Path] =
             quarantine_dir.mkdir(parents=True, exist_ok=True)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             quarantine_path = quarantine_dir / f"sessions_invalid_{timestamp}.jsonl"
-            with open(quarantine_path, "w") as f:
+            with open(quarantine_path, "w", encoding='utf-8') as f:
                 for _, line, _ in invalid_lines:
                     f.write(line + "\n")
                     quarantined_count += 1

@@ -322,7 +322,8 @@ def _backup_config(config_path: Path, backup_dir: Path, max_backups: int = 5) ->
 def load_config():
     config_path = Path(__file__).parent / "config.yaml"
     if yaml is not None:
-        with open(config_path) as f:
+        import yaml
+        with open(config_path, encoding='utf-8') as f:
             return yaml.safe_load(f)
     # Fallback: inline default config when PyYAML is not installed
     # 注意: 这是极端情况的降级，完整配置应参考 config.yaml

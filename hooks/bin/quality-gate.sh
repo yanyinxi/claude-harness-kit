@@ -3,6 +3,10 @@
 # 设计：永远 exit 0，格式错误警告但不阻断
 set -uo pipefail
 
+# 加载共享日志工具
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/log-utils.sh" 2>/dev/null || true
+
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
 
 INPUT=$(cat 2>/dev/null) || INPUT=""
@@ -12,7 +16,7 @@ FILE_PATH=$(echo "$INPUT" | python3 -c "
 import sys, json
 d = json.load(sys.stdin)
 print(d.get('tool_input', {}).get('file_path', ''))
-" 2>/dev/null) || { exit 0; }
+" 2>/dev/null) || { _hook_log_error "quality-gate" "Failed to parse file_path from input" 2>/dev/null; exit 0; }
 
 [[ -z "$FILE_PATH" ]] && exit 0
 
@@ -84,6 +88,7 @@ _check_test_missing() {
 # ── JSON 文件格式验证 ──
 if [[ "$FILE_PATH" =~ \.json$ ]]; then
     if ! python3 -m json.tool "$FILE_PATH" > /dev/null 2>&1; then
+        _hook_log_error "quality-gate" "JSON syntax error in: $FILE_PATH" 2>/dev/null
         block_post "❌ JSON 格式错误：$FILE_PATH\n请检查是否有语法错误（多余逗号、非法注释等）"
     fi
 fi
@@ -113,6 +118,7 @@ fi
 # ── Python 语法检查 ──
 if [[ "$FILE_PATH" =~ \.py$ ]] && [[ -f "$FILE_PATH" ]]; then
     if ! python3 -m py_compile "$FILE_PATH" 2>/dev/null; then
+        _hook_log_error "quality-gate" "Python syntax error in: $FILE_PATH" 2>/dev/null
         block_post "❌ Python 语法错误：$FILE_PATH"
     fi
 fi

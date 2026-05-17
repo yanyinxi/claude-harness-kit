@@ -268,7 +268,7 @@ class EffectTracker:
         """更新效果摘要"""
         # 读取现有摘要
         if self.summary_file.exists():
-            summary = json.loads(self.summary_file.read_text())
+            summary = json.loads(self.summary_file.read_text(encoding='utf-8'))
         else:
             summary = {"knowledge_stats": {}, "updated": ""}
 

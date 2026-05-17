@@ -104,6 +104,8 @@ class SessionState:
 
     def get_uninjected_instincts(self, instinct_ids: list[str]) -> list[str]:
         """获取未注入的本能 ID 列表"""
+        if instinct_ids is None:
+            return []
         state = self._load_state()
         injected = set(state.get("injected_instincts", []))
         return [iid for iid in instinct_ids if iid not in injected]
