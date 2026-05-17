@@ -1,0 +1,14 @@
+{
+  "applications": {
+    "test-1": {
+      "attempts": 3,
+      "successes": 2
+    },
+    "test-2": {
+      "attempts": 1,
+      "successes": 1
+    }
+  },
+  "total_apps": 4,
+  "total_success": 3
+}

@@ -138,6 +138,45 @@ Haiku 分析，生成本能候选
 
 ## 验证方法
 
+### 强制测试要求
+
+```
+⚠️ 新功能/模块必须包含 E2E 测试 ⚠️
+
+测试金字塔（必须遵守）：
+┌─────────────────────────────────────────────────┐
+│         端到端测试 (E2E) — 50%                   │
+│   完整工作流，模拟真实用户操作                   │
+├─────────────────────────────────────────────────┤
+│         集成测试 (Integration) — 30%            │
+│   多模块协作验证                                │
+├─────────────────────────────────────────────────┤
+│         单元测试 (Unit) — 10%                   │
+│   单模块独立正确性                              │
+└─────────────────────────────────────────────────┘
+
+验证检查项：
+□ 是否有 harness/tests/e2e/test_*.py E2E 测试
+□ E2E 测试是否覆盖完整用户工作流
+□ 所有测试是否通过（≥3 轮验证）
+□ 测试失败是否有明确错误信息
+```
+
+### 测试命令
+
+```bash
+# 1. 运行所有测试（包括 E2E）
+python3 -m pytest harness/tests/ -v
+
+# 2. 仅运行 E2E 测试
+python3 -m pytest harness/tests/e2e/ -v
+
+# 3. 运行记忆系统 E2E 测试
+python3 -m pytest harness/tests/e2e/test_memory_e2e.py -v
+```
+
+### 验证清单
+
 ```bash
 # 1. Hook 脚本可执行
 [[ -x hooks/bin/observe.sh ]] && echo "✅"
@@ -152,6 +191,10 @@ echo '{"sessionId":"test","message":{"type":"user","content":"请帮我写一个
 
 # 4. 观测文件生成
 ls .claude/homunculus/observations.jsonl && echo "✅ 观测日志存在"
+
+# 5. E2E 测试检查（必须通过）
+python3 -m pytest harness/tests/e2e/ -v --tb=short
+# 期望：所有测试 passed
 ```
 
 ## Red Flags

@@ -152,7 +152,22 @@ def apply_change(decision: dict, root: Optional[Path] = None) -> bool:
     # 更新 instinct
     _update_instinct(decision, root)
 
+    # 同步到记忆系统
+    _sync_to_memory(decision, root)
+
     return True
+
+
+def _sync_to_memory(decision: dict, root: Path):
+    """同步知识到记忆系统"""
+    try:
+        from memory_sync import sync_to_memory
+        result = sync_to_memory()
+        if result.get("synced", 0) > 0:
+            print(f"Memory synced: {result['synced']} entries")
+    except Exception as e:
+        # 不阻断主流程，只记录错误
+        print(f"Memory sync failed: {e}")
 
 
 def record_proposal(decision: dict, root: Path, backup_path: Optional[Path] = None):

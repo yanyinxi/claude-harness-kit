@@ -9,7 +9,8 @@
 .claude/data/observations.jsonl
 .claude/data/sessions.jsonl
 .claude/data/agent_calls.jsonl
-.claude/data/skill_calls.jsonl
+.claude/data/skill_calls.jsonl 
+.claude/data/.memory_session_test*.json
 .claude/proposals/
 
 # harness 运行时数据

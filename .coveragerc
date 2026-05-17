@@ -1,0 +1,21 @@
+[run]
+source = harness
+branch = True
+omit =
+    */tests/*
+    */test_*.py
+    */__pycache__/*
+    */evolve-daemon/vendor/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+show_missing = True
+precision = 2
+
+[html]
+directory = htmlcov

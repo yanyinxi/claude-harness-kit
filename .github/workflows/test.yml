@@ -1,0 +1,223 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# 允许手动触发
+  workflow_dispatch:
+
+jobs:
+  # ── Stage 1: 静态检查 (快速失败) ───────────────────────────────
+  lint:
+    name: Lint Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install ruff pytest pytest-cov pytest-mock
+
+      - name: Run ruff check
+        run: |
+          ruff check harness/ hooks/ --output-format=github
+        continue-on-error: true
+
+      - name: Run ruff format check
+        run: |
+          ruff format --check harness/ hooks/
+        continue-on-error: true
+
+      - name: ShellCheck hooks
+        run: |
+          if command -v shellcheck &> /dev/null; then
+            shellcheck hooks/bin/*.sh || true
+          fi
+
+  # ── Stage 2: 单元测试 (并行 3 模块) ───────────────────────────
+  unit-tests-core:
+    name: Unit Tests (Core)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pytest pytest-cov pytest-mock
+
+      - name: Run unit tests
+        run: |
+          pytest harness/tests/unit/_core/ \
+                -v --tb=short --cov=harness._core \
+                --cov-report=xml --cov-fail-under=95
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+
+  unit-tests-cli:
+    name: Unit Tests (CLI)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pytest pytest-cov pytest-mock
+
+      - name: Run unit tests
+        run: |
+          pytest harness/tests/unit/cli/ \
+                -v --tb=short --cov=harness.cli \
+                --cov-report=xml --cov-fail-under=95
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+
+  unit-tests-evolve:
+    name: Unit Tests (Evolve)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pytest pytest-cov pytest-mock
+
+      - name: Run unit tests
+        run: |
+          pytest harness/tests/unit/evolve-daemon/ \
+                -v --tb=short --cov=harness.evolve_daemon \
+                --cov-report=xml --cov-fail-under=95
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+
+  # ── Stage 3: 契约测试 ────────────────────────────────────────
+  contract-tests:
+    name: Contract Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pytest
+
+      - name: Run Agent contract tests
+        run: pytest harness/tests/contracts/agents/ -v
+
+      - name: Run Skill contract tests
+        run: pytest harness/tests/contracts/skills/ -v
+
+      - name: Run Hook contract tests
+        run: pytest harness/tests/contracts/hooks/ -v
+
+  # ── Stage 4: 集成测试 ───────────────────────────────────────
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pytest pytest-asyncio
+
+      - name: Run integration tests
+        run: pytest harness/tests/integration/ -v --tb=short
+
+  # ── Stage 5: E2E 测试 ───────────────────────────────────────
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pytest
+
+      - name: Run E2E tests
+        run: pytest harness/tests/e2e/ -v --tb=short
+
+  # ── Stage 6: 质量门禁汇总 ────────────────────────────────────
+  quality-gate:
+    name: Quality Gate
+    needs: [lint, unit-tests-core, unit-tests-cli, unit-tests-evolve, contract-tests, integration-tests, e2e-tests]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check Results
+        run: |
+          echo "========================================"
+          echo "Quality Gate Summary"
+          echo "========================================"
+          echo "Lint: ${{ needs.lint.result }}"
+          echo "Unit Tests (Core): ${{ needs.unit-tests-core.result }}"
+          echo "Unit Tests (CLI): ${{ needs.unit-tests-cli.result }}"
+          echo "Unit Tests (Evolve): ${{ needs.unit-tests-evolve.result }}"
+          echo "Contract Tests: ${{ needs.contract-tests.result }}"
+          echo "Integration Tests: ${{ needs.integration-tests.result }}"
+          echo "E2E Tests: ${{ needs.e2e-tests.result }}"
+          echo "========================================"
+
+      - name: Fail if any critical stage failed
+        if: |
+          needs.lint.result == 'failure' ||
+          needs.unit-tests-core.result == 'failure' ||
+          needs.unit-tests-cli.result == 'failure' ||
+          needs.unit-tests-evolve.result == 'failure'
+        run: |
+          echo "FAIL: Critical tests failed"
+          exit 1
+
+      - name: Success notification
+        if: |
+          needs.lint.result == 'success' &&
+          needs.unit-tests-core.result == 'success' &&
+          needs.unit-tests-cli.result == 'success' &&
+          needs.unit-tests-evolve.result == 'success'
+        run: |
+          echo "SUCCESS: All tests passed!"
