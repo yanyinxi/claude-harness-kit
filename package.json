@@ -1,14 +1,21 @@
 {
   "name": "chk",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Claude Harness Kit — Human steers, Agents execute. 多 Agent 协作、通用 Skills、持续进化",
   "main": "index.js",
   "scripts": {
     "test": "shellcheck hooks/bin/*.sh && ruff check harness/ && python3 -m pytest harness/tests/ --ignore=harness/tests/evolve-daemon/ -q",
+    "test:all": "python3 -m pytest harness/tests/ -v --tb=short",
+    "test:unit": "python3 -m pytest harness/tests/unit/ -v --tb=short",
+    "test:contract": "python3 -m pytest harness/tests/contracts/ -v --tb=short",
+    "test:integration": "python3 -m pytest harness/tests/integration/ -v --tb=short",
+    "test:e2e": "python3 -m pytest harness/tests/e2e/ -v --tb=short",
+    "test:cov": "python3 -m pytest harness/tests/ --cov=harness --cov-fail-under=95 -v",
     "test:py": "python3 -m pytest harness/tests/ -q",
     "test:js": "node -e \"require('./index.js')\"",
     "lint": "ruff check harness/",
-    "lint:sh": "shellcheck hooks/bin/*.sh"
+    "lint:sh": "shellcheck hooks/bin/*.sh",
+    "quality-gate": "bash hooks/bin/quality-gate.sh"
   },
   "files": [
     ".claude-plugin/",
