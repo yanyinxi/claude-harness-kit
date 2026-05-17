@@ -8,7 +8,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash hooks/bin/safety-check.sh",
+            "command": "bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/bin/safety-check.sh"],
             "timeout": 5
           }
         ]
@@ -20,7 +21,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash hooks/bin/quality-gate.sh",
+            "command": "bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/bin/quality-gate.sh"],
             "timeout": 10
           }
         ]
@@ -32,12 +34,14 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash hooks/bin/memory-inject.sh",
+            "command": "bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/bin/memory-inject.sh"],
             "timeout": 10
           },
           {
             "type": "command",
-            "command": "bash hooks/bin/check-update.sh",
+            "command": "bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/bin/check-update.sh"],
             "timeout": 15
           }
         ]

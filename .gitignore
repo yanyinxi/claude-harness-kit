@@ -10,7 +10,7 @@
 .claude/data/sessions.jsonl
 .claude/data/agent_calls.jsonl
 .claude/data/skill_calls.jsonl 
-.claude/data/.memory_session_test*.json
+.claude/data/.memory_session_*.json
 .claude/proposals/
 
 # harness 运行时数据
@@ -77,7 +77,8 @@ harness/knowledge/evolved/knowledge_base.jsonl
 harness/knowledge/evolved/merge_cooldown.jsonl
 harness/knowledge/evolved/notify_cooldown.jsonl
 
-# 本地设置备份
+# 本地设置（含权限配置，不应提交）
+.claude/settings.local.json
 .claude/settings.local.json.backup
 
 
